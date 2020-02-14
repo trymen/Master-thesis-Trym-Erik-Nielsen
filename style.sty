@@ -43,17 +43,19 @@
                 spaces,
                 hyphens]{url}      % Typesetting URLs
 \urlstyle{sf}
-
+\setcounter{secnumdepth}{3}
 
 %% Mathematics
-\RequirePackage{amssymb}    % Extra symbols
-\RequirePackage{amsthm}     % Theorem-like environments
-\RequirePackage{thmtools}   % Theorem-like environments, extends amsthm
-\RequirePackage{mathtools}  % Fonts and environments for mathematical formulae
-\RequirePackage{mathrsfs}   % Script font with \mathscr{}
-\RequirePackage{dsfont}     % Double stroke font with \mathds{}
-\RequirePackage{cancel}     % Cancel terms with \cancel, \bcancel or \xcancel
-\RequirePackage{stmaryrd}   % Brackets
+\RequirePackage{amsmath}    % Extra symbols
+% \RequirePackage{amsthm}     % Theorem-like environments
+% \RequirePackage{thmtools}   % Theorem-like environments, extends amsthm
+% \RequirePackage{mathtools}  % Fonts and environments for mathematical formulae
+% \RequirePackage{mathrsfs}   % Script font with \mathscr{}
+% \RequirePackage{dsfont}     % Double stroke font with \mathds{}
+% \RequirePackage{cancel}     % Cancel terms with \cancel, \bcancel or \xcancel
+% \RequirePackage{stmaryrd}   % Brackets
+\RequirePackage{xparse}
+\RequirePackage{physics}    % Vector notation \v
 \everymath
 {
     \ifodd\value{page}          % Allow multiline equations
@@ -85,18 +87,18 @@
 \RequirePackage{etoolbox}                                % Hooks
 \RequirePackage{pgffor}                                  % For-loops
 \RequirePackage{comment}                                 % Multiline comments
-\RequirePackage[notref, notcite]{showkeys}               % Labels in margins
-\renewcommand{\showkeyslabelformat}[1]
-{
-    \fbox
-    {
-        \parbox[t]{0.6\marginparwidth}
-        {
-            \centering\normalfont\footnotesize\ttfamily
-            \path{#1}
-        }
-    }
-}
+% \RequirePackage[notref, notcite]{showkeys}               % Labels in margins
+% \renewcommand{\showkeyslabelformat}[1]
+% {
+%     \fbox
+%     {
+%         \parbox[t]{0.6\marginparwidth}
+%         {
+%             \centering\normalfont\footnotesize\ttfamily
+%             \path{#1}
+%         }
+%     }
+% }
 \RequirePackage[obeyFinal,
                 color       = LightGray,
                 bordercolor = LightGray,
@@ -242,51 +244,51 @@
 
 
 %% Environments
-\declaretheoremstyle[headfont   = \bfseries\sffamily,
-                     notefont   = \normalfont,
-                     bodyfont   = \itshape,
-                     spaceabove = 6pt,
-                     spacebelow = 6pt]{plain}
-\declaretheoremstyle[headfont   = \bfseries\sffamily,
-                     notefont   = \normalfont,
-                     spaceabove = 6pt,
-                     spacebelow = 6pt]{definition}
-\declaretheorem[style = plain, numberwithin = section]{theorem}
-\declaretheorem[style = plain,      sibling = theorem]{corollary}
-\declaretheorem[style = plain,      sibling = theorem]{lemma}
-\declaretheorem[style = plain,      sibling = theorem]{proposition}
-\declaretheorem[style = plain,      sibling = theorem]{observation}
-\declaretheorem[style = plain,      sibling = theorem]{conjecture}
-\declaretheorem[style = definition, sibling = theorem]{definition}
-\declaretheorem[style = definition, sibling = theorem]{example}
-\declaretheorem[style = definition, sibling = theorem]{notation}
-\declaretheorem[style = remark,     sibling = theorem]{remark}
-\crefname{observation}{Observation}{Observations}
-\Crefname{observation}{Observation}{Observations}
-\crefname{conjecture}{Conjecture}{Conjectures}
-\Crefname{conjecture}{Conjecture}{Conjectures}
-\crefname{notation}{Notation}{Notations}
-\Crefname{notation}{Notation}{Notations}
+% \declaretheoremstyle[headfont   = \bfseries\sffamily,
+%                      notefont   = \normalfont,
+%                      bodyfont   = \itshape,
+%                      spaceabove = 6pt,
+%                      spacebelow = 6pt]{plain}
+% \declaretheoremstyle[headfont   = \bfseries\sffamily,
+%                      notefont   = \normalfont,
+%                      spaceabove = 6pt,
+%                      spacebelow = 6pt]{definition}
+% \declaretheorem[style = plain, numberwithin = section]{theorem}
+% \declaretheorem[style = plain,      sibling = theorem]{corollary}
+% \declaretheorem[style = plain,      sibling = theorem]{lemma}
+% \declaretheorem[style = plain,      sibling = theorem]{proposition}
+% \declaretheorem[style = plain,      sibling = theorem]{observation}
+% \declaretheorem[style = plain,      sibling = theorem]{conjecture}
+% \declaretheorem[style = definition, sibling = theorem]{definition}
+% \declaretheorem[style = definition, sibling = theorem]{example}
+% \declaretheorem[style = definition, sibling = theorem]{notation}
+% \declaretheorem[style = remark,     sibling = theorem]{remark}
+% \crefname{observation}{Observation}{Observations}
+% \Crefname{observation}{Observation}{Observations}
+% \crefname{conjecture}{Conjecture}{Conjectures}
+% \Crefname{conjecture}{Conjecture}{Conjectures}
+% \crefname{notation}{Notation}{Notations}
+% \Crefname{notation}{Notation}{Notations}
 
 
 %% Operators
-\newcommand{\diff}{\mathop{}\!\mathrm{d}}
-\renewcommand{\Re}{\operatorname{Re}}
-\renewcommand{\Im}{\operatorname{Im}}
-\DeclareMathOperator{\im}{im}
-\DeclareMathOperator{\rank}{rank}
+% \newcommand{\diff}{\mathop{}\!\mathrm{d}}
+% \renewcommand{\Re}{\operatorname{Re}}
+% \renewcommand{\Im}{\operatorname{Im}}
+% \DeclareMathOperator{\im}{im}
+% \DeclareMathOperator{\rank}{rank}
 
 
-%% Delimiters
-\DeclarePairedDelimiter{\p}{\lparen}{\rparen}          % Parenthesis
-\DeclarePairedDelimiter{\set}{\lbrace}{\rbrace}        % Set
-\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}          % Absolute value
-\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}         % Norm
-\DeclarePairedDelimiter{\ip}{\langle}{\rangle}         % Inner product, ideal
-\DeclarePairedDelimiter{\sqb}{\lbrack}{\rbrack}        % Square brackets
-\DeclarePairedDelimiter{\ssqb}{\llbracket}{\rrbracket} % Double brackets
-\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}         % Ceiling
-\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}      % Floor
+% %% Delimiters
+% \DeclarePairedDelimiter{\p}{\lparen}{\rparen}          % Parenthesis
+% \DeclarePairedDelimiter{\set}{\lbrace}{\rbrace}        % Set
+% \DeclarePairedDelimiter{\abs}{\lvert}{\rvert}          % Absolute value
+% \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}         % Norm
+% \DeclarePairedDelimiter{\ip}{\langle}{\rangle}         % Inner product, ideal
+% \DeclarePairedDelimiter{\sqb}{\lbrack}{\rbrack}        % Square brackets
+% \DeclarePairedDelimiter{\ssqb}{\llbracket}{\rrbracket} % Double brackets
+% \DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}         % Ceiling
+% \DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}      % Floor
 
 
 %% Blackboard bold
@@ -309,12 +311,13 @@
 
 
 %% Miscellaneous
-\renewcommand{\qedsymbol}{\(\blacksquare\)}
-\newcommand{\ie}{\leavevmode\unskip, i.e.,\xspace}
-\newcommand{\eg}{\leavevmode\unskip, e.g.,\xspace}
-\newcommand{\dash}{\textthreequartersemdash\xspace}
-\newcommand{\TikZ}{Ti\textit{k}Z\xspace}
-\newcommand{\matlab}{\textsc{Matlab}\xspace}
+\newcommand{\insertref}[1]{\todo[color=green!40]{#1}}
+% \renewcommand{\qedsymbol}{\(\blacksquare\)}
+% \newcommand{\ie}{\leavevmode\unskip, i.e.,\xspace}
+% \newcommand{\eg}{\leavevmode\unskip, e.g.,\xspace}
+% \newcommand{\dash}{\textthreequartersemdash\xspace}
+% \newcommand{\TikZ}{Ti\textit{k}Z\xspace}
+% \newcommand{\matlab}{\textsc{Matlab}\xspace}
 
 
 \endinput

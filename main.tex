@@ -1,21 +1,25 @@
-\documentclass[a4paper, british]{memoir}
+\documentclass[a4paper, american]{memoir}
 
+\setsecnumdepth{subsection}
 \usepackage{style}           % Custom style
-\usepackage{masterfrontpage} % Front page
+\usepackage[MEK, 60]{masterfrontpage} % Front page
 \usepackage{kantlipsum}      % Dummy text
 
-\title{Title}
-\subtitle{Optional Subtitle}
-\author{Author}
+
+\title{Spacecraft charging in solar wind plasma by means of particle-in-cell simulations}
+%\subtitle{Optional Subtitle}
+\author{Trym Erik Nielsen}
 
 \includeonly
 {
     sections/abstract,
     sections/acknowledgements,
-    sections/introduction,
-    sections/chapter2,
-    sections/chapter3,
-    sections/chapter4,
+    sections/Introduction,
+    sections/TheoreticalBackground,
+    sections/NumericalMethod,
+    sections/Results,
+    sections/Discussion,
+    sections/FutureWork,
     sections/appendixA,
     sections/appendixB,
 }
@@ -38,13 +42,13 @@
 
     \mainmatter         % Folios in Arabic numerals, numbered chapters.
 
-    \include{sections/introduction}
-
-    \part{The First Part}
-
-    \include{sections/chapter2}
-    \include{sections/chapter3}
-    \include{sections/chapter4}
+    \include{sections/Introduction}
+    \include{sections/TheoreticalBackground}
+    \include{sections/NumericalMethod}
+    \include{sections/Results}
+    \include{sections/Discussion}
+    \include{sections/FutureWork}
+    
 
     \appendix           % "Chapter" is renamed "Appendix"
     \appendixpage       % Similar to \part*{Appendices}, but appears in TOC.

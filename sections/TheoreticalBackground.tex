@@ -1,0 +1,61 @@
+\chapter{Theoretical background}
+
+\label{sec:theory}
+
+\section{Plasma modelling}
+In this section, we present a short overview of the basic mathematical framework used in the study of plasma dynamics. In section \ref{sec:basicEq}, we briefly present the equations of motion for single particle motion in electrical and magnetic field. Then in \ref{sec:pParam} we give an overview of essential plasma parameters.
+Plasma is a collection of ionized gas, commonly referred to as the fourth state of matter. The solar wind, the polar aurorae, and lighting are some examples of plasmas that occur in nature. \insertref{ref a basic intro text} Plasma shares many of the same properties that describe gases, but differ in being affected by magnetic and electrical fields: since plasma consists of charged particles, ions and free electrons, they are subject to the Lorentz force. The lorentz force acting on a charged plasma particle, causes curvilinear motion further complicated by the influence of other nearby charged particles.
+
+\section{Basic equations}
+
+\subsection{Single particle description}
+\label{subsec:basicEq}
+The single particle description of a plasma describes the motion of individual charged particles moving in imposed magnetic and electrical fields. Assuming the force of gravity is sufficiently small, and assuming constant electrical and magnetic fields, the single particle motion of a charge $q$ moving at velocity $v$ in the electrical field $E$ and magnetic field $B$ is described by the Lorentz force law 
+
+\begin{equation}\label{eq:lorentz}
+    \vb{F} = q \vb{E} + q \vb{v} \cross \vb{B}
+\end{equation}
+
+The term $q \vb{E}$ is called the Electric force, and the term $q\vb{v} \cross \vb{B}$ is called the magnetic force. When a particle moves in a static magnetic field, and no electric field is present, the particle will gyrate around magnetic field lines. Setting $E$ to zero, we have
+
+\begin{equation}\label{eq:magF}
+    \vb{F} = q \vb{v} \cross \vb{B}
+\end{equation}
+
+The cross product of the velocity and magnetic field vector means that the magnetic force always acts perpendicularly to the direction of motion of the particle, thereby causing the particle to gyrate.
+
+Setting the centripetal force equal to the magnitude of the Lorentz force, we can derive an expression for the gyroradius $r_g$ of the motion
+
+\begin{equation}\label{eq:gyrorad}
+    \frac{m_s v_{\perp}^2}{r_g} = \abs{q} v_{\perp} \vb{B}
+\end{equation}
+
+Where the subscript on $m_s$ denotes the specie of the particle. and $V_\perp$ denotes the perpendicular component of velocity to  the plane of $B$. Upon rearranging, the expression for the gyroradius $r_g$ becomes
+
+\begin{equation}
+    r_g = \frac{m_s v_\perp}{\abs{q} \vb{B}}
+\end{equation}
+
+The particle gyrates with an angular frequency, called the cyclotron frequency $\Omega_c$, expressed as 
+
+\begin{equation}
+    \Omega_c = \frac{v_\perp}{r_g} = \frac{\abs{q} \vb{B}}{m_s}
+\end{equation}
+
+The motion of a particle $q_s$ is in practical cases often described as the drift of the centre of gyration of the particle. When also subjected to an isotropic electrical field, this motion is often called E cross B, or Hall drift, and can be derived from 
+
+\subsection{Plasma parameters}
+\label{subsec:pParam}
+
+
+\kant[7-11] % Dummy text
+
+% \begin{theorem}[{\cite[95]{AM69}}]
+%     \label{thm:dedekind}
+%     Let \( A \) be a Noetherian domain of dimension one. Then the following are equivalent:
+%     \begin{enumerate}
+%         \item \( A \) is integrally closed;
+%         \item Every primary ideal in \( A \) is a prime power;
+%         \item Every local ring \( A_\mathfrak{p} \) \( (\mathfrak{p} \neq 0) \) is a discrete valuation ring.
+%     \end{enumerate}
+% \end{theorem}
