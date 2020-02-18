@@ -3,8 +3,8 @@
 \label{sec:theory}
 
 \section{Plasma modelling}
-In this section, we present a short overview of the basic mathematical framework used in the study of plasma dynamics. In section \ref{sec:basicEq}, we briefly present the equations of motion for single particle motion in electrical and magnetic field. Then in \ref{sec:pParam} we give an overview of essential plasma parameters.
-Plasma is a collection of ionized gas, commonly referred to as the fourth state of matter. The solar wind, the polar aurorae, and lighting are some examples of plasmas that occur in nature. \insertref{ref a basic intro text} Plasma shares many of the same properties that describe gases, but differ in being affected by magnetic and electrical fields: since plasma consists of charged particles, ions and free electrons, they are subject to the Lorentz force. The lorentz force acting on a charged plasma particle, causes curvilinear motion further complicated by the influence of other nearby charged particles.
+In this section, we present a short overview of the basic mathematical framework used in the study of plasma dynamics. In section \cref{subsec:basicEq}, we briefly present the equations of motion for single particle motion in electrical and magnetic field. Then in \cref{subsec:pParam} we give an overview of essential plasma parameters.
+Plasma is a collection of ionized gas, commonly referred to as the fourth state of matter. The solar wind, the polar aurorae, and lighting are some examples of plasmas that occur in nature. \insertref{ref a basic intro text} Plasma shares many of the same properties that describe gases, but differ in being affected by magnetic and electrical fields: since plasma consists of charged particles, ions and free electrons, they are subject to the Lorentz force. The Lorentz force acting on a charged plasma particle, causes curvilinear motion further complicated by the influence of other nearby charged particles.
 
 \section{Basic equations}
 
@@ -16,7 +16,7 @@ The single particle description of a plasma describes the motion of individual c
     \vb{F} = q \vb{E} + q \vb{v} \cross \vb{B}
 \end{equation}
 
-The term $q \vb{E}$ is called the Electric force, and the term $q\vb{v} \cross \vb{B}$ is called the magnetic force. When a particle moves in a static magnetic field, and no electric field is present, the particle will gyrate around magnetic field lines. Setting $E$ to zero, we have
+Where the term $q \vb{E}$ is called the Electric force, and the term $q\vb{v} \cross \vb{B}$ is called the magnetic force. When a particle moves in a static magnetic field, and no electric field is present, the particle will gyrate around magnetic field lines. Setting $E$ to zero, we have
 
 \begin{equation}\label{eq:magF}
     \vb{F} = q \vb{v} \cross \vb{B}
@@ -42,7 +42,56 @@ The particle gyrates with an angular frequency, called the cyclotron frequency $
     \Omega_c = \frac{v_\perp}{r_g} = \frac{\abs{q} \vb{B}}{m_s}
 \end{equation}
 
-The motion of a particle $q_s$ is in practical cases often described as the drift of the centre of gyration of the particle. When also subjected to an isotropic electrical field, this motion is often called E cross B, or Hall drift, and can be derived from 
+The motion of a particle $q_s$ is in practical cases often modelled as the drift of the centre of gyration of the particle. When also subjected to an isotropic electrical field, this motion is called E cross B drift, or Hall drift, and can be derived from the Lorentz force equation and Newtons' second law and solving for the acceleration of the particle: If we assume the drift velocity to be constant in time, the expression for the drift $\vb{V}_D$ becomes
+
+\begin{equation}
+    \vb{V}_D = \frac{\vb{E} \cross \vb{B}}{B^2}
+\end{equation}
+
+\subsection{Kinetic description}
+In the previous section, we studied the individual motion of charged plasma particles. Although the single particle description of plasma is useful in gaining an understanding in how individual particles behave in isotropic magnetic and electrical fields; it is an impractical model for analyzing macroscopic phenomena of the plasma. \insertref{"Plasma Physics" by Alexander Piel contains a good discussion of when each plasma model should be used} The kinetic description of plasma begins with the assumption of a density distribution of charges in the six dimensional phase space varying over time. Let $f_s(\vb{x}, \vb{v}, t)$ be the continuous probability distribution, representing the probability of finding a charged particle of species $s$ at time $t$ in phase space. Multiplying the distribution of charges by the charge of the species $q_s$, and integrating over the velocity space. the charge density $\rho_s$ can be found. Summing over all the species of charge in the plasma gives us the following expression for the total charge density $\rho_c$
+
+\begin{equation}\label{eq:rhoCharge}
+    \rho_c = \sum_s q_s\int f(\vb{x}, \vb{v}, t) d^3\vb{v}
+\end{equation}
+
+Similarly, an expression for the current density is obtained by multiplying the charge distribution by the velocity vector $v$ and integrating the result in a similar fashion to \ref{eq:rhoCharge}
+
+\begin{equation}
+    \vb{j} = \sum_s q_s \int \vb{v} f(\vb{x}, \vb{v}, t) d^3 \vb{v}
+\end{equation}
+
+
+Equipped with a continuous distribution function of particles in phase-space, equations of motion that describe the flow of the charged particles can be derived from solving the Boltzmann equation. Or alternatively, when assuming a non-collisional plasma, the set of vector equations called the Vlaslov equation can be used
+
+
+\begin{equation}\label{eq:vlaslov}
+    \pdv{f}{t} + \vb{v} \vdot \grad{f_s} + \frac{q_s}{m_s} (\vb{E} + \vb{v} \cross \vb{B}) \vdot \grad_v{f} = 0
+\end{equation}
+
+Where the operator notation $\grad_v = (\pdv{v_x}, \pdv{v_y}, \pdv{v_z})$ and $\grad = (\pdv{x},\pdv{y},\pdv{z})$ has been used. For a comprehensive derivation of the Vlaslov equation see \insertref{Plasma physics via computer simulation for example}
+
+
+\subsection{Fluid description}
+In previous sections, the equations of motion for characterising plasma has been modelled by analyzing the forces acting on individual particles. While this approach can be helpful in gaining insight into the physics governing the plasma behaviour, it is difficult to apply these frameworks to practical computation models. 
+\vskip 1mm
+Another method, that reduces the complexity of computing individual particle motions, is treating plasma as two continuous fluids. In this approach we are able to extract macroscopic properties of the plasma, such as the density, the velocity and the mean energy. The fluid equations are derived by taking the velocity moments of the Vlaslov equation \ref{eq:vlaslov}, where the generalized velocity moment is described as
+
+\begin{equation}\label{eq:moment}
+    M^n \equiv \int f(\vb{v}) \vb{v}^n d^3v
+\end{equation}
+
+The zeroth velocity moment, also called the continuity equation, can be found by multiplying equation \ref{eq:vlaslov} by the zeroth velocity moment 
+
+\begin{equation}\label{eq:zeromoment}
+    n_s = \int f_s d^3 v
+\end{equation}
+
+The zeroth velocity moment for species $s$ is simply the number density for the species. Multiplying this by the Vlaslov equation we have
+
+\begin{equation}\label{eq:continuity}
+    \int \pdv{f}{t} d \vb{v} \int \vb{v} \vdot \grad{f} d\vb{v} + \frac{q}{m} \int (\vb{E} + \vb{v} \cross \vb{B})  \vdot \pdf{f}{\vb{v}} d\vb{v} = 0
+\end{equation}
 
 \subsection{Plasma parameters}
 \label{subsec:pParam}
