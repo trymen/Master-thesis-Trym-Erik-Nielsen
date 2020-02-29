@@ -136,15 +136,17 @@ Where the terms $Q_s$ and $W_s$ denote the energy flux density and total change 
 
 Formal derivations of the fluid equations, with some differences in notation, can be found in the fundamental works of Chen \insertref{Chen 1985}, and Fitzpatrick \insertref{Fitzpatrick 2012}.
 
+\subsection{Magnetohydrodynamics}
+\todo{Finish this section after }
 
-\subsection{Plasma parameters}\label{subsec:pParam}
+\section{Plasma parameters}\label{subsec:pParam}
 In this section, the basic parameters used in the analysis and simulation will be introduced. We discuss the notion of a plasma temperature, present the characteristic length and frequency scales the Debye length, and plasma frequency. Additionally, we discuss the principle of quasineutrality in relation to plasma. 
 
-\subsection*{Temperature}
-The temperature of a plasma is a measure of the average kinetic energy of the individual species that make up the plasma. For a monoatomic gas, with a probability distribution $f(u)$, Chen \insertref{Chen, section 1.3} gives the following equation for the average kinetic energy
+\subsection{Temperature}\label{subsec:temperature}
+The temperature of a plasma is a measure of the average kinetic energy of the individual species that make up the plasma. For a mono-atomic gas, with a probability distribution $f(u)$, Chen \insertref{Chen, section 1.3} gives the following equation for the average kinetic energy
 
 \begin{equation}\label{eq:avgEint}
-    E_{av} = \frac{\int^\infty_-\infty \frac{1}{2} m u^2 f(u) du}{\int^\infty_-\infty f(u) du}
+    E_{av} = \frac{\int^\infty_{-\infty} \frac{1}{2} m u^2 f(u) du}{\int^\infty_{-\infty} f(u) du}
 \end{equation}
 
 
@@ -169,10 +171,10 @@ Where $K$ denotes the Boltzmann constant. Chen extends this argument for particl
 In plasma physics, it is common to use average energy rather than temperature as they are so closely linked. Calculations are often reduced in complexity by using the electron volt as the basic units of energy. It is defined as the amount of energy required to move a single electron across an electrical potential difference of 1 volt. One eV is therefore approximately equal $1.6 \text{x} 10^-19$ J, with a conversion factor to temperature, in Kelvin
 
 \begin{equation*}
-    1 eV = 11600 K
+    1 eV \approx 11600 K
 \end{equation*}
 
-\subsection*{Debye length}
+\subsection{Debye length}
 The Debye length is a parameter that measures the net persistence of the electrostatic effect of a charged particle. This effect is also known as Debye shielding, Hutchinson \insertref{Hutchinson plasma diagnostics sections 3.1.2} presents a definition for the Debye length by analyzing the potential profile of a test charge placed in a cold plasma. In a non isothermal plasma ions can be assumed to be stationary in relation the more energetic electrons. The electrons density is then determined from the Boltzman factor
 
 \begin{equation}\label{eq:boltzmannFactor}
@@ -207,29 +209,119 @@ The solution of equation \ref{eq:Helmholtz} takes the form
 The Debye length is then a measure of the shielding distance or thickness of the sheath that forms around a charged object embedded in a plasma \insertref{Chen section 1.4}.
 
 
-\subsection*{quasineutrality}
+\subsection{quasineutrality}
+Now that we have presented an expression for the Debye length, the approximation of quasineutral plasma can be defined: When the length scale of interest is much smaller than the Debye length, i.e $\lambda_D \lll L$, the density of ions is approximately equal to the density of electrons\insertref{Chen, section 1.4 Debye Shielding}. Or in other terms
+
+\begin{equation}
+    n_i \approx n_e \approx n
+\end{equation}
+
+Where n is a common density called the plasma density \insertref{Chen, section 1.4, Debye shielding}. When this approximation holds, the plasma is said to be quasineutral. Note that this approximation still allows for variations in charge at smaller length scales than $\lambda_D$. 
+
+\subsection{Electron plasma frequency}
+In plasma simulations of the solar wind an important physical phenomena is plasma oscillation, otherwise called Langmuir waves. In a neutral plasma, disturbances in the density of electrons (and ions) cause oscillations due to the restorative Coulomb force. For solar wind, and other cold plasmas, the frequency of the oscillations of electrons are expressed as
+
+\begin{equation}\label{eq:plasmaFreq}
+    \omega_{pe} = \sqrt{\frac{n_e e^2}{\epsilon_0 m_e}}
+\end{equation}
+
+$\omega_{pe}$ is called the electron plasma frequency. A similar expression exists for the oscillations of ions, but due to their higher mass they oscillate much slower rate than the electrons. Equation \ref{eq:plasmaFreq} is formally derived from Maxwell's equations \insertref{derivations by Chen sec 4.3, Fitzpatrick, Hutchinson} by assuming an infinite plasma not affected by an external magnetic field, no thermal motion i.e $KT = 0$, and ion fixed in space  in a uniform distribution \insertref{Chen sec 4.3}.
+
+
+
+\section{The solar wind plasma environment}
+In this section, a brief overview of the physics and basic plasma parameter values of the solar wind are presented. These data will necessary in building the computational parameters required in the charging simulations of space probes moving in the interplanetary medium presented later in this thesis.
+\\
+The solar wind is a non-isothermal plasma with a temperature averaging around 10 $eV$, that is primarily composed of free electrons, ions and alpha particles. The density of the solar wind plasma is relatively low as compared to other naturally occurring plasmas with a mean value of around 5 $cm^{-3}$. It flows with a drift velocity ranging from 400 $km/s$ up to 900 $km/s$ during periods of high solar activity, \insertref{fundamentals of spacecraft charing, prologue}. In close proximity to the sun, the solar wind density increases significantly, potentially charging space probes to values as low as hundreds of volts \insertref{Deca 2013, and introduction to spacecraft charging (?)}.
+
+
+\todo{Check if I am allowed to use an image from copyrighted works!}
+%\begin{figure}[h!]
+%    \centering
+%    \includegraphics[scale=0.65]{figures/solarWind.png}
+%    \caption{Large-scale structure of the solar wind}
+%    \label{fig:solarWind}
+%\end{figure}
 
 
 
 
-\subsection*{Plasma frequency}
+\subsection*{Interactions with solar system objects}
+The properties of the solar wind can change significantly in regions in close proximity to objects. Planets with internal magnetic fields, will cause MHD \todo{can I use abbreviations?} shock formation \insertref{one of the magnetosphere papers?}, and even bodies without an internal magnetic field of their own can 
+
+\begin{equation}\label{eq:magFieldStrength}
+    B_{\mu} = (\mu_0 / 4 \pi) \mu / r^3_M
+\end{equation}
 
 
 
+\begin{equation}\label{eq:pressureBalance}
+    \rho_w v^2_w \approx \frac{(2 B_{\mu})^2}{2 \mu_0} 
+\end{equation}
 
 
+\begin{equation}
+    r_M \approx \left(\frac{\mu}{4 \pi} \sqrt{\frac{2 \mu_0}{\rho_w v^2_w}} \right)^{\frac{1}{3}}
+\end{equation}
 
-\section{The photoelectric effect}
+\section{Spacecraft charging in plasma}
+A spacecraft collects charged particles when moving relatively to ambient plasma, this change in net charge on the spacecraft causes an electrical field according to Gauss's Law \insertref{Fundamentals of SC charging ch 1}. When the charging of the spacecraft reaches a non-oscillatory steady state, the sum of currents from all the species in the plasma is zero, and the net charging is constant. This is expressed as 
+
+\begin{equation} \label{eq:currentBalance}
+    \dv{Q}{t} = \sum_s I_s(V) = 0
+\end{equation}
+
+The solution of equation \ref{eq:currentBalance} for $V$ is called the floating potential of the spacecraft, and is relative to the neutral plasma. The floating potential of a spacecraft in a drifting plasma is usually negative, since the electrons move at a higher speed than the ions.
+\\
+For complex geometries it is non-trivial to find analytical expressions for the currents $I_s$ charging the spacecraft; in this section, Langmuir probe theory and orbital motion-limited theory is discussed as the basic tools for analyzing spacecraft charging with simple geometries. Spacecraft charging in Maxwellian plasmas, and the primary charging mechanisms that effect the overall potential of a spacecraft are then presented. Special attention is given to the photoelectric effect and the spacecraft photoelectric current, as the implementation of this current in a computational model is the overall objective of this thesis \todo{clunky should I mention this}.
 
 
-\kant[7-11] % Dummy text
+\subsection{Langmuir probe theory}
+A Langmuir probe is a simple device used in the laboratory to measure the temperature, the density, and the electrical potential of a plasma. A Langmuir probe consists of one or more, often spherical, electrodes inserted into the ambient plasma. Either a time varying or constant potential is induced between the electrodes, or between the electrodes and some electrical ground, causing the probe to collect charged particles. By analysing the current $I(V)$ for different potentials, the properties of the surrounding plasma can be extracted \insertref{Marholm Ph.D ch 3, fundamentals of S/C charging, Wojciech et al.}. When immersed in a plasma, a spacecraft behaves in a similar fashion to a Langmuir probe. The difference is that in the case of a spacecraft a potential is not applied, but can be measured as a response to incoming and outgoing currents \insertref{Fundamentals of sc charging, ch 2}. 
 
-% \begin{theorem}[{\cite[95]{AM69}}]
-%     \label{thm:dedekind}
-%     Let \( A \) be a Noetherian domain of dimension one. Then the following are equivalent:
-%     \begin{enumerate}
-%         \item \( A \) is integrally closed;
-%         \item Every primary ideal in \( A \) is a prime power;
-%         \item Every local ring \( A_\mathfrak{p} \) \( (\mathfrak{p} \neq 0) \) is a discrete valuation ring.
-%     \end{enumerate}
-% \end{theorem}
+
+\subsection*{Orbital motion-limited theory}
+In orbital motion limited theory, or OML theory for short, the charge flux impinging on a spacecraft is determined from the conservation of energy and angular momentum of species travelling in proximity to a spacecraft \insertref{Marholm Ph.D ch 3}. From conservation of energy, an expression for the impact velocity on a spherical spacecraft can be obtained, and from conservation of momentum an expression for the distance from the centre of the spacecraft to the straight line of travel can be found. In \insertref{Fundamentals of sc charging, Lai, Ch2.1} these expressions are given as 
+
+\begin{subequations}
+    \begin{align}
+        v_a &= v_{th} \left(1 - \frac{q \phi}{kT} \right) \label{eq:impactvel} \\
+        h &= a \left(1 - \frac{q \phi}{kT} \right) \label{eq:distStraight}
+    \end{align}
+\end{subequations}
+
+Integrating the particle distribution $f_s(\vb{x}, \vb{v}, t)$ using equation \ref{eq:impactvel} and \ref{eq:distStraight} as limits of integration, we can find the flux of particles that impact the spacecraft. It is often convenient work with a normalized potential variable in the formulas for current, define
+
+\begin{equation}\label{eq:normPot}
+    \eta_s \equiv - \frac{q_s V}{k T_s}
+\end{equation}
+
+Using the normalized potential, particles with $n_s < 0$ will be repelled, and particles with $n_s > 0$ will be attracted to the spacecraft \insertref{Marholm Ph.d ch 3.1}. Expressions for the integration of the particle distribution has been found for some simple geometries, for species with $n_s > 0$ with the assumption of a plasma with no internal magnetic field, and zero drift by Mott-Smith and Langmuir \insertref{Mott-Smith and Langmuir}
+
+\begin{subequations}
+    \begin{align}
+        I_s (\eta_s) &= I_{th,s} \label{eq:IPlane} \\
+        I_s (\eta_s) &= I_{th,s} \left(\frac{2}{\sqrt{\pi}} \sqrt{\eta_s} + \exp(\eta_s) \hspace{2pt} \text{erfc}(\sqrt{\eta_s}) \right) \label{eq:ICylinder}\\
+        & \approx I_{th,s} \frac{2}{\sqrt{\pi}} \sqrt{1 + \eta_s} \\
+        I_s(\eta_s)  &= I_{th,s} (1 + \eta_s) \label{eq:Isphere}
+    \end{align}
+\end{subequations}
+
+Where equations \ref{eq:IPlane}, \ref{eq:ICylinder} and \ref{eq:Isphere} are the functions of current for a plane, a cylinder, and a sphere respectively. These functions are derived based on the assumption that the cylinder is long compared to $\lambda_D$, the radius of the sphere and the cylinder to be small compared to $\lambda_D$, and the plane to be wider than $\lambda_D$. The notation $I_{th}$ is used to denote the current collected when the object is neutrally charged, i.e $\eta_s = 0$, and $erfc(\sqrt{\eta_s})$ is the complementary error function defined as
+
+\begin{subequations}
+    \begin{align*}
+        \text{erfc}(z) &\equiv 1 - \text{erf}(z) \\
+        &= \frac{2}{\sqrt{\pi}} \int^\infty_z e^(-t^2) dt
+    \end{align*}
+\end{subequations}
+
+
+\subsection*{Spacecraft charging in a Maxwellian plasma}
+
+
+\subsection*{The photoelectric effect}\todo{Includes discussion on Blackbody radiation..}
+
+\subsection*{Secondary and backscattered electrons}
+
+\subsection*{Artificial sources}
