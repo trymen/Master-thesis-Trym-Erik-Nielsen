@@ -273,7 +273,7 @@ A spacecraft collects charged particles when moving relatively to ambient plasma
 
 The solution of equation \ref{eq:currentBalance} for $V$ is called the floating potential of the spacecraft, and is relative to the neutral plasma. The floating potential of a spacecraft in a drifting plasma is usually negative, since the electrons move at a higher speed than the ions.
 \\
-For complex geometries it is non-trivial to find analytical expressions for the currents $I_s$ charging the spacecraft; in this section, Langmuir probe theory and orbital motion-limited theory is discussed as the basic tools for analyzing spacecraft charging with simple geometries. Spacecraft charging in Maxwellian plasmas, and the primary charging mechanisms that effect the overall potential of a spacecraft are then presented. Special attention is given to the photoelectric effect and the spacecraft photoelectric current, as the implementation of this current in a computational model is the overall objective of this thesis \todo{clunky should I mention this}.
+For complex geometries it is non-trivial to find analytical expressions for the currents $I_s$ charging the spacecraft; in this section, Langmuir probe theory and orbital motion-limited theory is discussed as the basic tools for analyzing spacecraft charging with simple geometries. The primary charging mechanisms that effect the overall potential of a spacecraft are then presented. Special attention is given to the photoelectric effect and the spacecraft photoelectric current, as the implementation of this current in a computational model is the overall objective of this thesis \todo{clunky?}.
 
 
 \subsection{Langmuir probe theory}
@@ -312,15 +312,105 @@ Where equations \ref{eq:IPlane}, \ref{eq:ICylinder} and \ref{eq:Isphere} are the
 \begin{subequations}
     \begin{align*}
         \text{erfc}(z) &\equiv 1 - \text{erf}(z) \\
-        &= \frac{2}{\sqrt{\pi}} \int^\infty_z e^(-t^2) dt
+        &= \frac{2}{\sqrt{\pi}} \int^\infty_z e^{-t^2} dt
     \end{align*}
 \end{subequations}
 
 
-\subsection*{Spacecraft charging in a Maxwellian plasma}
+\subsection*{The photoemission current}\todo{Includes discussion on Blackbody radiation..}
+In 1921, Albert Einstein was awarded the Nobel price in physics for his discovery of the mathematical law governing the photoelectric effect \insertref{(2020, ). Nobel Media AB 2020. Retrieved March 1, 2020,}. Qualitatively, the photoelectric effect occurs when a quantum of light, a photon, is absorbed by an electron in some material causing its energy to exceed the binding energy of that material and being ejected from the surface of the material. This binding energy of the material is called the work function of the material. Mathematically, with differences in notation, Einstein's law is expressed as \insertref{https://doi.org/10.1002/andp.19053220607}
+
+\begin{equation}\label{eq:phelectron}
+    E = h \nu - W
+\end{equation}
+
+Where $E$ denotes the maximum kinetic energy of the ejected electron, $h$ is Planck's constant, $\nu$ is the wavelength of the light quanta, and $W_f$ denotes the work function of the material. It is often useful in engineering to express equation \ref{eq:phelectron} in terms of the threshold frequency $\nu_0$ at which the photons have enough energy to cause photoemission. Using the relation $E = W_f = h \nu_0$, equation \ref{eq:phelectron} becomes
+
+\begin{equation}\label{eq:phfreq}
+    E_{k} = h(\nu - \nu_0)
+\end{equation}
+
+From equation \ref{eq:phelectron}, it is evident that the photoelectron yield is dependent on the material composition of the spacecraft. Table \ref{tab:workfunc} shows the work functions for some of the materials commonly used in space applications, these data have been reproduced from \insertref{Handbook of Chemistry and Physics} and \insertref{Experimental Investigation of Photoemission from Satellite Surface Materials}.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        \textbf{Material} & \textbf{Work function (eV)} \\ \hline
+        Aluminium         & 4.0                    \\ \hline
+        Gold              & 4.2                    \\ \hline
+        Silver            & 4.62                   \\ \hline
+        Stainless steel   & 4.4                    \\ \hline
+        Graphite          & 4.7                    \\ \hline
+    \end{tabular}
+    \caption{Work function for common materials used in space applications}
+    \label{tab:workfunc}
+\end{table}
+
+With an expression for the minimum frequency below which photoemission occurs it possible to compute the photoelectron current; defining a photoelectron yield $Y(\omega)$  (photoelectrons per photon at some energy $\omega$) as
+
+\begin{equation} \label{eq:naivePhYield}
+    Y(w) = 
+    \begin{cases}
+        1 \quad& if \quad \omega > h \nu_0 \\
+        0 \quad& if \quad \omega \leqslant h \nu_0
+    \end{cases}
+\end{equation}
 
 
-\subsection*{The photoelectric effect}\todo{Includes discussion on Blackbody radiation..}
+Then, the photoelectron current flux $J_{ph}$ can be found by integrating over the energy of the incoming photons \insertref{Fundamentals of sc, ch 7}
+
+\begin{equation}\label{eq:phCurrentNaive}
+    J_{ph} = \int^\infty_0 Y(\omega) f_s(\omega) \, d\omega
+\end{equation}
+
+
+Strictly speaking, equation \ref{eq:naivePhYield} is only an approximation for the yield of photoelectrons. A more accurate description has to account for the amount of photons reflected from the surface, thereby not contributing to the total photoelectron current flux. Defining the reflectance of the surface exposed to sunlight as $R(\omega)$, equation \ref{eq:phCurrentNaive} becomes \insertref{Fundamentals of sc charging, ch 7}
+
+\begin{equation}\label{eq:phCurrentR}
+    J_{ph}(R) = \int^\infty_0 Y(\omega, R) f_s(\omega) \, d\omega
+\end{equation}
+
+Both the photoelectron yield, and the reflectance of the spacecraft material is additionally dependent on the incident angle $\theta$ of the surface to the direction of travel of the photons. Lai gives the following equation \insertref{} for current flux $J_{ph}(\theta)$ when incidence angle is accounted for
+
+\begin{equation}\label{eq:phCurrentFull}
+    J_{ph}(\theta) = \int^\infty_0 f_s(\omega) Y^{*}[\omega, R(\omega, \theta)][1 - R(\omega, \theta)] \cos \theta \; d\omega
+\end{equation}
+
+Where $Y^{*}(\omega, R(\omega, \theta)$ is the photoelectron yield per \emph{absorbed} photon. Using estimates for terms $Y^{*}$ and $1 - R(\omega, \theta)$ and cancelling cosine terms in the product, equation \ref{eq:phCurrentFull} becomes
+
+\begin{subequations}
+    \begin{align}
+        J_{ph}(\theta) &= \int^\infty_0 f_s(\omega) Y(\omega)(1 - R(\omega)) \cos \theta \; d\omega \\
+        J_{ph}(\theta) &= J_{ph}(0) \cos \theta
+    \end{align}
+\end{subequations}
+
+
+Finally, an expression for the photoelectron current $I_{ph}(\theta)$ can be expressed as 
+
+\begin{equation}\label{eq:phCurrent}
+    I_{ph}(\theta) = J_{ph}(0) A \cos \theta 
+\end{equation}
+
+Inserting equation \ref{eq:phCurrent} into equation \ref{eq:currentBalance}, the floating potential for a spacecraft subject to photoelectric and ambient plasma charging can be computed.
+
+\subsubsection*{Blackbody radiation}
+
+
+
+
+
+
+
+
+% \begin{figure}[h!]
+%     \centering
+%     \includegraphics[scale=0.70]{figures/blackbody.png}
+%     \caption{Intensity of blackbody radiation for different temperatures}
+%     \label{fig:blackbody}
+% \end{figure}
+
 
 \subsection*{Secondary and backscattered electrons}
 
