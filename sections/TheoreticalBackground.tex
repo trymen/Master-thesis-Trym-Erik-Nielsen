@@ -189,7 +189,7 @@ Where $T_e$ denotes the electron temperature, $n_{\infty}$ is the density of ele
 
 Assuming $e \phi \lll T_e$, then it is reasonable to only keep the linear terms of the Taylor expansion of the $\exp (\frac{e \phi}{T_e})$ term on the right hand side of equation \ref{eq:poissonDebye}. Poisson's equation then takes the form
 
-\begin{equation}
+\begin{equation}\label{eq:poissonSimple}
     \laplacian{\phi} - \frac{1}{\lambda_D^2} \phi = 0
 \end{equation}
 
@@ -200,7 +200,7 @@ Where the Debye length $\lambda_D$ has been defined as follows:
     \lambda_d \equiv \sqrt{\frac{\epsilon_0 k T_e}{n_e e^2}}
 \end{equation}
 
-The solution of equation \ref{eq:Helmholtz} takes the form
+The solution of equation \ref{eq:poissonSimple} takes the form
 
 \begin{equation*}
     V \propto \exp (\frac{\pm x}{\lambda_D})
@@ -296,7 +296,7 @@ Integrating the particle distribution $f_s(\vb{x}, \vb{v}, t)$ using equation \r
     \eta_s \equiv - \frac{q_s V}{k T_s}
 \end{equation}
 
-Using the normalized potential, particles with $n_s < 0$ will be repelled, and particles with $n_s > 0$ will be attracted to the spacecraft \insertref{Marholm Ph.d ch 3.1}. Expressions for the integration of the particle distribution has been found for some simple geometries, for species with $n_s > 0$ with the assumption of a plasma with no internal magnetic field, and zero drift by Mott-Smith and Langmuir \insertref{Mott-Smith and Langmuir}
+Using the normalized potential, particles with $n_s < 0$ will be repelled, and particles with $n_s > 0$ will be attracted to the spacecraft \insertref{Marholm Ph.d ch 3.1}. Expressions for the integration of the particle distribution has been found for some simple geometries, for species with $n_s > 0$ with the assumption of a plasma with no internal magnetic field and zero drift, by Mott-Smith and Langmuir \insertref{Mott-Smith and Langmuir}
 
 \begin{subequations}
     \begin{align}
@@ -377,7 +377,7 @@ Both the photoelectron yield, and the reflectance of the spacecraft material is 
     J_{ph}(\theta) = \int^\infty_0 f_s(\omega) Y^{*}[\omega, R(\omega, \theta)][1 - R(\omega, \theta)] \cos \theta \; d\omega
 \end{equation}
 
-Where $Y^{*}(\omega, R(\omega, \theta)$ is the photoelectron yield per \emph{absorbed} photon. Using estimates for terms $Y^{*}$ and $1 - R(\omega, \theta)$ and cancelling cosine terms in the product, equation \ref{eq:phCurrentFull} becomes
+Where $Y^{*}(\omega, R(\omega, \theta))$ is the photoelectron yield per \emph{absorbed} photon. Using estimates for terms $Y^{*}$ and $1 - R(\omega, \theta)$ and cancelling cosine terms in the product, equation \ref{eq:phCurrentFull} becomes
 
 \begin{subequations}
     \begin{align}
@@ -387,29 +387,67 @@ Where $Y^{*}(\omega, R(\omega, \theta)$ is the photoelectron yield per \emph{abs
 \end{subequations}
 
 
-Finally, an expression for the photoelectron current $I_{ph}(\theta)$ can be expressed as 
+Finally, the photoelectron current $I_{ph}(\theta)$ can be expressed as 
 
 \begin{equation}\label{eq:phCurrent}
     I_{ph}(\theta) = J_{ph}(0) A \cos \theta 
 \end{equation}
 
-Inserting equation \ref{eq:phCurrent} into equation \ref{eq:currentBalance}, the floating potential for a spacecraft subject to photoelectric and ambient plasma charging can be computed.
+Where $A$ is the surface area of the spacecraft exposed to sunlight. Inserting equation \ref{eq:phCurrent} into equation \ref{eq:currentBalance}, and with a known photon flux from blackbody radiation theory, the floating potential for a spacecraft subject to photoelectric and ambient plasma charging can be computed.
 
-\subsubsection*{Blackbody radiation}
+\subsubsection*{The sun as a blackbody radiation source}
+In the previous section, an expression for the photoelectron current was shown. If we are to compute the floating potential of a spacecraft, it is necessary to either know the value of the photoelectron current a priori or to compute its value based on the amount of photon flux through the spacecraft surface. In this section we discuss the theory of blackbody radiation as a method of computing solar photon flux.
+\\
+A blackbody is an object in thermodynamic equilibrium that absorbs all frequencies of radiation, without reflecting any of the incoming radiation\insertref{Kirchhoff, 1860, Annalen der Physik und Chemie}. In Planck's seminal paper on the theory of heat radiation, Planck gives the following three conditions that a blackbody must satisfy \insertref{Planck, The theory of heat radiation, translation, p10.}
+
+\begin{quote}
+    First, the body must have a black surface in order to allow the incident rays to enter without reflection. [...] Second, the black body must have a certain minimum thickness depending on its absorbing power, in order to insure that the rays after passing into the body shall not leave it again at a different point of the surface. [...] Third, the black body must have a vanishingly small coefficient of scattering. Otherwise the rays received by it would be partly scattered in the interior and might leave again through the surface
+\end{quote}
+
+The sun does not perfectly absorb all frequencies of electromagnetic radiation, and neither is it in perfect thermodynamic equilibrium; sunspots have a measurably lower temperature than the surrounding photosphere \insertref{The
+observations also suggest that the coronal temperature above sunspots is lower than in
+their surroundings, Sunspots: An overview}. However, energy absorbed and emitted by the sun is in steady state and can therefore be approximated as a black body radiator. 
+//
+In "The theory of heat radiation" Planck derives the following expression for the energy density of the radiation emitted by a blackbody  
+
+\begin{equation}\label{eq:planckFreq}
+    B(\nu, T) = \frac{2 h \nu^3}{c^2} \frac{1}{\exp(\frac{h \nu}{k_B T}) - 1}
+\end{equation}
+
+Where $\nu$ is the frequency of the electromagnetic radiation emitted, $T$ is the temperature of the blackbody measured in Kelvin, $c$ is the speed of light, $h$ is the planck's constant, and $k_b$ is the Boltzmann constant. Equation \ref{eq:planckFreq} is called Planck's law, and can be similarly expressed in terms of the wavelength of the radiation $\lambda$.
+
+\begin{equation}\label{eq:planckWave}
+    B(\lambda, T) = \frac{2 h c^2}{\lambda^5} \frac{1}{\exp(\frac{hc}{\lambda k_B T}) - 1}
+\end{equation}
+
+\newpage
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{figures/blackbody.png}
+    \caption{Irradiance of blackbody radiation for different temperatures}
+    \label{fig:blackbody}
+\end{figure}
+
+Figure \ref{fig:blackbody} plots the irradiance for some values of $T$, the suns radiative output can be approximated by assuming a blackbody temperature $T \approx 5800 K$, shown in the figure as a blue line.
+ \\
+The radiation calculated from equation \ref{eq:planckFreq} are commonly given in the units $W m^{-2} Sr^{-1} nm^{-1}$, called spectral radiance, it is the radiance of a surface per unit wavelength. In figure \ref{fig:blackbody}, the radiance is multiplied by the ratio $\frac{R_{\odot}}{a_{\oplus}}$ (where $R_{\odot}$ is the radius of the Earth, and $a_{\oplus}$ is the solar radius) to give the spectral irradiance as measured on earth, the units then are given as  $W ^{-2} m^{-2} nm^{-1}$.
+\\
+\insertref{The solar reference spectrum in April 2008 as recorded by the Solar instrument on the International Space Station. \url{https://www.esa.int/ESA_Multimedia/Images/2017/12/Solar_spectrum}}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{figures/solarspectrum.png}
+    \caption{Solar irradiance as measured onboard the International Space Station}
+    \label{fig:solIrradiance}
+\end{figure}
+
+\newpage
+
+Comparing figure \ref{fig:blackbody} to figure \ref{fig:solIrradiance}, it can be seen that asside from smaller fluctuations in spectral radiation lines, our approximation of the sun as a blackbody emitter is a good one. Given the workfunction (or more accurately, the cut-off wavelength) of the material composition of our spacecraft, and assuming a photoelectron yield of one photoelectron to one photon under the cut-off wavelength, integrating equation \ref{eq:planckWave} gives the photoelectron flux. Integrating planck's law for a given frequency band is non-trivial, in \ref{sec:methods}, the method outlined by Widger and Woodall \insertref{Integration of Planck blackbody radiation function, Widger \& Woodall} is presented, and a C function for computing the integral numerically is given. 
 
 
 
-
-
-
-
-
-% \begin{figure}[h!]
-%     \centering
-%     \includegraphics[scale=0.70]{figures/blackbody.png}
-%     \caption{Intensity of blackbody radiation for different temperatures}
-%     \label{fig:blackbody}
-% \end{figure}
 
 
 \subsection*{Secondary and backscattered electrons}
