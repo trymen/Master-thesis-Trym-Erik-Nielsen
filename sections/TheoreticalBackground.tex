@@ -408,7 +408,7 @@ The sun does not perfectly absorb all frequencies of electromagnetic radiation, 
 observations also suggest that the coronal temperature above sunspots is lower than in
 their surroundings, Sunspots: An overview}. However, energy absorbed and emitted by the sun is in steady state and can therefore be approximated as a black body radiator. 
 //
-In "The theory of heat radiation" Planck derives the following expression for the energy density of the radiation emitted by a blackbody  
+In "The theory of heat radiation" Planck derives the following expression for the energy density of the electromagnetic radiation emitted by a blackbody  
 
 \begin{equation}\label{eq:planckFreq}
     B(\nu, T) = \frac{2 h \nu^3}{c^2} \frac{1}{\exp(\frac{h \nu}{k_B T}) - 1}
@@ -420,6 +420,10 @@ Where $\nu$ is the frequency of the electromagnetic radiation emitted, $T$ is th
     B(\lambda, T) = \frac{2 h c^2}{\lambda^5} \frac{1}{\exp(\frac{hc}{\lambda k_B T}) - 1}
 \end{equation}
 
+The spectral energy computed from the equations above can be expressed in many units depending on the problem at hand. Of particular interest in this thesis is expressing the spectral energy as the number of photons emitted at a particular wavelength. In the derivation of Planck's law; Planck is often credited as the father of modern quantum mechanics by historians for his idea that the radiation emitted by a blackbody at certain frequencies as packets of energy \insertref{a historical text on the history of quantum mechanics, i.e }
+
+Figure \ref{fig:blackbody} plots the irradiance given by equation \ref{eq:planckWave} for some values of $T$, the suns radiative output can be approximated by assuming a blackbody temperature $T \approx 5800 K$, shown in the figure as a blue line.
+
 \newpage
 
 \begin{figure}[h!]
@@ -429,8 +433,7 @@ Where $\nu$ is the frequency of the electromagnetic radiation emitted, $T$ is th
     \label{fig:blackbody}
 \end{figure}
 
-Figure \ref{fig:blackbody} plots the irradiance for some values of $T$, the suns radiative output can be approximated by assuming a blackbody temperature $T \approx 5800 K$, shown in the figure as a blue line.
- \\
+
 The radiation calculated from equation \ref{eq:planckFreq} are commonly given in the units $W m^{-2} Sr^{-1} nm^{-1}$, called spectral radiance, it is the radiance of a surface per unit wavelength. In figure \ref{fig:blackbody}, the radiance is multiplied by the ratio $\frac{R_{\odot}}{a_{\oplus}}$ (where $R_{\odot}$ is the radius of the Earth, and $a_{\oplus}$ is the solar radius) to give the spectral irradiance as measured on earth, the units then are given as  $W ^{-2} m^{-2} nm^{-1}$.
 \\
 \insertref{The solar reference spectrum in April 2008 as recorded by the Solar instrument on the International Space Station. \url{https://www.esa.int/ESA_Multimedia/Images/2017/12/Solar_spectrum}}
