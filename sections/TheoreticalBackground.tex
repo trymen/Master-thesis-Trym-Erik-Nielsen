@@ -3,7 +3,7 @@
 \label{sec:theory}
 
 \section{Plasma modelling}
-In this section, we present a short overview of the basic mathematical framework used in the study of plasma dynamics. In section \cref{subsec:basicEq}, we briefly present the equations of motion for single particle motion in electrical and magnetic field. Then in \cref{subsec:pParam} we give an overview of essential plasma parameters.
+In this section, we present a short overview of the basic mathematical framework used in the study of plasma dynamics. In section \cref{subsec:basicEq}, we briefly present the equations of motion for single particle motion in electrical and magnetic fields. Then in \cref{subsec:pParam} we give an overview of essential plasma parameters.
 Plasma is a collection of ionized gas, commonly referred to as the fourth state of matter. The solar wind, the polar aurorae, and lighting are some examples of plasmas that occur in nature. \insertref{ref a basic intro text} Plasma shares many of the same properties that describe gases, but differ in being affected by magnetic and electrical fields: since plasma consists of charged particles, ions and free electrons, they are subject to the Lorentz force. The Lorentz force acting on a charged plasma particle, causes curvilinear motion further complicated by the influence of other nearby charged particles.
 
 \section{Basic equations}
@@ -137,7 +137,49 @@ Where the terms $Q_s$ and $W_s$ denote the energy flux density and total change 
 Formal derivations of the fluid equations, with some differences in notation, can be found in the fundamental works of Chen \insertref{Chen 1985}, and Fitzpatrick \insertref{Fitzpatrick 2012}.
 
 \subsection{Magnetohydrodynamics}
-\todo{Finish this section after }
+Solving the equations of motion discussed in \ref{subsec:basicEq} coupled with Maxwell's equations is extremely computationally demanding. As such, two common approximations to these equations are used, the electrostatic model, and magnetohydrodynamics.
+\\
+In the electrostatic approximation of plasma, the plasma currents are presumed small, thereby simplifying maxwell's equations to solving poission's equation for the electrostatic potential.
+\\
+In the magnetohydrodynamics, plasma is treated as a neutral yet conducting fluid. Assuming a quasi-neutral, plasma at thermodynamic equilibrium Maxwell's equations reduce to \insertref{Computer simulation using particles, ch 9-9-1}
+
+\begin{subequations}
+    \begin{align}
+        \nabla \cross \vb{B} &= \mu_0 \vb{j} \\
+        \nabla \cross \vb{E} &= - \pdv{\vb{B}}{t} \label{eq:curlE}\\
+        \nabla \cdot \vb{B} &= \nabla \cdot \vb{E} = 0    
+    \end{align}
+\end{subequations}
+
+The force equation can then be rewritten in terms of current density $\vb{j}$ and the conductivity $\sigma$ as
+
+\begin{equation}\label{eq:maghydroCurr}
+    \vb{j} = \sigma (\vb{E} + \vb{v} \cross{B})    
+\end{equation}
+
+From the assumption of a perfectly conducting fluid, and finite current density $\vb{j}$, then 
+
+\begin{equation}\label{eq:magHydroInf}
+    \vb{E} + \vb{v} \cross \vb{B} = 0
+\end{equation}
+
+ From equation \ref{eq:magHydroInf}, equation \ref{eq:curlE} reduces to
+
+\begin{equation}
+    \pdv{\vb{B}}{t} = \nabla \cross (\vb{V} \cross \vb{B})
+\end{equation}
+
+The equations must then be closed using the fluid continuity equations and the momentum balance equations
+
+\begin{subequations}
+    \begin{align}
+        \pdv{\rho}{t} &= \nabla \cdot (\rho \vb{V}) \\
+        \rho \dv{\vb{v}}{t} &= \grad{p} + \vb{j} \cross \vb{B}
+    \end{align}
+\end{subequations}
+
+Where $\rho$ is the fluid density, $p$ is the fluid pressure, and $\dv{v}{t}$ is the material derivative, i.e the rate of change of with respect to the moving fluid particle.
+
 
 \section{Plasma parameters}\label{subsec:pParam}
 In this section, the basic parameters used in the analysis and simulation will be introduced. We discuss the notion of a plasma temperature, present the characteristic length and frequency scales the Debye length, and plasma frequency. Additionally, we discuss the principle of quasineutrality in relation to plasma. 
@@ -230,7 +272,7 @@ $\omega_{pe}$ is called the electron plasma frequency. A similar expression exis
 
 
 \section{The solar wind plasma environment}
-In this section, a brief overview of the physics and basic plasma parameter values of the solar wind are presented. These data will necessary in building the computational parameters required in the charging simulations of space probes moving in the interplanetary medium presented later in this thesis.
+In this section, a brief overview of the physics and basic plasma parameter values of the solar wind are presented. These data will be necessary in building the computational parameters required for the charging simulations of space probes moving in the interplanetary medium presented later in this thesis.
 \\
 The solar wind is a non-isothermal plasma with a temperature averaging around 10 $eV$, that is primarily composed of free electrons, ions and alpha particles. The density of the solar wind plasma is relatively low as compared to other naturally occurring plasmas with a mean value of around 5 $cm^{-3}$. It flows with a drift velocity ranging from 400 $km/s$ up to 900 $km/s$ during periods of high solar activity, \insertref{fundamentals of spacecraft charing, prologue}. In close proximity to the sun, the solar wind density increases significantly, potentially charging space probes to values as low as hundreds of volts \insertref{Deca 2013, and introduction to spacecraft charging (?)}.
 
@@ -247,7 +289,7 @@ The solar wind is a non-isothermal plasma with a temperature averaging around 10
 
 
 \subsection*{Interactions with solar system objects}
-The properties of the solar wind can change significantly in regions in close proximity to objects. Planets with internal magnetic fields, will cause MHD \todo{can I use abbreviations?} shock formation \insertref{one of the magnetosphere papers?}, and even bodies without an internal magnetic field of their own can 
+The properties of the solar wind can change significantly in regions in close proximity to objects. Planets with internal magnetic fields, will cause magnetohydrodynamic (MHD) shock formation \insertref{one of the magnetosphere papers?}, and bodies without an intrinsic magnetic field still effect the flow of the solar wind plasma due to induced magnetic fields from solar wind charge collection.
 
 \begin{equation}\label{eq:magFieldStrength}
     B_{\mu} = (\mu_0 / 4 \pi) \mu / r^3_M
@@ -447,12 +489,50 @@ The radiation calculated from equation \ref{eq:planckFreq} are commonly given in
 
 \newpage
 
-Comparing figure \ref{fig:blackbody} to figure \ref{fig:solIrradiance}, it can be seen that asside from smaller fluctuations in spectral radiation lines, our approximation of the sun as a blackbody emitter is a good one. Given the workfunction (or more accurately, the cut-off wavelength) of the material composition of our spacecraft, and assuming a photoelectron yield of one photoelectron to one photon under the cut-off wavelength, integrating equation \ref{eq:planckWave} gives the photoelectron flux. Integrating planck's law for a given frequency band is non-trivial, in \ref{sec:methods}, the method outlined by Widger and Woodall \insertref{Integration of Planck blackbody radiation function, Widger \& Woodall} is presented, and a C function for computing the integral numerically is given. 
-
-
-
+Comparing figure \ref{fig:blackbody} to figure \ref{fig:solIrradiance}, it can be seen that aside from smaller fluctuations in electromagnetic radiation, due to absorption of energy at certain frequencies in the solar atmosphere, our approximation of the sun as a blackbody emitter is a good one. 
+\\
+Given the work function (or more accurately, the cut-off wavelength or frequency) of the material of a spacecraft, and assuming a photoelectron yield of one photoelectron to one photon under the cut-off wavelength, integrating equation \ref{eq:planckWave} gives the photoelectron flux emitted by the surface of a spacecraft exposed to sunlight. Integrating planck's law for a given frequency band is non-trivial, in \ref{sec:methods}, the method for integrating Planck's law by Widger and Woodall \insertref{Integration of Planck blackbody radiation function, Widger \& Woodall} is presented in detail. 
 
 
 \subsection*{Secondary and backscattered electrons}
+Secondary and backscattered electrons can, depending on the ambient plasma environment and the material properties of the spacecraft in question, contribute significantly to the overall charge of a spacecraft. Both secondary and backscattered electrons provide a source of outgoing electrons from surfaces \insertref{Fundamentals of sc charging}. 
+\\
+At higher electron temperatures, the electrons impinging on a spacecraft may have high enough energy to interact with the electrons embedded in the surface material thereby releasing one or more electrons from the surface. The yield of secondary electron emission, or probability of emission, is a function of energy and is denoted as $\delta(E)$. 
+\\
+In a finite range ambient electron temperature, certain materials $\delta(E)$ can exceed one; gold, aluminum oxide, and Kapton are some common materials used in spacecraft for which $\delta(E)$ exceeds one \insertref{Fundamentals of sc charging}. When $\delta(E) > 1$ there is a net total flux of outgoing electrons thereby causing the spacecraft to charge positively.  
+\\
+Since the outgoing flux of electrons are dependent on the incoming electrons, one can calculate the secondary electron flux based on the incoming electron distribution $f(E)$. The current flux equation for secondary electrons is then
 
-\subsection*{Artificial sources}
+\begin{equation}\label{eq:secondaryE}
+    j_s = \int^{\infty}_0 \delta(E) f(E) dE
+\end{equation}
+
+
+Backscattered electron emission is similar to secondary electron emission in that the mechanisms are dependent on incoming electrons from the ambient plasma. An electron is backscattered due to an inelastic collision with some surface material. 
+\\
+The outgoing electron is the same electron that collided with the surface material, backscattering of electrons can then be thought of as a form of reflection. Since the outgoing and incoming electron is the same particle, the probability of backscattering, $\eta(E)$, cannot exceed 1. 
+
+Similarly to the secondary electron emission mechanism, the bacscattering effect is dependent on the distribution of the electrons in the ambient plasma, so a similar integral to equation \ref{eq:secondaryE} can be formed for the backscattered electron current flux 
+
+\begin{equation}\label{eq:backscatterE}
+    j_b = \int^{\infty}_0 \eta(E) f(E) dE
+\end{equation}
+
+\subsection*{Artificial sources of spacecraft charging}
+Artificial sources of charging can occur both as a method for charge mitigation on spacecraft, as well as an adverse side effect of charged particle emitting equipment onboard. The SCATHA spacecraft launched by NASA was one of the first flown mission that successfully proved that spacecraft could be discharged safely without damaging scientific instruments \insertref{SCATHA}. 
+\\
+Charge mitigation methods can be subdivided into active and passive methods, the difference being passive methods require no control mechanisms and are automatic, whereas active mitigation requires some form of control system. These systems can be further subdivided into where the discharging occurs, whether it is on the spacecraft frame or dielectric surfaces.
+\\
+One of the simplest methods for discharging a spacecraft is by using a simple sharp spike protruding from the spacecraft surface. Since the radius of curvature is small at the tip of the spike, a large electrical field is generated causing electron emission from the tip. The flux of outgoing electrons reduces the negative potential the spike is connected to. Lai \insertref{A critical overview on spacecraft charging mitigation methods, 2003} gives the following equation, with differences in notation, for the current flux of a sharp spike 
+
+\begin{equation}
+    j_{spike} = A E^2 \exp \left(- \frac{B W^{\frac{3}{2}}}{E} \right)
+\end{equation}
+
+Where A and B are some constant, E is electric field strength and W is the surface material work function.
+\\
+Not all sources of artificial charging are beneficial however, ion engines expel high density plasma that may return to the already charged surfaces of the spacecraft. Differential charging between conducting and dielectric surfaces can occur in this case, causing damage to onboard electrical equipment. Deriving analytical expressions for charging due to electrical thrusters is impractical, and is typically simulated; \insertref{bepiColombo plasma simulation} shows one such simulation of the mercury transfer module thruster on the BepiColombo spacecraft. 
+
+
+
+\newpage
