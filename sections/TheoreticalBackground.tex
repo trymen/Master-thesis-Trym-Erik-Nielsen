@@ -285,26 +285,70 @@ The solar wind is a non-isothermal plasma with a temperature averaging around 10
 %    \label{fig:solarWind}
 %\end{figure}
 
-
-
-
 \subsection*{Interactions with solar system objects}
-The properties of the solar wind can change significantly in regions in close proximity to objects. Planets with internal magnetic fields, will cause magnetohydrodynamic (MHD) shock formation \insertref{one of the magnetosphere papers?}, and bodies without an intrinsic magnetic field still effect the flow of the solar wind plasma due to induced magnetic fields from solar wind charge collection.
+The properties of the solar wind can change significantly in regions in close proximity to solar system objects. Planets with internal magnetic fields, will cause magnetohydrodynamic (MHD) shock formation \insertref{one of the magnetosphere papers?}, and bodies without an intrinsic magnetic field may still affect the flow of the solar wind plasma due to induced magnetic fields from solar wind charge collection or interaction with the ionosphere of the body.
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/EarthMagnetosphere.PNG}
+    \caption{Magnetosphere of Earth}
+    \label{fig:EarthMagSph}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{figures/inducedMagnetosphere.PNG}
+    \caption{Induced magnetosphere on Venus}
+    \label{fig:VenusMagSph}
+\end{subfigure}
+\caption{Differences in magnetosphere structures for bodies with and without internal magnetic fields, reproduced from \insertref{Induced magnetospheres}}
+\label{fig:magnetosphere}
+\end{figure}
+
+Figure \ref{fig:magnetosphere} shows the basic structure, and differences, in the magnetospheres of two bodies with and without internal magnetic fields. This thesis is concerned with simulating the charging characteristics of the BepiColombo satellite, the MMO (Mercury Magnetospheric Orbiter). Mercury has an intrinsic, yet relatively weak, magnetic field. 
+\\
+As such, figure \ref{fig:EarthMagSph} is illustrative of the magnetic environment the MMO spacecraft will be subjected to. The bow-shock forms due to the compression of the solar wind from the obstruction of the magnetosphere of the body in question, the shocks location and properties changes dynamically depending on the pressure exerted by the solar wind. Immediately behind the bow-shock is the region called the magnetosheath. In this region the charged particles have a lower density yet higher average temperature than that of the solar wind \insertref{}. 
+\\
+Separating the magnetosphere of the earth, or Mercury, is the magnetopause. The magnetopause is defined as the region around an object where the dynamic pressure of the solar wind balances with the pressure from the intrinsic magnetic field of the object. Beyond the magnetopause, the intrinsic magnetic field of the planet dominates. In this region charged plasma particles move in spirals following magnetic field lines of the planet, the magnetosphere of Earth also contains a region of high density cold plasma called the plasmasphere. The composition of the plasma, its temperature and density in these regions vary significantly. The charging of a spacecraft will then vary significantly as a spacecraft orbits a planet, and it is therefore important to determine the location of these regions with respect to the planet. 
+\\
+The location of the magnetopause of a planet with an intrinsic field can be approximated by substituting the distance of the magnetopause $r_M$ into the balance expression for the planets magnetic field strength. Balancing the dynamic pressure of the sun with the magnetic pressure, we have \insertref{basics of the solar wind}
+
+\begin{equation}\label{eq:pBalanceRough}
+\rho_w v^2_w \sim B^2_{\mu} / 2 \mu_0  
+\end{equation}
+Where $rho_w$ and $v_w$ is the solar wind density and velocity respectively, $B_{\mu}$ is the dipole magnetic field strength, and $\mu_0$ is the vacuum permeability. The magnetic field strength is expressed as
 
 \begin{equation}\label{eq:magFieldStrength}
     B_{\mu} = (\mu_0 / 4 \pi) \mu / r^3_M
 \end{equation}
 
-
+where $\mu$ is the permeability of the planet. However, the magnetopause must carry a current to confine the planets dipole magnetic field. This current produces a magnetic field on the order of magntiude to $B_{\nu}$. Therefore, just inside the magnetopause, the magnetic field strength is approximately twice $B_{\nu}$. The balance equation \ref{eq:pBalanceRough} then becomes 
 
 \begin{equation}\label{eq:pressureBalance}
     \rho_w v^2_w \approx \frac{(2 B_{\mu})^2}{2 \mu_0} 
 \end{equation}
 
+Substituting in the magnetic field stength from equation \ref{eq:magFieldStrength} the distance of the magnetopause on the sunward side to the planet is approximately 
 
-\begin{equation}
+\begin{equation}\label{eq:magnetopause}
     r_M \approx \left(\frac{\mu}{4 \pi} \sqrt{\frac{2 \mu_0}{\rho_w v^2_w}} \right)^{\frac{1}{3}}
 \end{equation}
+
+This can be expressed as a relative distance by introducing the radius of the planet $R$ and the magnetic field strength at the equator $B_0 = (\nu_0 / 4 \pi) \nu / R^3$
+
+\begin{equation}
+    \frac{r_m}{R} \approx \left(\frac{2 B^2_0}{\nu_0 \rho_w v^2_w} \right)^{1/6}
+\end{equation}
+
+
+In her book \insertref{Basics of the Solar wind}, Meyer-Vernet also gives an approximation for the distance from the planet to the bow-shock by assuming a conical function describing the radius $r$ from the foci (the planet) to the bowshock. The radius $r$ on the line extending from the planet to the sun is approximately
+
+\begin{equation}
+    r \simeq (1 + \epsilon) \, r_M
+\end{equation}
+
+Where $\epsilon$ is the eccentricity of the conic section. Typically this value is around $\epsilon \simeq 0.5$.
 
 \section{Spacecraft charging in plasma}
 A spacecraft collects charged particles when moving relatively to ambient plasma, this change in net charge on the spacecraft causes an electrical field according to Gauss's Law \insertref{Fundamentals of SC charging ch 1}. When the charging of the spacecraft reaches a non-oscillatory steady state, the sum of currents from all the species in the plasma is zero, and the net charging is constant. This is expressed as 
@@ -466,8 +510,6 @@ The spectral energy computed from the equations above can be expressed in many u
 
 Figure \ref{fig:blackbody} plots the irradiance given by equation \ref{eq:planckWave} for some values of $T$, the suns radiative output can be approximated by assuming a blackbody temperature $T \approx 5800 K$, shown in the figure as a blue line.
 
-\newpage
-
 \begin{figure}[h!]
     \centering
     \includegraphics[scale=0.6]{figures/blackbody.png}
@@ -476,11 +518,11 @@ Figure \ref{fig:blackbody} plots the irradiance given by equation \ref{eq:planck
 \end{figure}
 
 
-The radiation calculated from equation \ref{eq:planckFreq} are commonly given in the units $W m^{-2} Sr^{-1} nm^{-1}$, called spectral radiance, it is the radiance of a surface per unit wavelength. In figure \ref{fig:blackbody}, the radiance is multiplied by the ratio $\frac{R_{\odot}}{a_{\oplus}}$ (where $R_{\odot}$ is the radius of the Earth, and $a_{\oplus}$ is the solar radius) to give the spectral irradiance as measured on earth, the units then are given as  $W ^{-2} m^{-2} nm^{-1}$.
+The radiation calculated from equation \ref{eq:planckFreq} is commonly given in the units $W m^{-2} Sr^{-1} nm^{-1}$, called spectral radiance, it is the radiance of a surface per unit wavelength. In figure \ref{fig:blackbody}, the radiance is multiplied by the ratio $\frac{R_{\odot}}{a_{\oplus}}$ (where $R_{\odot}$ is the radius of the Earth, and $a_{\oplus}$ is the solar radius) to give the spectral irradiance as measured on earth, the units then are given as  $W ^{-2} m^{-2} nm^{-1}$.
 \\
 \insertref{The solar reference spectrum in April 2008 as recorded by the Solar instrument on the International Space Station. \url{https://www.esa.int/ESA_Multimedia/Images/2017/12/Solar_spectrum}}
 
-\begin{figure}[h!]
+\begin{figure}
     \centering
     \includegraphics[scale=0.6]{figures/solarspectrum.png}
     \caption{Solar irradiance as measured onboard the International Space Station}
