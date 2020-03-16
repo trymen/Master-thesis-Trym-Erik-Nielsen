@@ -1,12 +1,97 @@
 \chapter{Numerical Method}
 \label{sec:methods}
+In the previous chapter, the basics of plasma physics and the mathematical tools required to analyze plasma dynamics were introduced. Solving the equations of motion for the millions of plasma particles analytically is impractical, this section will outline the Particle-in-Cell (PiC) algorithm as a framework for computer simulation of plasma. A method for implementing photoelectron emission from conducting surfaces is emphasized. First, a general description of the PiC algorithm is introduced as well as the stability criteria of the algorithm. Then the implementation of the PiC algorithm in the PINC framework is discussed with emphasis on the implementation of object charging in plasma. Finally, a method for implementing photoelectron emission into the PINC object module is presented.
 
 \section{Particle In Cell algorithm}
+The particle in cell algorithm is a method used in computational plasma physics to analyze large systems of many particles in a computationally efficient manner. This is achieved by the introduction of super particles, computational particles, that represent many real particles as well as by interpolating the forces acting on these super particles to a spatial grid.\\
+There are three main ways of simulating the forces acting on a system particles. The particle-particle method (PP) where forces are computed between individual particles. The particle-mesh method (PM) where the forces between the particles are computed as field quantities on the spatial mesh. And the particle-particle-mesh method (PPPM or $P^3M$), which is a combination of the two earlier methods.\\
+By far the simplest method computationally is the PP method. However, since all forces between each individual pair of particles is computed, the method is also the most computationally expensive. If the system of interest contains $N_p$ particles, then the number of operations scale as $\mathcal{O}(N^2_p)$ \insertref{Hockney and eastwood p20}. It is therefore impractical to use the PP method for all but the simplest systems, even on highly parallel High Performance Computers (HPC) available today.\\
+The PM method computes the forces of a system as field quantities, first by assigning the charges in the system to the mesh by some method, then solving Poisson's equation on the mesh, then computing the forces on the mesh points and interpolating to the individual particles. This method is therefore faster, but usually not as accurate as computing the forces on all particle pairs directly. With $N_g$ grid points, the complexity of this method scales as $\mathcal{O}(N_g \log{N_g})$ thus making this method much more applicable to larger systems than the PP method.
 
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{figures/PiC.png}
+    \caption{Particle in cell compute cycle}
+    \label{fig:pic}
+\end{figure}
+
+The PiC algorithm is an example of the PM method, figure \ref{fig:pic} gives an overview of a computational cycle for each time step in the PiC algorithm. Beginning at the box on the right in the figure, a distribution of $N_p$ particles with position $\vb{x}_p$ is interpolated to get the charge $\rho_g$ and current density $\vb{J}_g$ at the surrounding grid points. The two most common methods for this interpolation is the Nearest Grid Point (NGP) scheme, and Cloud in Cell (CIC) scheme.\\
+Once the charge and current densities are known on the grid, the next step is to solve for the $\vb{E}$ and $\vb{B}$ fields. This is accomplished by solving Maxwell's equations at the grid points
+
+\begin{subequations}
+    \begin{align}
+        Gauss's\; Law: \nabla \cdot \vb{E} &= \frac{\rho}{\epsilon_0} \label{eq:gauss} \\
+        Gauss's\; Law\; for\; magnetism: \nabla \cdot \vb{B} &= 0 \\
+        Maxwell - Faraday's\; equation: \nabla \cross \vb{E} &= - \pdv{\vb{B}}{t}\\
+        Ampere's\; Law: \nabla \cross \vb{B} &= \mu_0 \left(\vb{J} + \epsilon_0 \pdv{\vb{E}}{t} \right)
+    \end{align}
+\end{subequations}
+
+Where $\rho$ is the charge density, $\epsilon_0$ is the vacuum permittivity, $\mu_0$ is the vacuum permeability, and $\vb{E}$ and $\vb{B}$ are the electric and magnetic fields respectively. With the electric and magnetic field computed at the grid nodes, the force on each super particle is computed from Lorentz's force equation and interpolating back to the position of the super particles. Using some numerical integrator the new position and velocity of the super particle is updated from the computed forces, and the cycle can then be repeated for the next time step. 
 
 \section{Particle in Cell implementation in PINC}
+In this section, we discuss the methods implemented in PINC that are required for the main PiC compute cycle described in figure \ref{fig:pic} with focus on the particular schemes used in this thesis. The scheme used in PINC for integrating the equations of motion are presented, followed by the multigrid field solver, and finally the particle weighting scheme is discussed. PINC is the work of many researchers, but have been mainly implemented by Sigvald Marholm as part of his Ph.D thesis \insertref{Sigvald's thesis}, Gullik Killie \insertref{Gullik's thesis}, and Steffen Brask \insertref{Steffen's thesis}. Significant contributions have also been made by Jan Deca, who implemented the module for object charging in PINC. This module will be discussed in more detail later in this chapter. 
+
 \subsection{Integration of the equations of motion}
+Planet Mercury possesses and internal magnetic field, as such the plasma surrounding the planet is magnetized. To solve for the motion of magnetized plasma, the Boris algorithm is used to integrate the equations of motion. The Boris algorithm is a variant of the well known leapfrog method, in which the position and velocity of a particle is updated at half time steps in staggered fashion. Like the leapfrog method, the Boris algorithm is an energy conserving integrator; the merits of the Boris algorithm as the de facto particle mover is further expanded upon in the work by Qin et al. \insertref{Why is Boris algorithm so good?}
+\\
+Using the same notation as defined in \insertref{Plasma physics via computer simulation} the Lorentz force is discretized as 
+
+\begin{subequations}
+    \begin{align}
+        \frac{\vb{x}^{t+\Delta t}_p - \vb{x}^t_p}{\Delta t} &= \vb{v}^{t + \frac{\Delta t}{2}} \\
+        \frac{\vb{v}^{t+\Delta t}_p - \vb{v}^{t-\Delta t}_p}{\Delta t} &= \frac{q_s}{m_s} \left(\vb{E}_p + \frac{\vb{v}^{t+\Delta t}_p - \vb{v}^{t-\Delta t}_p}{2} \cross \vb{B}_p \right) \label{eq:borizVel}
+    \end{align}
+\end{subequations}
+
+In the Boris algorithm equation \ref{eq:borizVel} is decomposed into a series of updating steps. First, half the acceleration is added, then the intermediary velocity vector is rotated due to the external magnetic field $\vb{B}$, and finally the second half of the acceleration is added.
+
+\begin{subequations}\label{eq:borisNewVel}
+    \begin{align}
+        \vb{v}^{-} &= \vb{v}^{t-\Delta t}_p + \frac{q_s}{m_s} \vb{E}_p \frac{\Delta t}{2} \\
+        \vb{v}^{'}_p &= \vb{v}^{-}_p + \vb{v}^{-}_p \cross \vb{T} \\
+        \vb{v}^{+}_p &= \vb{v}^{-}_p + \vb{v}^{'}_p \cross \vb{S} \\
+        \vb{x}^{t+\Delta t}_p &= \vb{v}^{+}_p + \frac{q_s}{m_s} \vb{E}_p \frac{\Delta t}{2} 
+    \end{align}
+\end{subequations}
+
+Where the rotational parameters $\vb{T}$ and $\vb{S}$ are expressed as
+
+\begin{subequations}\label{eq:BrotParams}
+    \begin{align}
+        \vb{T} &= \hat{\vb{B}}_p \cdot \tan\left(\frac{q_s \Delta t}{2m} B_p \right) \\
+        \vb{S} &= \frac{2 \vb{T}}{1 + \vb{T}^2} 
+    \end{align}
+\end{subequations}
+
+Equations \ref{eq:borisNewVel} are equally suited for plasmas with time varying magnetic fields as for electrostatic plasma with a constant external magnetic field. Since PINC is an electrostatic model, equations \ref{eq:BrotParams} is solved once before the main time loop, then applied to each call to the mover method.
+
 \subsection{Field Solver}
+Several field solvers exists in PINC, in this thesis the multigrid solver developed by Vetvik \insertref{Gullik's thesis} has been used. The multigrid solver is an iterative method; the basic principle of the method in a PiC context is to solve Poisson's equation first on a coarse grid, then using the solution on the course grid as a guess, solve the equation again for a finer grid. The solution for the coarse grid speeds up the solution for the finer grid, reducing the total computational time required to converge to an accurate solution. 
+\\
+There are three main types of multigrid solver, divided into the so called V-cycle, W-cycle and F-cycle, defined by when the algorithm should use a coarser or finer mesh than used in the previous iteration. Multigrid solvers are highly flexible, and many researchers have spent considerable effort in order to optimize the number of iterations \insertref{Killie thesis}, \insertref{Multigrid, Trottenberg et al}, highly optimized multigrid solvers have a local complexity given by $\mathcal{O}(N_g)$, with a global complexity of $\mathcal{O}(N_g log(N_g))$ when using domain decomposition like in the case of PINC \insertref{Steffen's thesis}.
+\\
+As described earlier, the multigrid method solves Poisson's equation in PINC. Strictly speaking, the solution to Gauss's law, equation \ref{eq:gauss} is solved. In PINC however, electrostatic plasma is assumed, in this case the electric field is irrotational, i.e. $\nabla \cross \vb{E} = 0$ and the electric field can then be represented as the gradient of a scalar potential field $\vb{E} = \nabla \phi$.  Substituting the potential field back into Gauss's law, equation \ref{eq:gauss} we have Poisson's equation
+
+\begin{equation}\label{eq:poisson}
+    \nabla^2 \phi = \frac{\rho}{\epsilon}
+\end{equation}
+
+In PINC this equation is solved iteratively using the Gauss-seidel method. Gauss-Seidel discretizes \ref{eq:poisson} using the Forward-Time Central-Space (FTCS) finite difference scheme. In one spatial dimension, the electric field in terms of the potential becomes
+
+\begin{equation}\label{eq:Ediscrete}
+    \vb{E}_g = \frac{\phi^{n+1}_g - \phi^{n-1}_g}{2\Delta x}
+\end{equation}
+
+and Poisson's equation, equation \ref{eq:poisson}, becomes
+
+\begin{equation}\label{eq:poissonDescrete}
+    \frac{\phi^{n+1}_g - 2\phi^n_g + \phi^{n-1}_g}{{\Delta x}^2} = - \frac{\rho_g}{\epsilon}
+\end{equation}
+
+
+Where the subscript g implies the evaluation of $\phi$ at grid points, and the superscript p denotes the grid node index. Analogous expressions can be formed in two and three spatial dimensions.
+
 \subsection{Particle weighting}
 
 \section{Simulation stability and constraints}
@@ -14,18 +99,19 @@
 \subsection{Finite time}
 \subsection{The CFL condition}
 
+
+
+
+
 \section{The PINC object module}
-\subsection{}
+\subsection{The capacitance matrix method}
+\subsection{Representing objects on a grid}
 
 \section{Implementing photoemission in PINC}
-\subsection{Algorithm and pseudocode}
-
+\subsection{Algorithm and pseudo-code}
+\subsubsection{Integrating Planck's law}
 \subsection{Object functions}
-\subsubsection*{Integrating Planck's law}
-
 \subsection{Population functions}
 \subsection{Initialization and normalization of photoelectric flux}
-
 \subsection{Mercury Magnetospheric Orbiter simulation setup}
-
 \subsection{Data analysis tools}
