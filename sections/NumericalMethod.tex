@@ -93,14 +93,28 @@ and Poisson's equation, equation \ref{eq:poisson}, becomes
 Where the subscript g implies the evaluation of $\phi$ at grid points, and the superscript p denotes the grid node index. Analogous expressions can be formed in two and three spatial dimensions.
 
 \subsection{Particle weighting}
+In the particle in cell method particles can exist anywhere in the continuous spatial computational domain, but forces and charge densities are calculated at discrete grid points \ref{fig:pic} \insertref{Birdsall Ch 2.6}.  Historically, the NGP method and CIC method are used to weight computational particles to the grid. Higher order schemes exists, such as Quadratic Splines (QS) and Cubic Splines (CS), see \insertref{Okuda, SPLINES AND HIGH ORDER INTERPOLATIONS IN PLASMA SIMULATIONS} for an overview on the usage of higher order weighting schemes in plasma simulation. In PINC the CIC method is used; using similar notation as Verboncoeur in his paper \insertref{Particle simulation of plasmas: review and
+advances} the weighting function is defined as 
+
+\begin{equation}\label{eq:weightFunc}
+    \vb{w}_{i,j,k} = \vb{x}_p - \vb{X}_{i,j,k}
+\end{equation}
+
+Where $\vb{x}_p$ is the position of particle p, and $\vb{X}_{i,j,k}$ is the position of the nearest grid point closest to the origin. Using equation \ref{eq:weightFunc}, the charge distribution of particle p to a two dimensional grid can be found as
+
+\begin{subequations}
+    \begin{align*}
+        Q_{i,j} &= q_p \, (1 - w_i) \, (1 - w_j) \\
+        Q_{i+1,j} &= q_p \, w_i \, (1 - w_j) \\
+        Q_{i,j+1} &= q_p \, (1 - w_i) \, w_j \\
+        Q_{i+1,j+1} &= q_p \, w_i \, w_j 
+    \end{align*}
+\end{subequations}
 
 \section{Simulation stability and constraints}
 \subsection{Finite grid}
 \subsection{Finite time}
 \subsection{The CFL condition}
-
-
-
 
 
 \section{The PINC object module}
