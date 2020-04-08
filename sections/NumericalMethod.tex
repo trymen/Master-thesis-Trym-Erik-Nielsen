@@ -111,9 +111,48 @@ Where $\vb{x}_p$ is the position of particle p, and $\vb{X}_{i,j,k}$ is the posi
     \end{align*}
 \end{subequations}
 
+With similar equations for the three dimensional case can be found from equation \ref{eq:weightFunc}. From the charge distribution found above, the charge density can be found directly by dividing the charge distribution by the volume of a computational cell, i.e 
+
+\begin{equation*}
+    \rho_{i,j,k} = \frac{Q_{i,j,k}}{V_{i,j,k}}
+\end{equation*}
+
+From the charge density and current density, PINC computes the electric and magnetic field using the multigrid field solver module.
+
 \section{Simulation stability and constraints}
-\subsection{Finite grid}
-\subsection{Finite time}
+
+\subsection{Spatial resolution}
+In PINC, and in other particle in cell codes, particles move in continuous space, but their macroscopic properties are projected to a discrete grid. Representing continuous variables on a discrete grid leads to numerical instability called finite grid instability \insertref{Particle simulations of space weather, lapenta 2011, sec 5.1.}. The analysis of finite grid instability is beyond the scope of this thesis, a rigorous mathematical description of finite grid instability can be found in \insertref{Birdsall and Langdon}. The most important result of these analyses is that the grid spacing $\Delta x$ must satisfy the condition
+
+\begin{equation}\label{eq:GridSize}
+    \frac{\Delta x}{\lambda_D} < C
+\end{equation}
+
+
+Where C is some constant dependent on the discretization scheme used. In the case of the CIC scheme, the constant C is approximately equal to $\pi$. Failure to meet this condition in a PIC simulation leads to unphysical heating of the plasma. Equation \ref{eq:GridSize} must therefore be satisfied in all directions of the full computational domain to ensure conservation of energy.
+
+\subsection{temporal resolution}
+In PINC, the boris algorithm is used for particle pushing. The boris algorithm is an explicit forward time integration scheme, and as such simulations run with PINC must satisfy temporal stability constraints associated with such schemes. In \insertref{hockey and eastwood} and \insertref{birdsall and langdon} and \insertref{lapenta, 2011} a Von Neumann stability analysis of a harmonic oscillator without an external magnetic field given by the following equation
+
+\begin{equation}\label{eq:harmonicOscillator}
+    \frac{q_s}{m_s} \vb{E}_p(\vb{x}_p) = - \Omega^2 \vb{x}_p
+\end{equation}
+
+leads to the equation 
+
+\begin{equation}
+    \left(\frac{\Omega \Delta t}{2} \right)^2 = \sin^2{\left(\frac{\omega_N \Delta t}{2}\right)}
+\end{equation}
+
+Where $\omega_N$ is the numerical oscillation frequency. For values outside the range [-1,1] the sine function has only complex solutions, thus for time steps $\Delta t$ where  $\Omega \Delta t > 2$ is true, the numerical oscillation frequency will be complex. Any practical simulation of the harmonic oscillator will therefore become unstable due to unbounded numerical heating. Thus, the finite time stability criteria can be expressed as
+
+\begin{equation}
+    \Omega \Delta t < 2
+\end{equation}
+
+In this thesis, for solar wind simulations, the frequency $\Omega$ that needs to be resolved is typically the electron oscillation frequency of the cold solar wind plasma. 
+
+
 \subsection{The CFL condition}
 
 
