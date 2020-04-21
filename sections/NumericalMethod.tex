@@ -165,7 +165,29 @@ In \insertref{See Steffens master thesis..} a common formulation of the conditio
 Where C is some characteristic speed. The constant C is solver scheme dependent, and is often set as $C = 1$ for explicit schemes; in PINC this qualitatively means that a particle is restricted to move by maximum one computational cell per time step as the length scale is normalized to the grid step size.
 
 \section{The PINC Object module}
-The object module in PINC contains a set of functions and data structures necessary for simulating objects immersed in plasma. It was developed primarily by Jan Deca, and Sigvald Marholm as a part of a collaboration between the University of Oslo and University of Colorado Boulder. In the object module, spacecraft-plasma interations are simulated using the same Capacitance Matrix method outlined by Miyake and Usui in developing the PIC code EMSES (the ElectroMagnetic Spacecraft Environment Simulator) \insertref{New electromagnetic particle simulation code for the analysis of spacecraft-plasma interactions}. In this section the capacitance matrix method is outlined in brief, then the method used in PINC for defining objects on a structured Cartesian grid is discussed. 
+The object module in PINC contains a set of functions and data structures necessary for simulating objects immersed in plasma. It was developed primarily by Jan Deca, and Sigvald Marholm as a part of a collaboration between the University of Oslo and University of Colorado Boulder. In the object module, spacecraft-plasma interations are simulated using the same Capacitance Matrix method outlined by Miyake and Usui in developing the PIC code EMSES (the ElectroMagnetic Spacecraft Environment Simulator) \insertref{New electromagnetic particle simulation code for the analysis of spacecraft-plasma interactions}. 
+
+In this section the method used in PINC for defining objects on a structured Cartesian grid is discussed in brief; a description of the \textit{Grid} data structure and associated functions in PINC is also introduced as all scalar and vector fields are represented in PINC using this data structure, including conducting objects which are defined as scalar fields. The capacitance matrix method is then outlined, with an emphasis on the equations that have been implemented in PINC. 
+
+
+
+\subsection{Representing objects on a grid}
+In the PINC object module, conducting objects are represented as points on the Cartesian computational grid, and stored in an input HDF5 (Hierarchical Data Format) file. Internally in PINC, this file is converted to a PINC \textit{Grid} structure instance and is stored as a subset of the \textit{Object} data structure which additionally contains data on which nodes are internal to the object, which nodes are on the surface, and data required in photoemission computations. Required data for photoemission in the \textit{Object} structure will be described in the later section on implementation of photoemission in PINC.
+
+The PINC \textit{Grid} structure is a generalized data structure that stores N-dimensional data in a flat manner. The values on the grid is stored in a lexicographical manner; the elements of the three dimensional array is then represented in PINC as
+
+\begin{equation*}
+    (0,0,0), \, (1,0,0), \,, \, (2,0,0), \, ... \, , \, (0,1,0) \,, \, (1,1,0) \,, \, (2,1,0) \,, \, ...
+\end{equation*}
+
+Objects in PINC are thus stored as 1 by N arrays representing scalar fields, where N is the total number of grid points in the computational domain. The \textit{Grid} structure additionally contains a data field called \textit{sizeProd}, that allows for converting between Cartesian grid point coordinates and the index of value in the array: This field is an array that contains the cumulative product of the number of grid points along each axis in the computational domain. Thus, the index $p$ of the value of a \textit{Grid} structure located at the Cartesian coordinates $(x,y,z)$ is represented as
+
+\begin{equation}\label{eq:PINCindex}
+    p = x * sizeProd[0] + y * sizeProd[1] + z * sizeProd[2]
+\end{equation}
+
+Traversing along an axis from a point with index $p$ of the \textit{Grid} structure, is then the simple matter of adding the corresponding element of the \textit{sizeProd} array to the index $p$. We will make use of this fact, along with equation \ref{eq:PINCindex}, later in this chapter in creating an algorithm for photoemission on the surface of conducting objects. 
+
 
 \subsection{The capacitance matrix method}
 The general idea of the capacitance matrix method is to precalculate a capacitance matrix for each object immersed in the plasma in question. Applying the computed capacitance matrix, the charges due to super-particles impinging the object can be redistributed to the surface of the object, after redistribution of charges a charge density and electric potential correction is computed and spacecraft potential can be updated. super-particles located within the object are then removed from the computational domain after their charges have been redistributed. 
@@ -226,25 +248,61 @@ Substituting equation \ref{eq:SCrhoCorrNew} into equation \ref{eq:ConsSurfCharge
     \phi_C = \frac{\sum_i \sum_j C_{ij} \phi_{s,j}}{\sum_i \sum_j C_{ij}}
 \end{equation}
 
-In the conducting object run mode of PINC, after a first pass of the multigrid Poisson solver, equations \ref{eq:SCrhoCorrNew} and equation \ref{eq:Equipotential} are solved to redistribute absorbed charged particles, a new pass with the Poisson solver then solves the new potential field using the correction to the charge density field. Details on the implementation of these equations in PINC are given in appendix \ref{sec:ObjectCode}.
-
-
-
-\subsection{Representing objects on a grid}
-
-
+In the conducting object run mode of PINC, after a first pass of the multigrid Poisson solver, equations \ref{eq:SCrhoCorrNew} and equation \ref{eq:Equipotential} are solved to redistribute absorbed charged particles, a new pass with the Poisson solver then solves the new potential field using the correction to the charge density field. Details on the implementation of these equations in PINC can be referenced by contacting the 4DSpace group at the University of Oslo for access to the PINC code repository.
 
 
 \section{Implementing photoemission in PINC}
+
+Photoelectric emission by sunlit spacecraft surfaces contribute significantly to the overall charge of a spacecraft. In fact, in normal conditions in geosynchronous orbits, the photoelectron flux exceeds that of the ambient electrons \insertref{Aspects of spacecraft charging in sunlight}. When there is a net outgoing current flux, spacecraft charge to to a positive voltage. In order to simulate spacecraft charging using PINC, it is then necessary to implement photoelectric emission. In this section the photoemission method implemented as part of this thesis is presented. First, a scheme for integrating Planck's law over a finite frequency band and the normalization of the  computed photoelectron flux is described. Then, the general algorithm for photoemission is presented along with relevant pseudocode. Using the general photoemission algorithm as a framework, different methods for the injection of photoelectrons and their merits are then discussed. Finally, the specifics of the newly implemented c functions, and how they are integrated into the existing PINC framework is shown.
+
+
+
+\subsection{Integrating Planck's law}
+
+As discussed in the theoretical background, the photoelectron flux is dependent on the material composition of the sunlit surface. Surfaces with a lower work function tend to eject more photoelectrons. Similarly, the photoelectron flux of a sunlit surface is proportional to the distance from the surface to the sun. Since the power output of the sun follows an inverse square law with the square of the distance from the sun, the closer the spacecraft is to the sun in its orbit the higher amount of photons above the work function strike the surface of the spacecraft. Both these factors need to be accounted for in order to make the simulation of spacecraft charging in sunlight as general as possible. 
+Thus, to compute the photoelectron flux for a particular spacecraft, Planck's law must be integrated in the frequency band from the work function frequency, to infinity before the main particle-in-cell loop is started. The photoelectron flux can then be directly computed from the power output received by the spacecraft, as long as the surface area exposed to the sun and work function of the spacecraft material surface is known. These variables can given as input to our simulation. Additionally, integrating Plancks law allows the average kinetic energy of the emitted photoelectron to be calculated, simply by dividing the total radiation energy absorbed per timestep by the total photoelectron flux.
+Several methods for numerically integrating Planck's law effieciently exists. In this thesis, the method settled on is based on the paper by Widger and Woodall \insertref{Integration of the Planck Blackbody Radiation Function}. A summary of the method presented in that paper, and the implementation in PINC as C code will now be given.
+
+First, to simplify the integrals, Planck's law is recast in terms of the wavenumber ($cm^{-1}$) $\nu$ rather than frequency of radiation. Planck's law then takes the form
+
+\begin{equation}\label{eq:PlanckNu}
+    B(T) = C_1 \int^{\infty}_{\nu} \nu^3 \left(\exp{\frac{C_2 \nu}{T}} - 1 \right) d \nu
+\end{equation}
+
+Where B(T) is the radiance, given in units of $W cm^{-2} Sr^{-1}$, T is the absolute temperature in Kelvins, and $C_1$ and $C_2$ are the first and second radiation constants respectively.
+
+Letting $x = \frac{C_2 \nu}{T}$, equation \ref{eq:planckNu} can be rewritten as 
+
+\begin{equation}\label{eq:PlanckX}
+    B(T) = C_1 C_2^{-4} T^4 \int^{\infty}_x \frac{x^3}{\exp{x} - 1} dx
+\end{equation}
+
+The integrand in equation \ref{eq:PlanckX} can be expanded in a series form, substituting that series into equation \ref{eq:PlanckX} and integrating by parts, equation \ref{eq:planckX} becomes
+
+\begin{equation}\label{eq:PlanckSum}
+    \int^{\infty}_x \frac{x^3}{\exp{x} - 1} dx = \sum^{\infty}_{n=1} \exp{-n x} \left(x^2 n^{-1} + 3 x^2 n^{-2} + 6 x n^{-3} + 6 n^{-4} \right)
+\end{equation}
+
+$C_1$, $C_2$ and T are known constants in equation \ref{eq:PlanckX}, and the infinite sum in equation \ref{eq:PlanckSum} is straight forward to compute to some finite tolerance using a C function. 
+
+
+
+
+
+
+\subsection{Initialization and normalization of photoelectric flux}
+
 \subsection{Algorithm and pseudo-code}
+
+
 \subsection{Injection of photoelectrons}
 \subsubsection{Surface node injection}
 \subsubsection{Filling adjacent cells}
 
-\subsection{Integrating Planck's law}
 \subsection{Object functions}
 \subsection{Population functions}
-\subsection{Initialization and normalization of photoelectric flux}
+
+
 
 \section{Simulation setups}
 \subsection{Photoemission verification simulation}
