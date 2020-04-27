@@ -3,9 +3,9 @@
 In the previous chapter, the basics of plasma physics and the mathematical tools required to analyze plasma dynamics were introduced. Solving the equations of motion for the millions of plasma particles analytically is impractical, this section will outline the Particle-in-Cell (PiC) algorithm as a framework for computer simulation of plasma. A method for implementing photoelectron emission from conducting surfaces is emphasized. First, a general description of the PiC algorithm is introduced as well as the stability criteria of the algorithm. Then the implementation of the PiC algorithm in the PINC framework is discussed with emphasis on the implementation of object charging in plasma. Finally, a method for implementing photoelectron emission into the PINC object module is presented.
 
 \section{Particle In Cell algorithm}
-The particle in cell algorithm is a method used in computational plasma physics to analyze large systems of many particles in a computationally efficient manner. This is achieved by the introduction of super particles, computational particles, that represent many real particles as well as by interpolating the forces acting on these super particles to a spatial grid.\\
+The particle in cell algorithm is a method used in computational plasma physics to analyze large systems of many particles in a computationally efficient manner. This is achieved by the introduction of super particles, computational particles, that represent many real particles, then interpolating the forces acting on these super particles to a spatial grid.\\
 There are three main ways of simulating the forces acting on a system particles. The particle-particle method (PP) where forces are computed between individual particles. The particle-mesh method (PM) where the forces between the particles are computed as field quantities on the spatial mesh. And the particle-particle-mesh method (PPPM or $P^3M$), which is a combination of the two earlier methods.\\
-By far the simplest method computationally is the PP method. However, since all forces between each individual pair of particles is computed, the method is also the most computationally expensive. If the system of interest contains $N_p$ particles, then the number of operations scale as $\mathcal{O}(N^2_p)$ \insertref{Hockney and eastwood p20}. It is therefore impractical to use the PP method for all but the simplest systems, even on highly parallel High Performance Computers (HPC) available today.\\
+By far the simplest method computationally is the PP method. However, since all forces between each individual pair of particles are computed, the method is also the most computationally expensive. If the system of interest contains $N_p$ particles, then the number of operations scale as $\mathcal{O}(N^2_p)$ \insertref{Hockney and eastwood p20}. It is therefore impractical to use the PP method for all but the simplest systems, even on highly parallel High Performance Computers (HPC) available today.\\
 The PM method computes the forces of a system as field quantities, first by assigning the charges in the system to the mesh by some method, then solving Poisson's equation on the mesh, then computing the forces on the mesh points and interpolating to the individual particles. This method is therefore faster, but usually not as accurate as computing the forces on all particle pairs directly. With $N_g$ grid points, the complexity of this method scales as $\mathcal{O}(N_g \log{N_g})$ thus making this method much more applicable to larger systems than the PP method.
 
 \begin{figure}[h!]
@@ -15,7 +15,7 @@ The PM method computes the forces of a system as field quantities, first by assi
     \label{fig:pic}
 \end{figure}
 
-The PiC algorithm is an example of the PM method, figure \ref{fig:pic} gives an overview of a computational cycle for each time step in the PiC algorithm. Beginning at the box on the right in the figure, a distribution of $N_p$ particles with position $\vb{x}_p$ is interpolated to get the charge $\rho_g$ and current density $\vb{J}_g$ at the surrounding grid points. The two most common methods for this interpolation is the Nearest Grid Point (NGP) scheme, and Cloud in Cell (CIC) scheme.\\
+The PiC algorithm is an example of the PM method, figure \ref{fig:pic} shows an overview of a computational cycle for each time step in the PiC algorithm. Beginning at the box on the right in the figure, a distribution of $N_p$ particles with position $\vb{x}_p$ is interpolated to get the charge $\rho_g$ and current density $\vb{J}_g$ at the surrounding grid points. The two most common methods for this interpolation is the Nearest Grid Point (NGP) scheme, and Cloud in Cell (CIC) scheme.\\
 Once the charge and current densities are known on the grid, the next step is to solve for the $\vb{E}$ and $\vb{B}$ fields. This is accomplished by solving Maxwell's equations at the grid points
 
 \begin{subequations}
@@ -260,8 +260,8 @@ Photoelectric emission by sunlit spacecraft surfaces contribute significantly to
 \subsection{Integrating Planck's law}
 
 As discussed in the theoretical background, the photoelectron flux is dependent on the material composition of the sunlit surface. Surfaces with a lower work function tend to eject more photoelectrons. Similarly, the photoelectron flux of a sunlit surface is proportional to the distance from the surface to the sun. Since the power output of the sun follows an inverse square law with the square of the distance from the sun, the closer the spacecraft is to the sun in its orbit the higher amount of photons above the work function strike the surface of the spacecraft. Both these factors need to be accounted for in order to make the simulation of spacecraft charging in sunlight as general as possible. 
-Thus, to compute the photoelectron flux for a particular spacecraft, Planck's law must be integrated in the frequency band from the work function frequency, to infinity before the main particle-in-cell loop is started. The photoelectron flux can then be directly computed from the power output received by the spacecraft, as long as the surface area exposed to the sun and work function of the spacecraft material surface is known. These variables can given as input to our simulation. Additionally, integrating Plancks law allows the average kinetic energy of the emitted photoelectron to be calculated, simply by dividing the total radiation energy absorbed per timestep by the total photoelectron flux.
-Several methods for numerically integrating Planck's law effieciently exists. In this thesis, the method settled on is based on the paper by Widger and Woodall \insertref{Integration of the Planck Blackbody Radiation Function}. A summary of the method presented in that paper, and the implementation in PINC as C code will now be given.
+Thus, to compute the photoelectron flux for a particular spacecraft, Planck's law must be integrated in the frequency band from the work function frequency, to infinity before the main particle-in-cell loop is started. The photoelectron flux can then be directly computed from the power output received by the spacecraft, as long as the surface area exposed to the sun and work function of the spacecraft material surface is known. These variables can given as input to our simulation. Additionally, integrating Planck's law allows the average kinetic energy of the emitted photoelectron to be calculated, simply by dividing the total radiation energy absorbed per timestep by the total photoelectron flux.
+Several methods for numerically integrating Planck's law efficiently exists. In this thesis, the method settled on is based on the paper by Widger and Woodall \insertref{Integration of the Planck Blackbody Radiation Function}. A summary of the method presented in that paper, and the implementation in PINC as C code will now be given.
 
 First, to simplify the integrals, Planck's law is recast in terms of the wavenumber ($cm^{-1}$) $\nu$ rather than frequency of radiation. Planck's law then takes the form
 
@@ -271,7 +271,7 @@ First, to simplify the integrals, Planck's law is recast in terms of the wavenum
 
 Where B(T) is the radiance, given in units of $W cm^{-2} Sr^{-1}$, T is the absolute temperature in Kelvins, and $C_1$ and $C_2$ are the first and second radiation constants respectively.
 
-Letting $x = \frac{C_2 \nu}{T}$, equation \ref{eq:planckNu} can be rewritten as 
+Letting $x = C_2 T^{-1} \nu$, equation \ref{eq:PlanckNu} can be rewritten as 
 
 \begin{equation}\label{eq:PlanckX}
     B(T) = C_1 C_2^{-4} T^4 \int^{\infty}_x \frac{x^3}{\exp{x} - 1} dx
@@ -283,11 +283,15 @@ The integrand in equation \ref{eq:PlanckX} can be expanded in a series form, sub
     \int^{\infty}_x \frac{x^3}{\exp{x} - 1} dx = \sum^{\infty}_{n=1} \exp{-n x} \left(x^2 n^{-1} + 3 x^2 n^{-2} + 6 x n^{-3} + 6 n^{-4} \right)
 \end{equation}
 
-$C_1$, $C_2$ and T are known constants in equation \ref{eq:PlanckX}, and the infinite sum in equation \ref{eq:PlanckSum} is straight forward to compute to some finite tolerance using a C function. 
+$C_1$, $C_2$ and T are known constants in equation \ref{eq:PlanckX}, and the infinite sum in equation \ref{eq:PlanckSum} is straight forward to compute to some finite tolerance using a C function. The integral in \ref{eq:PlanckSum} is computed in units of radiance $W m^2 Sr^{-1}$, the solid angle $\Omega$ of the photoemitting object with respect to the sun can be calculated as
 
+\begin{equation*}
+    \Omega = \frac{A_s}{r^2}
+\end{equation*}
 
+Where $A_s$ is the area of the sunlit surface, and $r$ is the radial distance from the center of the sun to the object. Multiplying the result of \ref{eq:PlanckSum} by the solid angle of the object with respect to the sun, and the surface area of the sun, the power output in the frequency band above the work function of interest can be found. A similar integral to the one found in equation \ref{eq:PlanckSum} can be constructed in terms of photons per second instead of Watts.
 
-
+Computing the photons impinging on the surface per timestep does not however correspond to the amount of photoelectrons emitted by the sunlit surface. To compute the total photoelectron flux, the photon impinging rate must be multiplied by the surface material reflectance, and the photoelectron yield (number of electrons emitted per incoming photon above the work function of the material) as described in chapter \ref{sec:theory}.
 
 
 \subsection{Initialization and normalization of photoelectric flux}
@@ -302,10 +306,10 @@ $C_1$, $C_2$ and T are known constants in equation \ref{eq:PlanckX}, and the inf
 \subsection{Object functions}
 \subsection{Population functions}
 
+\section{Solar Probe plus verification simulation}
 
-
-\section{Simulation setups}
-\subsection{Photoemission verification simulation}
-\subsection{Mercury Magnetospheric Orbiter simulation setup}
+%\section{Simulation setups}
+%\subsection{Photoemission verification simulation}
+\section{Mercury Magnetospheric Orbiter simulation setup}
 
 \section{Data analysis tools}
