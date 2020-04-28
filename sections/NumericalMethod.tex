@@ -183,7 +183,7 @@ The PINC \textit{Grid} structure is a generalized data structure that stores N-d
 Objects in PINC are thus stored as 1 by N arrays representing scalar fields, where N is the total number of grid points in the computational domain. The \textit{Grid} structure additionally contains a data field called \textit{sizeProd}, that allows for converting between Cartesian grid point coordinates and the index of value in the array: This field is an array that contains the cumulative product of the number of grid points along each axis in the computational domain. Thus, the index $p$ of the value of a \textit{Grid} structure located at the Cartesian coordinates $(x,y,z)$ is represented as
 
 \begin{equation}\label{eq:PINCindex}
-    p = x * sizeProd[0] + y * sizeProd[1] + z * sizeProd[2]
+    p = x * \text{sizeProd}[0] + y * \text{sizeProd}[1] + z * \text{sizeProd}[2]
 \end{equation}
 
 Traversing along an axis from a point with index $p$ of the \textit{Grid} structure, is then the simple matter of adding the corresponding element of the \textit{sizeProd} array to the index $p$. We will make use of this fact, along with equation \ref{eq:PINCindex}, later in this chapter in creating an algorithm for photoemission on the surface of conducting objects. 
@@ -294,17 +294,62 @@ Where $A_s$ is the area of the sunlit surface, and $r$ is the radial distance fr
 Computing the photons impinging on the surface per timestep does not however correspond to the amount of photoelectrons emitted by the sunlit surface. To compute the total photoelectron flux, the photon impinging rate must be multiplied by the surface material reflectance, and the photoelectron yield (number of electrons emitted per incoming photon above the work function of the material) as described in chapter \ref{sec:theory}.
 
 
-\subsection{Initialization and normalization of photoelectric flux}
+%\subsection{Initialization and normalization of photoelectric flux}
+\subsection{Injection of photoelectrons}
+The method selected for injecting a Maxwellian velocity distribution of electrons affect the accuracy of the results from a particle in cell simulation. Once the average kinetic energy of the photoelectrons has been calculated as seen in previous sections, a Maxwellian velocity distribution can be constructed from the average velocity. 
+
+The position of the particles must also be distributed into the computational domain in such a way that the particles remain Maxwellian in their velocity distribution. Describing an accurate particle distribution function $f(\vb{x}, \vb{v}, t)$ is especially important for simulations with timescales longer than that that of the ion transit time, and for simulations that include Monte Carlo collision modules \insertref{Loading and Injection of Maxwellian Distributions in Particle Simulations}.  
+
+In the code developed for this thesis, three methods for injecting photoelectrons were analyzed; two methods based on injecting electrons directly from the surface nodes, and one method in which electrons were uniformly distributed in the computational cells adjacent to the emitting surfaces.
+
+\subsubsection{Surface node injection}
+
+The simplest method for injecting the photoelectrons from a surface, is by defining all object surface nodes exposed to sunlight as particle sources. The position of each emitted particle is computed as an update based on the Maxwellian velocity distribution from the position of each node:
+
+\begin{equation}
+    x_i = x_{\text{node},i} + R \, v_i
+\end{equation}
+
+Where $x_{i,j}$ denotes the position component in the i direction of the injected particle, $x_{node,i}$ denotes the position of some node in the i direction, R is some random number on the interval $[0,1]$, and $v_i$ is the velocity component in the i direction of the injected particle.
+
+Two methods for sampling the Maximilian velocity distribution were analyzed; the first was based on the Box-Mueller algorithm \insertref{Spacecraft charging analysis with the implicit particle-in-cell code iPic3D}.
+
+In the Box-Mueller algorithm, the tangential velocities are sampled from the bivariate Maxwell distribution:
+
+\begin{equation}\label{eq:bivariateMaxell}
+    f(v_{t1}, v_{t2}) = \left(\frac{m}{2 \pi k T}  \right) \exp \left(- \frac{m (v^2_{t1} + v^2_{t1})}{2 k T} \right)
+\end{equation}
+
+Whereas normal component of the velocity is sampled from a half-Maxwellian distribution described by the distribution function
+
+\begin{equation}\label{eq:halfMaxwell}
+    f(v_n) = \left(\frac{m}{2 \pi k T}\right)^{1/2} \exp \left(- \frac{m v^2_n}{2 k T} \right)
+\end{equation}
+
+This was implemented in PINC by sampling a Gaussian distribution with a mean of zero, and rejecting negative velocities (pointing into the object). \todo{correct?}
+
+
+The tangential velocities were sampled 
+
+\subsubsection{Filling adjacent cells}
+
+\subsection{Finding object nodes exposed to sunlight}
 
 \subsection{Algorithm and pseudo-code}
 
 
-\subsection{Injection of photoelectrons}
-\subsubsection{Surface node injection}
-\subsubsection{Filling adjacent cells}
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=12
+    cm, height=15cm]{figures/photoemission.PNG}
+    \caption{Photoemission algorithm}
+    \label{fig:photoemission}
+\end{figure}
 
-\subsection{Object functions}
-\subsection{Population functions}
+
+
+\subsubsection{Object functions}
+\subsubsection{Population functions}
 
 \section{Solar Probe plus verification simulation}
 
