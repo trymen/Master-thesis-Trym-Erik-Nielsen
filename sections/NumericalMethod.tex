@@ -192,7 +192,7 @@ Traversing along an axis from a point with index $p$ of the \textit{Grid} struct
 \subsection{The capacitance matrix method}
 The general idea of the capacitance matrix method is to precalculate a capacitance matrix for each object immersed in the plasma in question. Applying the computed capacitance matrix, the charges due to super-particles impinging the object can be redistributed to the surface of the object, after redistribution of charges a charge density and electric potential correction is computed and spacecraft potential can be updated. super-particles located within the object are then removed from the computational domain after their charges have been redistributed. 
 
-
+\todo{Create a new cycle diagram}
 Figure \insertref{Updated PIC cycle diagram} shows a modified computational cycle for PINC when taking into account charge accumulation on the surface of a conducting object immersed in the plasma.
 
 The capacitance matrix relates the potential $\phi$ and charge distribution $\rho$ as follows \insertref{New electromagnetic particle simulation code for the analysis of spacecraft-plasma interactions}
@@ -250,10 +250,67 @@ Substituting equation \ref{eq:SCrhoCorrNew} into equation \ref{eq:ConsSurfCharge
 
 In the conducting object run mode of PINC, after a first pass of the multigrid Poisson solver, equations \ref{eq:SCrhoCorrNew} and equation \ref{eq:Equipotential} are solved to redistribute absorbed charged particles, a new pass with the Poisson solver then solves the new potential field using the correction to the charge density field. Details on the implementation of these equations in PINC can be referenced by contacting the 4DSpace group at the University of Oslo for access to the PINC code repository.
 
+\newpage
 
 \section{Implementing photoemission in PINC}
 
-Photoelectric emission by sunlit spacecraft surfaces contribute significantly to the overall charge of a spacecraft. In fact, in normal conditions in geosynchronous orbits, the photoelectron flux exceeds that of the ambient electrons \insertref{Aspects of spacecraft charging in sunlight}. When there is a net outgoing current flux, spacecraft charge to to a positive voltage. In order to simulate spacecraft charging using PINC, it is then necessary to implement photoelectric emission. In this section the photoemission method implemented as part of this thesis is presented. First, a scheme for integrating Planck's law over a finite frequency band and the normalization of the  computed photoelectron flux is described. Then, the general algorithm for photoemission is presented along with relevant pseudocode. Using the general photoemission algorithm as a framework, different methods for the injection of photoelectrons and their merits are then discussed. Finally, the specifics of the newly implemented c functions, and how they are integrated into the existing PINC framework is shown.
+Photoelectric emission by sunlit spacecraft surfaces contribute significantly to the overall charge of a spacecraft. In fact, in normal conditions in geosynchronous orbits, the photoelectron flux exceeds that of the ambient electrons \insertref{Aspects of spacecraft charging in sunlight}. When there is a net outgoing current flux, spacecraft charge to to a positive voltage. In order to simulate spacecraft charging using PINC, it is then necessary to implement photoelectric emission. In this section the photoemission method implemented as part of this thesis is presented. 
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=12
+    cm, height=15cm]{figures/photoemission.PNG}
+    \caption{Flowchart describing the photoemission algorithm}
+    \label{fig:photoemission}
+\end{figure}
+
+The flowchart shown in figure \ref{fig:photoemission} describes the general flow of PIC method as implemented in PINC when the photoemission modules developed for this thesis are included. Processes shown in the diagram are on a function level in the code, with processes colored grey describing functionality that needed to be implemented in PINC. The details of the implementation of these processes are shown later in this section. The functions placed within the stippled box are carried out for each iteration of the PIC time loop; since these functions are called with a greater frequency, it is vital that they are computationally efficient.
+
+In addition to the functions described in the figure \ref{fig:photoemission}, the initialization function of the object structure in PINC was expanded to read input parameters required for the new photoemission functions. To facilitate ease of use, and to make the code more easily readable, function pointers were added such that the functions for computing photoelectron flux and photoelectron injection could be specified as part of an input file. 
+
+
+\subsection{Finding object nodes exposed to sunlight}
+
+To be able to simulate photoemission our code needs to know what surfaces the photoelectrons are supposed to be emitted from. As discussed in the previous section on the PINC object module, PINC has no "knowledge" on what faces make up the surface of an object embedded in the computational domain. Thus, it is necessary to locate the object nodes that are exposed to direct sunlight.
+
+The two functions developed to find these surface nodes are directly linked to the functions that inject photoelectrons into the computational domain since a more complex function is required to find the subset of surface nodes used to fill computational cells adjacent to the sunlit object surface. 
+
+The general method for finding the sunlit surface nodes is fairly straight forward, and has been programmed with the assumption that photons travel in the same direction as the x axis of the domain to reduce the complexity of the code. 
+
+Beginning at the node with index 0 of the domain, the code steps along the x direction checking whether each node index is an element of the array containing all object surface nodes. When the node index matches the index of a surface node, the index is stored in the object structure, and the loop stepping along the x axis is exited. The loop of stepping down the x axis is then repeated for each node along the y and z axis until the function has iterated through each "column" normal to the yz plane. If a surface node is not located in a column parallel to the x axis, the function simply continues to the next column.
+
+This function can be visualized as analogous to mapping the topology of the bottom of a lake by sinking a weight attached to a rope from the surface of the lake and measuring the wetted length of the rope when the weight reaches the bottom.
+
+
+
+\begin{lstlisting}[language=C]
+
+void oFindSunlitNodes(...){
+
+    ... define and initialize variables ...
+
+    for(int k = 0; k<size[z]; k++){
+    
+        for(int j = 0; j<size[y]; j++){
+                
+            int flag = 0;
+            for(int i = 0; i<size[x]; i++){
+                
+                index = i*sizeProd[1] + j*sizeProd[2] + k*sizeProd[3];
+                for(int n = 0; n < nSurfaceNodes; n++){
+                    
+                    if(n == index){
+                        flag = 1;
+                        ... append index to exposed node array ...
+                    }
+                }
+            }
+        }
+    }
+}
+\end{lstlisting}
+
 
 
 
@@ -293,24 +350,26 @@ Where $A_s$ is the area of the sunlit surface, and $r$ is the radial distance fr
 
 Computing the photons impinging on the surface per timestep does not however correspond to the amount of photoelectrons emitted by the sunlit surface. To compute the total photoelectron flux, the photon impinging rate must be multiplied by the surface material reflectance, and the photoelectron yield (number of electrons emitted per incoming photon above the work function of the material) as described in chapter \ref{sec:theory}.
 
-
 %\subsection{Initialization and normalization of photoelectric flux}
+
 \subsection{Injection of photoelectrons}
 The method selected for injecting a Maxwellian velocity distribution of electrons affect the accuracy of the results from a particle in cell simulation. Once the average kinetic energy of the photoelectrons has been calculated as seen in previous sections, a Maxwellian velocity distribution can be constructed from the average velocity. 
 
 The position of the particles must also be distributed into the computational domain in such a way that the particles remain Maxwellian in their velocity distribution. Describing an accurate particle distribution function $f(\vb{x}, \vb{v}, t)$ is especially important for simulations with timescales longer than that that of the ion transit time, and for simulations that include Monte Carlo collision modules \insertref{Loading and Injection of Maxwellian Distributions in Particle Simulations}.  
 
-In the code developed for this thesis, three methods for injecting photoelectrons were analyzed; two methods based on injecting electrons directly from the surface nodes, and one method in which electrons were uniformly distributed in the computational cells adjacent to the emitting surfaces.
+In the code developed for this thesis, three methods for injecting photoelectrons were analyzed; two methods based on injecting electrons directly from the surface nodes exposed to sunlight, and one method in which electrons were uniformly distributed in the computational cells adjacent to the emitting surfaces.
 
-\subsubsection{Surface node injection}
+Later in this chapter, these injection algorithms are tested against the charging simulations of the Solar Probe plus presented in \insertref{Spacecraft charging analysis with the implicit particle-in-cell code iPic3D}.
 
-The simplest method for injecting the photoelectrons from a surface, is by defining all object surface nodes exposed to sunlight as particle sources. The position of each emitted particle is computed as an update based on the Maxwellian velocity distribution from the position of each node:
+\subsubsection*{Surface node injection}
 
-\begin{equation}
+The simplest method for injecting the photoelectrons from a surface, is by defining all object surface nodes exposed to sunlight as particle sources. The position of each emitted particle is computed as an "push" based on the Maxwellian velocity distribution from the position of each node:
+
+\begin{equation}\label{eq:injection}
     x_i = x_{\text{node},i} + R \, v_i
 \end{equation}
 
-Where $x_{i,j}$ denotes the position component in the i direction of the injected particle, $x_{node,i}$ denotes the position of some node in the i direction, R is some random number on the interval $[0,1]$, and $v_i$ is the velocity component in the i direction of the injected particle.
+Where $x_{i,j}$ denotes the position component in the i direction of the injected particle, $x_{node,i}$ denotes the position of some node in the i direction, R is some random number on the interval $[0,1]$, and $v_i$ is the sampled velocity component in the i direction of the injected particle.
 
 Two methods for sampling the Maximilian velocity distribution were analyzed; the first was based on the Box-Mueller algorithm \insertref{Spacecraft charging analysis with the implicit particle-in-cell code iPic3D}.
 
@@ -320,36 +379,64 @@ In the Box-Mueller algorithm, the tangential velocities are sampled from the biv
     f(v_{t1}, v_{t2}) = \left(\frac{m}{2 \pi k T}  \right) \exp \left(- \frac{m (v^2_{t1} + v^2_{t1})}{2 k T} \right)
 \end{equation}
 
-Whereas normal component of the velocity is sampled from a half-Maxwellian distribution described by the distribution function
+Whereas the normal component of the velocity is sampled from a half-Maxwellian distribution, described by the distribution function
 
 \begin{equation}\label{eq:halfMaxwell}
     f(v_n) = \left(\frac{m}{2 \pi k T}\right)^{1/2} \exp \left(- \frac{m v^2_n}{2 k T} \right)
 \end{equation}
 
-This was implemented in PINC by sampling a Gaussian distribution with a mean of zero, and rejecting negative velocities (pointing into the object). \todo{correct?}
+The bivariate distribution is implemented in PINC by sampling a bivariate Gaussian distribution with a variation equal to the average thermal velocity of the photoelectrons. The normal component of the photoelectron velocity is sampled from a univariate Gaussian distribution, also with a variation equal to the average thermal velocity, and rejecting the negative velocities (pointing into the object).
+
+The second node injection method implemented similarly distributed emitted particles as a partial push using equation \ref{eq:injection}. The method differs in how the velocity distribution of the particles were sampled. First, the speed of the electron is sampled from a univariate Gaussian distribution and the velocity of the particle is initialized as parallel and opposite to the direction of the sun. Then, a rotation matrix is formed from subsequent rotations about each axis perpendicular to the sunward direction. Each rotation angle is randomly sampled from the range $[\ang{-90}, \ang{90}]$ to reduce the probability of the particle being injected into the object.
+
+In PINC, the sunward unit vector is always defined as being in the negative x direction. Thus, the rotation matrix in PINC is implemented as two elemental rotations about the y and z axis in either order. The rotation tensor $\pmb{R}$ is then expressed as
+
+\begin{equation}\label{eq:rotMat}
+    \pmb{R} = \pmb{Y}_{\beta} \, \pmb{Z}_{\gamma}
+\end{equation}
 
 
-The tangential velocities were sampled 
-
-\subsubsection{Filling adjacent cells}
-
-\subsection{Finding object nodes exposed to sunlight}
-
-\subsection{Algorithm and pseudo-code}
+and in the matrix form
 
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=12
-    cm, height=15cm]{figures/photoemission.PNG}
-    \caption{Photoemission algorithm}
-    \label{fig:photoemission}
-\end{figure}
+\begin{equation}
+    \pmb{R} = 
+        \begin{bmatrix}
+            \cos \beta & 0 & \sin \beta \\
+            0 & 1 & 0 \\
+            -\sin \beta & 0 & \cos \beta
+        \end{bmatrix}
+        \begin{bmatrix}
+            \cos \gamma & -\sin \gamma & 0 \\
+            \sin \gamma & \cos \gamma & 0 \\
+            0 & 0 & 1
+        \end{bmatrix}
+\end{equation}
+
+Where $\beta$, $\gamma$ are the rotation angles about the y and z axis, and $\pmb{Y}_{\beta}$, $\pmb{Z}_{\gamma}$ are the elemental rotation tensors about the Y and Z axis respectively. The initial velocity vector is then multiplied by the rotation matrix, and the particles are placed according to equation \ref{eq:injection}.
+
+The disadvantage of using this method is that it requires calling the function that generates the rotation matrix every time a photoelectron is emitted. This makes this method more computationally expensive than taking samples from the univariate and bivariate Gaussian distributions. However, the photoelectrons produced by the first method could potentially have higher average kinetic energy than what is physically correct, since the two Gaussian distributions are sampled independently in the first method.
 
 
 
-\subsubsection{Object functions}
-\subsubsection{Population functions}
+\subsubsection*{Filling adjacent cells}
+This method is based on the same method utilized in the particle-in-cell code iPic3D by Deca et. al \insertref{Spacecraft charging analysis with the implicit particle-in-cell code iPic3D}; photoelectrons are distributed in a uniform random location in each computational cell adjacent to the emitting surface of the object. In PINC, unlike iPic3D, objects are defined by the nodes on the computational grid rather than the computational cells, the first step in PINC is then to identify the corner nodes of the cells adjacent to the emitting surface. To ensure no overlap in the distribution of electrons a subset of these corner nodes are selected. Each photoelectron is then placed in a surface adjacent cell by adding a random value in the range $[0,1]$ to each position component of the corner node. 
+
+\begin{subequations}
+    \begin{equation}\label{eq:cellFillX}
+        x_{p} = x_{n} - R
+    \end{equation}
+    \begin{equation}
+        y_{p} = y_{n} + R
+    \end{equation}
+    \begin{equation}
+        z_{p} = z_{n} + R
+    \end{equation}
+\end{subequations}
+
+Where the subscript $p$ denotes the p'th photoelectron and the subscript $n$ is used for node positions. The random number $R$ is sampled independently for each position component, and the range $[0,1]$ is used since distance is normalized by stepsize in PINC. The negative sign in subequation \ref{eq:cellFillX} stems from the fact that in PINC the sunward direction is always along the negative x axis.
+
+
 
 \section{Solar Probe plus verification simulation}
 

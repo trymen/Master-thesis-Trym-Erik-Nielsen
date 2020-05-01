@@ -1,6 +1,7 @@
 \documentclass[a4paper, american]{memoir}
 
 \setsecnumdepth{subsubsection}
+\setcounter{tocdepth}{2}
 \usepackage{style}           % Custom style
 \usepackage[MEK, 60]{masterfrontpage} % Front page
 \usepackage{kantlipsum}      % Dummy text
@@ -12,6 +13,7 @@
 
 \includeonly
 {
+    sections/quotation,
     sections/abstract,
     sections/acknowledgements,
     sections/Introduction,
@@ -29,7 +31,7 @@
     \frontmatter        % Folios in Roman numerals, unnumbered chapters.
 
     \masterfrontpage
-
+    \include{sections/quotation}
     \include{sections/abstract}
     \include{sections/acknowledgements}
 
