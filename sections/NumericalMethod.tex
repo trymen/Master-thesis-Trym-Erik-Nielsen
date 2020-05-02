@@ -183,7 +183,7 @@ The PINC \textit{Grid} structure is a generalized data structure that stores N-d
 Objects in PINC are thus stored as 1 by N arrays representing scalar fields, where N is the total number of grid points in the computational domain. The \textit{Grid} structure additionally contains a data field called \textit{sizeProd}, that allows for converting between Cartesian grid point coordinates and the index of value in the array: This field is an array that contains the cumulative product of the number of grid points along each axis in the computational domain. Thus, the index $p$ of the value of a \textit{Grid} structure located at the Cartesian coordinates $(x,y,z)$ is represented as
 
 \begin{equation}\label{eq:PINCindex}
-    p = x * \text{sizeProd}[0] + y * \text{sizeProd}[1] + z * \text{sizeProd}[2]
+    p = x \cdot \text{sizeProd}[0] + y \cdot \text{sizeProd}[1] + z \cdot \text{sizeProd}[2]
 \end{equation}
 
 Traversing along an axis from a point with index $p$ of the \textit{Grid} structure, is then the simple matter of adding the corresponding element of the \textit{sizeProd} array to the index $p$. We will make use of this fact, along with equation \ref{eq:PINCindex}, later in this chapter in creating an algorithm for photoemission on the surface of conducting objects. 
@@ -278,15 +278,15 @@ The two functions developed to find these surface nodes are directly linked to t
 
 The general method for finding the sunlit surface nodes is fairly straight forward, and has been programmed with the assumption that photons travel in the same direction as the x axis of the domain to reduce the complexity of the code. 
 
-Beginning at the node with index 0 of the domain, the code steps along the x direction checking whether each node index is an element of the array containing all object surface nodes. When the node index matches the index of a surface node, the index is stored in the object structure, and the loop stepping along the x axis is exited. The loop of stepping down the x axis is then repeated for each node along the y and z axis until the function has iterated through each "column" normal to the yz plane. If a surface node is not located in a column parallel to the x axis, the function simply continues to the next column.
+Beginning at the node with index 0 of the domain, the code steps along the x direction checking whether each node index is an element of the array containing all object surface nodes. When the node index matches the index of a surface node, the index is stored in the object structure, and the loop stepping along the x axis is exited. The loop of stepping down the x axis is then repeated for each node along the y and z axis until the function has iterated through each "column" normal to the YZ plane. If a surface node is not located in a column parallel to the x axis, the function simply continues to the next column.
 
-This function can be visualized as analogous to mapping the topology of the bottom of a lake by sinking a weight attached to a rope from the surface of the lake and measuring the wetted length of the rope when the weight reaches the bottom.
+This function can be visualized as analogous to mapping the topology of the bottom of a lake by sinking a weight attached to a rope from the surface of the lake, and measuring the wetted length of the rope when the weight reaches the bottom.
 
 
-
-\begin{lstlisting}[language=C]
-
-void oFindSunlitNodes(...){
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=C, caption={Pseudo code for finding sunlit object surface nodes},
+                    label={lst:sunlitNodes}]
+void oFindAllSunlitNodes(...){
 
     ... define and initialize variables ...
 
@@ -300,18 +300,37 @@ void oFindSunlitNodes(...){
                 index = i*sizeProd[1] + j*sizeProd[2] + k*sizeProd[3];
                 for(int n = 0; n < nSurfaceNodes; n++){
                     
-                    if(n == index){
-                        flag = 1;
+                    surfNode = surface[n];
+                    if(surfNode == index){
                         ... append index to exposed node array ...
+                        flag = 1;
+                        break;
                     }
+                    
+                if(flag) break;
+                
                 }
             }
         }
     }
 }
 \end{lstlisting}
+\end{minipage}
 
+\vspace{1cm}
+Listing \ref{lst:sunlitNodes} shows the basic structure of the function described above, each column normal to the YZ plane is stepped down using the "size" array that stores the number of nodes along each axis of the domain. The index is then found using equation \ref{eq:PINCindex} and compared with the indices of surface nodes stored in the "surface" array. The surface array is initialized by the function that computes the object capacitance matrix, which is called before the sunlit surface nodes are found. In the photoelectron injection function, the indices of the sunlit nodes can then be converted into Cartesian coordinates with a helper function using the "sizeProd" array. 
 
+A similar function to listing \ref{lst:sunlitNodes} finds the subset of sunlit object nodes that are used for photoelectron injection by filling cells adjacent to the emitting surfaces.
+Since PINC does not store data defining cells, we choose the cell to be filled by the vertices $[i-1,j,k], [i-1,j+1,k], [i-1,j,k+1], [i-1,j+1,k+1], [i,j,k], [i,j+1,k], [i,j,k+1], [i,j+1,k+1]$. In PINC we have defined the sunlit surface of the object by the projection of the object onto the YZ plane, therefore for a cell to be "on" the surface of the object we require that the vertices $[i,j,k], [i,j+1,k], [i,j,k+1], [i,j+1,k+1]$ of the cell are also surface nodes.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.6]{figures/nodes.png}
+    \caption{Surface nodes on a box exposed to sunlight}
+    \label{fig:sunlitNodes}
+\end{figure}
+
+Figure \ref{fig:sunlitNodes} shows the surface nodes of a 2 unit by 2 unit box,
 
 
 \subsection{Integrating Planck's law}
