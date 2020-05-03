@@ -270,22 +270,22 @@ The flowchart shown in figure \ref{fig:photoemission} describes the general flow
 In addition to the functions described in the figure \ref{fig:photoemission}, the initialization function of the object structure in PINC was expanded to read input parameters required for the new photoemission functions. To facilitate ease of use, and to make the code more easily readable, function pointers were added such that the functions for computing photoelectron flux and photoelectron injection could be specified as part of an input file. 
 
 
-\subsection{Finding object nodes exposed to sunlight}
+\subsection{Identifying sunlit surfaces}
 
-To be able to simulate photoemission our code needs to know what surfaces the photoelectrons are supposed to be emitted from. As discussed in the previous section on the PINC object module, PINC has no "knowledge" on what faces make up the surface of an object embedded in the computational domain. Thus, it is necessary to locate the object nodes that are exposed to direct sunlight.
+To be able to simulate photoemission, our code needs to know which surfaces the photoelectrons are supposed to be emitted from. As discussed in the previous section on the PINC object module, PINC has no "knowledge" on what faces make up the surface of an object embedded in the computational domain. Thus, it is necessary to locate the object nodes that are exposed to direct sunlight.
 
-The two functions developed to find these surface nodes are directly linked to the functions that inject photoelectrons into the computational domain since a more complex function is required to find the subset of surface nodes used to fill computational cells adjacent to the sunlit object surface. 
+Two different functions were developed to find these surface nodes, which function to run is dependent on which algorithm selected for injecting photoelectrons into the computational domain.
 
-The general method for finding the sunlit surface nodes is fairly straight forward, and has been programmed with the assumption that photons travel in the same direction as the x axis of the domain to reduce the complexity of the code. 
+The method for finding the surface nodes directly exposed to sunlight has been programmed with the assumption that photons travel in the same direction as the x axis of the domain to reduce the complexity of the code. 
 
-Beginning at the node with index 0 of the domain, the code steps along the x direction checking whether each node index is an element of the array containing all object surface nodes. When the node index matches the index of a surface node, the index is stored in the object structure, and the loop stepping along the x axis is exited. The loop of stepping down the x axis is then repeated for each node along the y and z axis until the function has iterated through each "column" normal to the YZ plane. If a surface node is not located in a column parallel to the x axis, the function simply continues to the next column.
+Beginning at the node with index 0 of the domain, the code steps along the x direction checking whether each node index is an element of the array containing all object surface nodes. When the node index matches the index of a surface node, that index is stored in the object structure, and the loop stepping along the x axis is exited. The loop of stepping down the x axis is then repeated for each node along the y and z axis until the function has iterated through each "column" normal to the YZ plane. If a surface node is not located in a column parallel to the x axis, the function simply continues to the next column.
 
 This function can be visualized as analogous to mapping the topology of the bottom of a lake by sinking a weight attached to a rope from the surface of the lake, and measuring the wetted length of the rope when the weight reaches the bottom.
 
 
 \begin{minipage}{\linewidth}
 \begin{lstlisting}[language=C, caption={Pseudo code for finding sunlit object surface nodes},
-                    label={lst:sunlitNodes}]
+label={lst:sunlitNodes}]
 void oFindAllSunlitNodes(...){
 
     ... define and initialize variables ...
@@ -318,10 +318,12 @@ void oFindAllSunlitNodes(...){
 \end{minipage}
 
 \vspace{1cm}
-Listing \ref{lst:sunlitNodes} shows the basic structure of the function described above, each column normal to the YZ plane is stepped down using the "size" array that stores the number of nodes along each axis of the domain. The index is then found using equation \ref{eq:PINCindex} and compared with the indices of surface nodes stored in the "surface" array. The surface array is initialized by the function that computes the object capacitance matrix, which is called before the sunlit surface nodes are found. In the photoelectron injection function, the indices of the sunlit nodes can then be converted into Cartesian coordinates with a helper function using the "sizeProd" array. 
+Listing \ref{lst:sunlitNodes} shows the basic structure of the function described above. Each column normal to the YZ plane is stepped down using the "size" array that stores the number of nodes along each axis of the domain. The linear index of the node is then found using equation \ref{eq:PINCindex} and compared with the indices of surface nodes stored in the "surface" array. 
 
-A similar function to listing \ref{lst:sunlitNodes} finds the subset of sunlit object nodes that are used for photoelectron injection by filling cells adjacent to the emitting surfaces.
-Since PINC does not store data defining cells, we choose the cell to be filled by the vertices $[i-1,j,k], [i-1,j+1,k], [i-1,j,k+1], [i-1,j+1,k+1], [i,j,k], [i,j+1,k], [i,j,k+1], [i,j+1,k+1]$. In PINC we have defined the sunlit surface of the object by the projection of the object onto the YZ plane, therefore for a cell to be "on" the surface of the object we require that the vertices $[i,j,k], [i,j+1,k], [i,j,k+1], [i,j+1,k+1]$ of the cell are also surface nodes.
+The surface node array is initialized by a function that computes the object capacitance matrix, which is called before the sunlit surface nodes are found. In the photoelectron injection function, the indices of the sunlit nodes can then be converted into Cartesian coordinates with a helper function using the "sizeProd" array. 
+
+A similar function to listing \ref{lst:sunlitNodes} finds the subset of object surface nodes that are used for photoelectron injection by filling cells adjacent to the emitting surfaces.
+Since PINC does not store data defining cells, and each node is surrounded by 8 computational cells, it is necessary to consistently pick which cell to fill with photoelectrons. For a surface node with linear index $p$ located at grid points $[i,j,k]$ we choose the cell to be filled by the nodes $[i-1,j,k], [i-1,j+1,k], [i-1,j,k+1], [i-1,j+1,k+1], [i,j,k], [i,j+1,k], [i,j,k+1], [i,j+1,k+1]$. In PINC we have defined the sunlit surface of the object by the projection of the object onto the YZ plane, therefore for a cell to be "on" the surface of the object we also require that the vertices $[i,j,k], [i,j+1,k], [i,j,k+1], [i,j+1,k+1]$ of the cell are also surface nodes.
 
 \begin{figure}[h!]
     \centering
@@ -330,16 +332,84 @@ Since PINC does not store data defining cells, we choose the cell to be filled b
     \label{fig:sunlitNodes}
 \end{figure}
 
-Figure \ref{fig:sunlitNodes} shows the surface nodes of a 2 unit by 2 unit box,
+Figure \ref{fig:sunlitNodes} is a visual representation of why this condition must be met for nodes used for the cell filling injection algorithm. It shows the surface nodes of a 2 unit by 2 unit box inside a computational box of 10 x 10 x 10 nodes where the sunward direction is along the negative X axis. Nodes marked in blue are nodes used for photoelectron injection by cell filling, the surface injection algorithm uses the nodes colored \textbf{both} red and blue. Cells defined by nodes colored red are not adjacent to the sunlit surface in the XY plane.
+
+Another condition is necessary to avoid selecting cells that are part of the interior of the object; we further stipulate that for nodes $[i-1,j,k], [i-1,j+1,k], [i-1,j,k+1], [i-1,j+1,k+1]$ a maximum of three are either surface nodes \textbf{or} interior nodes of the object.
+
+
+\begin{minipage}{\linewidth}
+    \begin{lstlisting}[language=C, caption={C pseudocode for finding cells adjacent
+    to sunlit object surfaces},
+    label={lst:sunlitCells}]
+    
+    void oCellFillingNodes(...){
+        
+        ... variable definitions and initialization ...
+    
+        for(long int i = surfaceOffset[a]; i<surfaceOffset[a+1]; i++){
+                    
+            int nObjNode = 0;
+            int yzPlane = 0;        
+          
+            //cell nodes
+            long int p = surface[i];
+            long int pu = p + sizeProd[3];
+            long int plu = p + sizeProd[2] + sizeProd[3];
+            long int pl = p + sizeProd[2]; 
+            long int po = p - sizeProd[1];
+            long int pou = p - sizeProd[1] + sizeProd[3];
+            long int poul = p - sizeProd[1] + sizeProd[3] + sizeProd[2];
+            long int pol = p - sizeProd[1] + sizeProd[2];
+        
+            for(int j = interiorOffset[a]; j < interiorOffset[a+1]; j++){
+                long int intNode = interior[j];
+                if(po == intNode || pou == intNode ||
+                   poul == intNode || pol == intNode){
+                    nObjNode++;
+                }
+            }
+        
+            for(int j = surfaceOffset[a]; j < surfaceOffset[a+1]; j++){
+                long int surfNode = surface[j];
+                if(po == surfNode || pou == surfNode || 
+                   poul == surfNode || pol == surfNode){
+                    nObjNode++;
+                }
+        
+                if(p == surfNode || pu == surfNode || 
+                   plu == surfNode || pl == surfNode){
+                    yzPlane++;
+                }
+            }
+        
+            if(yzPlane == 4 && nObjNode < 8){
+                ... store index p as an emitting node for cell filling ...
+            }
+        }
+    }
+    \end{lstlisting}
+\end{minipage}
+
+
+A C style pseudocode implementation of these conditions are given in listing \ref{lst:sunlitCells}; the "surfaceOffset" stores the number of surface nodes for object "a", then the defined cell vertices are stored. The linear index of these vertices are then compared against the "surface" array and "interior" array. We then check whether the cell has a face on the surface of the object, and that the cell is \textbf{not} an interior cell.
+
+\subsection{Photoemission current and photoelectron energy}
+
 
 
 \subsection{Integrating Planck's law}
 
-As discussed in the theoretical background, the photoelectron flux is dependent on the material composition of the sunlit surface. Surfaces with a lower work function tend to eject more photoelectrons. Similarly, the photoelectron flux of a sunlit surface is proportional to the distance from the surface to the sun. Since the power output of the sun follows an inverse square law with the square of the distance from the sun, the closer the spacecraft is to the sun in its orbit the higher amount of photons above the work function strike the surface of the spacecraft. Both these factors need to be accounted for in order to make the simulation of spacecraft charging in sunlight as general as possible. 
-Thus, to compute the photoelectron flux for a particular spacecraft, Planck's law must be integrated in the frequency band from the work function frequency, to infinity before the main particle-in-cell loop is started. The photoelectron flux can then be directly computed from the power output received by the spacecraft, as long as the surface area exposed to the sun and work function of the spacecraft material surface is known. These variables can given as input to our simulation. Additionally, integrating Planck's law allows the average kinetic energy of the emitted photoelectron to be calculated, simply by dividing the total radiation energy absorbed per timestep by the total photoelectron flux.
-Several methods for numerically integrating Planck's law efficiently exists. In this thesis, the method settled on is based on the paper by Widger and Woodall \insertref{Integration of the Planck Blackbody Radiation Function}. A summary of the method presented in that paper, and the implementation in PINC as C code will now be given.
+As discussed in the theoretical background, the photoelectron flux is dependent on the material composition of the sunlit surface. Surfaces with a lower work function tend to eject more photoelectrons.
 
-First, to simplify the integrals, Planck's law is recast in terms of the wavenumber ($cm^{-1}$) $\nu$ rather than frequency of radiation. Planck's law then takes the form
+Similarly, the photoelectron flux of a sunlit surface is proportional to the distance from the surface to the sun. Since the power output of the sun follows an inverse square law with the square of the distance from the sun, the closer the spacecraft is to the sun in its orbit the higher the number of photons above the work function strike the surface of the spacecraft. Both these factors need to be accounted for in order to make simulating spacecraft charging in sunlight as general as possible. 
+
+Thus, to compute the photoelectron flux for a particular spacecraft, Planck's law must be integrated in the frequency band from the work function frequency, to infinity before the main particle-in-cell loop is started. The photoelectron flux can then be directly computed from the power output received by the spacecraft, as long as the surface area exposed to the sun and work function of the spacecraft material surface is known. These variables can given as input to our simulation. Both reflectance and photoelectron yield are dependent on the energy of incoming photons, but are assumed to be constant in this thesis.  
+
+Additionally, integrating Planck's law allows the average kinetic energy of the emitted photoelectron to be calculated, dividing the total radiation energy absorbed per timestep by the total photoelectron flux.
+
+Several methods for numerically integrating Planck's law efficiently exists. In this thesis, the method settled on is based on the paper by Widger and Woodall \insertref{Integration of the Planck Blackbody Radiation Function}. A overview of the method presented in that paper, and the implementation in PINC as C pseudocode will now be given.
+
+First, to simplify the integrals, Planck's law is recast in terms of the wavenumber ($cm^{-1}$) $\nu$ rather than the frequency of radiation. Planck's law then takes the form
 
 \begin{equation}\label{eq:PlanckNu}
     B(T) = C_1 \int^{\infty}_{\nu} \nu^3 \left(\exp{\frac{C_2 \nu}{T}} - 1 \right) d \nu
@@ -369,7 +439,46 @@ Where $A_s$ is the area of the sunlit surface, and $r$ is the radial distance fr
 
 Computing the photons impinging on the surface per timestep does not however correspond to the amount of photoelectrons emitted by the sunlit surface. To compute the total photoelectron flux, the photon impinging rate must be multiplied by the surface material reflectance, and the photoelectron yield (number of electrons emitted per incoming photon above the work function of the material) as described in chapter \ref{sec:theory}.
 
-%\subsection{Initialization and normalization of photoelectric flux}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=C, caption={Numerical integration of Planck's law in terms of photon flux}, label={lst:planck}]
+void oPlanckPhotonIntegral(...){
+
+  ... Variable and constant definitions and initialization ...
+    
+  for(int a=0; a<nObj; a++){
+	//sigma[a] = ((double)sigma[a]) / (Planck * speedOfLight * 100.);
+	double c1 = Planck * speedOfLight / Boltzmann;
+	double x = c1 * 100. * (double)sigma[a]/temperature;
+	double x2 = x * x;
+
+	// decide how many terms of sum are needed
+	double iterations = 2.0 + 20.0/x;
+	iterations = (iterations < 512.) ? iterations : 512;
+	int iter = (int)(iterations);
+	// add up terms of sum
+	double sum = 0.;
+	for (int n=1; n<iter; n++) {
+	  double dn = 1.0 / n;
+	  sum += exp(-n*x) * (x2 + 2.0*(x + dn)*dn) * dn;
+	}
+	//result, in units of photons/s/m2/sr, convert to photons/timestep
+	double kTohc = (Boltzmann * (double)temperature) / (Planck * speedOfLight);
+	double solidAngle = (double)area[a] / pow(distFromSun,2.);
+	radiance[a] = 2.0 * pow(kTohc,3.) * speedOfLight;
+	radiance[a] = radiance[a] * sum;
+	radiance[a] *= solidAngle * sunSurfaceArea;
+	radiance[a] *= (1.0 - reflectance) * phYield;
+	radiance[a] *= time;
+  }
+    
+  ... Store radiance to object structure here ...
+
+}
+\end{lstlisting}
+\end{minipage}
+
+Listing \ref{lst:planck} shows a numeric implementation of equation \ref{eq:PlanckX} and equation \ref{eq:PlanckSum}. The original algorithm \insertref{https://www.spectralcalc.com/blackbody/CalculatingBlackbodyRadianceV2.pdf} has been converted from C++ code to C for compatability with the PINC framework.
+
 
 \subsection{Injection of photoelectrons}
 The method selected for injecting a Maxwellian velocity distribution of electrons affect the accuracy of the results from a particle in cell simulation. Once the average kinetic energy of the photoelectrons has been calculated as seen in previous sections, a Maxwellian velocity distribution can be constructed from the average velocity. 
@@ -438,8 +547,12 @@ The disadvantage of using this method is that it requires calling the function t
 
 
 
-\subsubsection*{Filling adjacent cells}
-This method is based on the same method utilized in the particle-in-cell code iPic3D by Deca et. al \insertref{Spacecraft charging analysis with the implicit particle-in-cell code iPic3D}; photoelectrons are distributed in a uniform random location in each computational cell adjacent to the emitting surface of the object. In PINC, unlike iPic3D, objects are defined by the nodes on the computational grid rather than the computational cells, the first step in PINC is then to identify the corner nodes of the cells adjacent to the emitting surface. To ensure no overlap in the distribution of electrons a subset of these corner nodes are selected. Each photoelectron is then placed in a surface adjacent cell by adding a random value in the range $[0,1]$ to each position component of the corner node. 
+\subsubsection*{Filling cells adjacent to sunlit surfaces}
+This method is based on the same method utilized in the particle-in-cell code iPic3D by Deca et. al \insertref{Spacecraft charging analysis with the implicit particle-in-cell code iPic3D}; photoelectrons are distributed in a uniform random location in each computational cell adjacent to the emitting surface of the object. Based on the results from verification simulations, this cell filling algorithm was the method ultimately selected when simulating charging of the BepiColombo spacecraft MMO.
+
+In PINC, unlike iPic3D, objects are defined by the nodes on the computational grid rather than the computational cells. The first step in PINC is then to identify the corner nodes of the cells adjacent to the emitting surface, the pseudocode found in listing \ref{lst:sunlitCells} shows how these corner nodes are identified.
+
+Each photoelectron is placed in a cell by adding a random value in the range $[0,1]$ to each position component of the corner node. 
 
 \begin{subequations}
     \begin{equation}\label{eq:cellFillX}
@@ -455,9 +568,46 @@ This method is based on the same method utilized in the particle-in-cell code iP
 
 Where the subscript $p$ denotes the p'th photoelectron and the subscript $n$ is used for node positions. The random number $R$ is sampled independently for each position component, and the range $[0,1]$ is used since distance is normalized by stepsize in PINC. The negative sign in subequation \ref{eq:cellFillX} stems from the fact that in PINC the sunward direction is always along the negative x axis.
 
+The total flux of photoelectrons is divided by the number of cells adjacent to the sunlit surfaces of the object, each cell is then filled iteratively with this amount. 
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=C, caption={C style pseudocode of cell filling algorithm},
+                    label={lst:cellInject}]
+void pPhotoelectrons(...){
+
+  ... initialize variables ...
+  ... divide photoelectron flux by total number of cells to be filled ...
+
+  for(int a=0; a < nObjects; a++){
+    for(long int j=0; j<(long)flux[a]; j++){
+      for(int i = 0; i < nEmittingNodes; i++){
+
+        long int node = emittingNodes[emittingOffset[a] + i];
+        gNodeToGrid3D(... node, pos ... ); //computes node location in grid
+        memcpy(newPos, pos, pop->nDims * sizeof(*newPos));
+        while(vel[0] >= 0.0){
+          vel[0] = univariate_gaussian(... avgVel[a] ...); //normal velocity component
+        }
+        bivariate_gaussian( ...avgVel[a], &vel[1], &vel[2] ...); //tangential velocity components
+        newPos[0] -= random(...); //subtract a random value in range [0,1]
+        newPos[1] += random(...);
+        newPos[2] += random(...);
+        pNewParticle(...); //create the new particle
+        ... reset "vel" array to zeroes ...
+      }
+    }
+  }   
+}
+\end{lstlisting}
+\end{minipage}
 
 
+Listing \ref{lst:cellInject} shows how this method was implemented in C style pseudocode. The velocity of a particle is sampled in the surface normal direction and the tangential direction. Then a random position within the cell is computed as an offset of the position of the corner node that defines the cell, the electron is then stored in the particle "population" structure with its new velocity and position. The next cell corner is then selected and the process repeats until the total amount of photoelectrons in the timestep has been created.
+
+\newpage
 \section{Solar Probe plus verification simulation}
+
+\subsection{}
 
 %\section{Simulation setups}
 %\subsection{Photoemission verification simulation}
