@@ -4,9 +4,9 @@ In the previous chapter, the basics of plasma physics and the mathematical tools
 
 \section{Particle In Cell algorithm}
 The particle in cell algorithm is a method used in computational plasma physics to analyze large systems of many particles in a computationally efficient manner. This is achieved by the introduction of super particles, computational particles, that represent many real particles, then interpolating the forces acting on these super particles to a spatial grid.\\
-There are three main ways of simulating the forces acting on a system particles. The particle-particle method (PP) where forces are computed between individual particles. The particle-mesh method (PM) where the forces between the particles are computed as field quantities on the spatial mesh. And the particle-particle-mesh method (PPPM or $P^3M$), which is a combination of the two earlier methods.\\
-By far the simplest method computationally is the PP method. However, since all forces between each individual pair of particles are computed, the method is also the most computationally expensive. If the system of interest contains $N_p$ particles, then the number of operations scale as $\mathcal{O}(N^2_p)$ \insertref{Hockney and eastwood p20}. It is therefore impractical to use the PP method for all but the simplest systems, even on highly parallel High Performance Computers (HPC) available today.\\
-The PM method computes the forces of a system as field quantities, first by assigning the charges in the system to the mesh by some method, then solving Poisson's equation on the mesh, then computing the forces on the mesh points and interpolating to the individual particles. This method is therefore faster, but usually not as accurate as computing the forces on all particle pairs directly. With $N_g$ grid points, the complexity of this method scales as $\mathcal{O}(N_g \log{N_g})$ thus making this method much more applicable to larger systems than the PP method.
+There are three main ways of simulating the forces acting on a system particles. The particle-particle method (PP) where forces are computed between individual particles. The particle-mesh method (PM) where the forces between the particles are computed as field quantities on the spatial mesh. And the particle-particle-mesh method (PPPM or $P^3M$), which is a combination of the two earlier methods \parencite{Birdsall2004}.\\
+By far the simplest method computationally is the PP method. However, since all forces between each individual pair of particles are computed, the method is also the most computationally expensive. If the system of interest contains $N_p$ particles, then the number of operations scale as $\mathcal{O}(N^2_p)$ \parencite[p.20]{Hockney1988}. It is therefore impractical to use the PP method for all but the simplest systems, even on highly parallel High Performance Computers (HPC) available today.\\
+The PM method computes the forces of a system as field quantities, first by assigning the charges in the system to the mesh by some method, then solving Poisson's equation on the mesh, then computing the forces on the mesh points and interpolating to the individual particles. This method is therefore faster, but usually not as accurate as computing the forces on all particle pairs directly. With $N_g$ grid points, the complexity of this method scales as $\mathcal{O}(N_g \log{N_g})$ \parencite{Hockney1988} thus making this method much more applicable to larger systems than the PP method.
 
 \begin{figure}[h!]
     \centering
@@ -15,7 +15,7 @@ The PM method computes the forces of a system as field quantities, first by assi
     \label{fig:pic}
 \end{figure}
 
-The PiC algorithm is an example of the PM method, figure \ref{fig:pic} shows an overview of a computational cycle for each time step in the PiC algorithm. Beginning at the box on the right in the figure, a distribution of $N_p$ particles with position $\vb{x}_p$ is interpolated to get the charge $\rho_g$ and current density $\vb{J}_g$ at the surrounding grid points. The two most common methods for this interpolation is the Nearest Grid Point (NGP) scheme, and Cloud in Cell (CIC) scheme.\\
+The PiC algorithm is an example of the PM method, figure \ref{fig:pic} shows an overview of a computational cycle for each timestep in the PiC algorithm. Beginning at the box on the right in the figure, a distribution of $N_p$ particles with position $\vb{x}_p$ is interpolated to get the charge $\rho_g$ and current density $\vb{J}_g$ at the surrounding grid points. The two most common methods for this interpolation is the Nearest Grid Point (NGP) scheme, and Cloud in Cell (CIC) scheme.\\
 Once the charge and current densities are known on the grid, the next step is to solve for the $\vb{E}$ and $\vb{B}$ fields. This is accomplished by solving Maxwell's equations at the grid points
 
 \begin{subequations}
@@ -27,15 +27,15 @@ Once the charge and current densities are known on the grid, the next step is to
     \end{align}
 \end{subequations}
 
-Where $\rho$ is the charge density, $\epsilon_0$ is the vacuum permittivity, $\mu_0$ is the vacuum permeability, and $\vb{E}$ and $\vb{B}$ are the electric and magnetic fields respectively. With the electric and magnetic field computed at the grid nodes, the force on each super particle is computed from Lorentz's force equation and interpolating back to the position of the super particles. Using some numerical integrator the new position and velocity of the super particle is updated from the computed forces, and the cycle can then be repeated for the next time step. 
+Where $\rho$ is the charge density, $\epsilon_0$ is the vacuum permittivity, $\mu_0$ is the vacuum permeability, and $\vb{E}$ and $\vb{B}$ are the electric and magnetic fields respectively. With the electric and magnetic field computed at the grid nodes, the force on each super particle is computed from Lorentz's force equation and interpolating back to the position of the super particles. Using some numerical integrator the new position and velocity of the super particle is updated from the computed forces, and the cycle can then be repeated for the next timestep. 
 
 \section{Particle in Cell implementation in PINC}
-In this section, we discuss the methods implemented in PINC that are required for the main PiC compute cycle described in figure \ref{fig:pic} with focus on the particular schemes used in this thesis. The scheme used in PINC for integrating the equations of motion are presented, followed by the multigrid field solver, and finally the particle weighting scheme is discussed. PINC is the work of many researchers, but have been mainly implemented by Sigvald Marholm as part of his Ph.D thesis \insertref{Sigvald's thesis}, Gullik Killie \insertref{Gullik's thesis}, and Steffen Brask \insertref{Steffen's thesis}. Significant contributions have also been made by Jan Deca, who implemented the module for object charging in PINC. This module will be discussed in more detail later in this chapter. 
+In this section, we discuss the methods implemented in PINC that are required for the main PiC compute cycle described in figure \ref{fig:pic} with focus on the particular schemes used in this thesis. The scheme used in PINC for integrating the equations of motion are presented, followed by the multigrid field solver, and finally the particle weighting scheme is discussed. PINC is the work of many researchers, but have been mainly implemented by Sigvald Marholm, Gullik Killie \parencite{Killie}, and Steffen Brask \parencite{Brask2018}. Significant contributions have also been made by Jan Deca, who implemented the module for object charging in PINC. This module will be discussed in more detail later in this chapter. 
 
 \subsection{Integration of the equations of motion}
-Planet Mercury possesses and internal magnetic field, as such the plasma surrounding the planet is magnetized. To solve for the motion of magnetized plasma, the Boris algorithm is used to integrate the equations of motion. The Boris algorithm is a variant of the well known leapfrog method, in which the position and velocity of a particle is updated at half time steps in staggered fashion. Like the leapfrog method, the Boris algorithm is an energy conserving integrator; the merits of the Boris algorithm as the de facto particle mover is further expanded upon in the work by Qin et al. \insertref{Why is Boris algorithm so good?}
+Planet Mercury possesses and internal magnetic field, as such the plasma surrounding the planet is magnetized. To solve for the motion of magnetized plasma, the Boris algorithm is used to integrate the equations of motion. The Boris algorithm is a variant of the well known leapfrog method, in which the position and velocity of a particle is updated at half timesteps in staggered fashion. Like the leapfrog method, the Boris algorithm is an energy conserving integrator; the merits of the Boris algorithm as the de facto particle mover is further expanded upon in the publication \parencite{Qin2013}.
 \\
-Using the same notation as defined in \insertref{Plasma physics via computer simulation} the Lorentz force is discretized as 
+Using the same notation as defined in \parencite{Birdsall2004} the Lorentz force is discretized as 
 
 \begin{subequations}
     \begin{align}
@@ -67,9 +67,9 @@ Where the rotational parameters $\vb{T}$ and $\vb{S}$ are expressed as
 Equations \ref{eq:borisNewVel} are equally suited for plasmas with time varying magnetic fields as for electrostatic plasma with a constant external magnetic field. Since PINC is an electrostatic model, equations \ref{eq:BrotParams} is solved once before the main time loop, then applied to each call to the mover method.
 
 \subsection{Field Solver}
-Several field solvers exists in PINC, in this thesis the multigrid solver developed by Vetvik \insertref{Gullik's thesis} has been used. The multigrid solver is an iterative method; the basic principle of the method in a PiC context is to solve Poisson's equation first on a coarse grid, then using the solution on the course grid as a guess, solve the equation again for a finer grid. The solution for the coarse grid speeds up the solution for the finer grid, reducing the total computational time required to converge to an accurate solution. 
+Several field solvers exists in PINC, in this thesis the multigrid solver developed by Killie \parencite{Killie} has been used. The multigrid solver is an iterative method; the basic principle of the method in a PiC context is to solve Poisson's equation first on a coarse grid, then using the solution on the course grid as a guess, solve the equation again for a finer grid. The solution for the coarse grid speeds up the solution for the finer grid, reducing the total computational time required to converge to an accurate solution. 
 \\
-There are three main types of multigrid solver, divided into the so called V-cycle, W-cycle and F-cycle, defined by when the algorithm should use a coarser or finer mesh than used in the previous iteration. Multigrid solvers are highly flexible, and many researchers have spent considerable effort in order to optimize the number of iterations \insertref{Killie thesis}, \insertref{Multigrid, Trottenberg et al}, highly optimized multigrid solvers have a local complexity given by $\mathcal{O}(N_g)$, with a global complexity of $\mathcal{O}(N_g log(N_g))$ when using domain decomposition like in the case of PINC \insertref{Steffen's thesis}.
+There are three main types of multigrid solver, divided into the so called V-cycle, W-cycle and F-cycle, defined by when the algorithm should use a coarser or finer mesh than used in the previous iteration. Multigrid solvers are highly flexible, and many researchers have spent considerable effort in order to optimize the number of iterations \insertref{Multigrid, Trottenberg et al}, highly optimized multigrid solvers have a local complexity given by $\mathcal{O}(N_g)$, with a global complexity of $\mathcal{O}(N_g log(N_g))$ when using domain decomposition like in the case of PINC \insertref{Trottenberg2020}.
 \\
 As described earlier, the multigrid method solves Poisson's equation in PINC. Strictly speaking, the solution to Gauss's law, equation \ref{eq:gauss} is solved. In PINC however, electrostatic plasma is assumed, in this case the electric field is irrotational, i.e. $\nabla \cross \vb{E} = 0$ and the electric field can then be represented as the gradient of a scalar potential field $\vb{E} = \nabla \phi$.  Substituting the potential field back into Gauss's law, equation \ref{eq:gauss} we have Poisson's equation
 
@@ -93,8 +93,7 @@ and Poisson's equation, equation \ref{eq:poisson}, becomes
 Where the subscript g implies the evaluation of $\phi$ at grid points, and the superscript p denotes the grid node index. Analogous expressions can be formed in two and three spatial dimensions.
 
 \subsection{Particle weighting}
-In the particle in cell method particles can exist anywhere in the continuous spatial computational domain, but forces and charge densities are calculated at discrete grid points \ref{fig:pic} \insertref{Birdsall Ch 2.6}.  Historically, the NGP method and CIC method are used to weight computational particles to the grid. Higher order schemes exists, such as Quadratic Splines (QS) and Cubic Splines (CS), see \insertref{Okuda, SPLINES AND HIGH ORDER INTERPOLATIONS IN PLASMA SIMULATIONS} for an overview on the usage of higher order weighting schemes in plasma simulation. In PINC the CIC method is used; using similar notation as Verboncoeur in his paper \insertref{Particle simulation of plasmas: review and
-advances} the weighting function is defined as 
+In the particle in cell method particles can exist anywhere in the continuous spatial computational domain, but forces and charge densities are calculated at discrete grid points \parencite[chapter 2.6]{Birdsall2004}. Historically, the NGP method and CIC method are used to weight computational particles to the grid. Higher order schemes exists, such as Quadratic Splines (QS) and Cubic Splines (CS), see \parencite{Okuda1979} for an overview on the usage of higher order weighting schemes in plasma simulation. In PINC the CIC method is used to weight particle parameters to the grid. Using similar notation as Verboncoeur \parencite{Verboncoeur2005} the weighting function is defined as 
 
 \begin{equation}\label{eq:weightFunc}
     \vb{w}_{i,j,k} = \vb{x}_p - \vb{X}_{i,j,k}
@@ -122,7 +121,7 @@ From the charge density and current density, PINC computes the electric and magn
 \section{Simulation stability and constraints}
 
 \subsection{Spatial resolution}
-In PINC, and in other particle in cell codes, particles move in continuous space, but their macroscopic properties are projected to a discrete grid. Representing continuous variables on a discrete grid leads to numerical instability called finite grid instability \insertref{Particle simulations of space weather, lapenta 2011, sec 5.1.}. The analysis of finite grid instability is beyond the scope of this thesis, a rigorous mathematical description of finite grid instability can be found in \insertref{Birdsall and Langdon}. The most important result of these analyses is that the grid spacing $\Delta x$ must satisfy the condition
+In PINC, and in other particle in cell codes, particles move in continuous space, but their macroscopic properties are projected to a discrete grid. Representing continuous variables on a discrete grid leads to numerical instability called finite grid instability \parencite[section 5.1.]{Lapenta2011}. The analysis of finite grid instability is beyond the scope of this thesis, a rigorous mathematical description of finite grid instability can be found in for example \textit{Plasma physics via computer simulation} \parencite{Birdsall2004}. The most important result of these analyses is that the grid spacing $\Delta x$ must satisfy the condition
 
 \begin{equation}\label{eq:GridSize}
     \frac{\Delta x}{\lambda_D} < C
@@ -132,7 +131,7 @@ In PINC, and in other particle in cell codes, particles move in continuous space
 Where C is some constant dependent on the discretization scheme used. In the case of the CIC scheme, the constant C is approximately equal to $\pi$. Failure to meet this condition in a PIC simulation leads to unphysical heating of the plasma. Equation \ref{eq:GridSize} must therefore be satisfied in all directions of the full computational domain to ensure conservation of energy.
 
 \subsection{temporal resolution}
-In PINC, the boris algorithm is used for particle pushing. The boris algorithm is an explicit forward time integration scheme, and as such simulations run with PINC must satisfy temporal stability constraints associated with such schemes. In \insertref{hockey and eastwood} and \insertref{birdsall and langdon} and \insertref{lapenta, 2011} a Von Neumann stability analysis of a harmonic oscillator without an external magnetic field given by the following equation
+In PINC, the boris algorithm is used for particle pushing. The boris algorithm is an explicit forward time integration scheme, and as such simulations run with PINC must satisfy temporal stability constraints associated with such schemes. A Von Neumann stability analysis of a harmonic oscillator without an external magnetic field given by the following equation \parencite{Hockney1988}, \parencite{Birdsall2004}, \parencite{Lapenta2011} 
 
 \begin{equation}\label{eq:harmonicOscillator}
     \frac{q_s}{m_s} \vb{E}_p(\vb{x}_p) = - \Omega^2 \vb{x}_p
@@ -144,7 +143,7 @@ leads to the equation
     \left(\frac{\Omega \Delta t}{2} \right)^2 = \sin^2{\left(\frac{\omega_N \Delta t}{2}\right)}
 \end{equation}
 
-Where $\omega_N$ is the numerical oscillation frequency. For values outside the range [-1,1] the sine function has only complex solutions, thus for time steps $\Delta t$ where  $\Omega \Delta t > 2$ is true, the numerical oscillation frequency will be complex. Any practical simulation of the harmonic oscillator will therefore become unstable due to unbounded numerical heating. Thus, the finite time stability criteria can be expressed as
+Where $\omega_N$ is the numerical oscillation frequency. For values outside the range [-1,1] the sine function has only complex solutions, thus for timesteps $\Delta t$ where  $\Omega \Delta t > 2$ is true, the numerical oscillation frequency will be complex. Any practical simulation of the harmonic oscillator will therefore become unstable due to unbounded numerical heating. Thus, the finite time stability criteria can be expressed as
 
 \begin{equation}
     \Omega \Delta t < 2
@@ -154,7 +153,7 @@ In this thesis, for solar wind simulations, the frequency $\Omega$ that needs to
 
 
 \subsection{The CFL condition}
-The Courant–Friedrichs–Lewy condition, or CFL condition, is a stability criteria linking the finite time step and grid step, $\Delta t$ and $\Delta x$ respectively. The condition must be met everywhere in the computational domain if the explicit integrator in PINC is to converge to a solution.
+The Courant–Friedrichs–Lewy condition, or CFL condition, is a stability criteria linking the finite timestep and grid step, $\Delta t$ and $\Delta x$ respectively. The condition must be met everywhere in the computational domain if the explicit integrator in PINC is to converge to a solution.
 
 In \insertref{See Steffens master thesis..} a common formulation of the condition is given as
 
@@ -162,13 +161,12 @@ In \insertref{See Steffens master thesis..} a common formulation of the conditio
     \frac{\Delta x}{\Delta t} > C
 \end{equation}
 
-Where C is some characteristic speed. The constant C is solver scheme dependent, and is often set as $C = 1$ for explicit schemes; in PINC this qualitatively means that a particle is restricted to move by maximum one computational cell per time step as the length scale is normalized to the grid step size.
+Where C is some characteristic speed. The constant C is solver scheme dependent, and is often set as $C = 1$ for explicit schemes; in PINC this qualitatively means that a particle is restricted to move by maximum one computational cell per timestep as the length scale is normalized to the grid step size.
 
 \section{The PINC Object module}
-The object module in PINC contains a set of functions and data structures necessary for simulating objects immersed in plasma. It was developed primarily by Jan Deca, and Sigvald Marholm as a part of a collaboration between the University of Oslo and University of Colorado Boulder. In the object module, spacecraft-plasma interations are simulated using the same Capacitance Matrix method outlined by Miyake and Usui in developing the PIC code EMSES (the ElectroMagnetic Spacecraft Environment Simulator) \insertref{New electromagnetic particle simulation code for the analysis of spacecraft-plasma interactions}. 
+The object module in PINC contains a set of functions and data structures necessary for simulating objects immersed in plasma. It was developed primarily by Jan Deca and Sigvald Marholm as a part of a collaboration between the University of Oslo and University of Colorado Boulder. In the object module, spacecraft-plasma interations are simulated using the same Capacitance Matrix method outlined by Miyake and Usui in developing the PIC code EMSES (the ElectroMagnetic Spacecraft Environment Simulator) \parencite{Miyake2009}. 
 
 In this section the method used in PINC for defining objects on a structured Cartesian grid is discussed in brief; a description of the \textit{Grid} data structure and associated functions in PINC is also introduced as all scalar and vector fields are represented in PINC using this data structure, including conducting objects which are defined as scalar fields. The capacitance matrix method is then outlined, with an emphasis on the equations that have been implemented in PINC. 
-
 
 
 \subsection{Representing objects on a grid}
@@ -195,7 +193,7 @@ The general idea of the capacitance matrix method is to precalculate a capacitan
 \todo{Create a new cycle diagram}
 Figure \insertref{Updated PIC cycle diagram} shows a modified computational cycle for PINC when taking into account charge accumulation on the surface of a conducting object immersed in the plasma.
 
-The capacitance matrix relates the potential $\phi$ and charge distribution $\rho$ as follows \insertref{New electromagnetic particle simulation code for the analysis of spacecraft-plasma interactions}
+The capacitance matrix relates the potential $\phi$ and charge distribution $\rho$ as follows \parencite{Miyake2009}
 
 \begin{equation}
     \rho_i = \sum^{N_G}_{j=1} A_{ij} \phi_j
@@ -254,7 +252,7 @@ In the conducting object run mode of PINC, after a first pass of the multigrid P
 
 \section{Implementing photoemission in PINC}
 
-Photoelectric emission by sunlit spacecraft surfaces contribute significantly to the overall charge of a spacecraft. In fact, in normal conditions in geosynchronous orbits, the photoelectron flux exceeds that of the ambient electrons \insertref{Aspects of spacecraft charging in sunlight}. When there is a net outgoing current flux, spacecraft charge to to a positive voltage. In order to simulate spacecraft charging using PINC, it is then necessary to implement photoelectric emission. In this section the photoemission method implemented as part of this thesis is presented. 
+Photoelectric emission by sunlit spacecraft surfaces contribute significantly to the overall charge of a spacecraft. In fact, in normal conditions in geosynchronous orbits, the photoelectron flux exceeds that of the ambient electrons \parencite{Lai2006}. When there is a net outgoing current flux, spacecraft charge to to a positive voltage. In order to simulate spacecraft charging using PINC, it is then necessary to implement photoelectric emission. In this section the photoemission method implemented as part of this thesis is presented. 
 
 
 \begin{figure}[h!]
@@ -393,21 +391,45 @@ Another condition is necessary to avoid selecting cells that are part of the int
 
 A C style pseudocode implementation of these conditions are given in listing \ref{lst:sunlitCells}; the "surfaceOffset" stores the number of surface nodes for object "a", then the defined cell vertices are stored. The linear index of these vertices are then compared against the "surface" array and "interior" array. We then check whether the cell has a face on the surface of the object, and that the cell is \textbf{not} an interior cell.
 
-\subsection{Photoemission current and photoelectron energy}
 
+\subsection{Photoemission current and photoelectron energy}\label{subsection:CurrentDensity}
+Two methods have been developed in PINC for finding the temperature, and flux of photoelectrons from sunlit object surfaces. The first method has been previously discussed in chapter \cref{sec:theory}; integrating Planck's law over a frequency band, allows both the photoelectron flux and temperature to be calculated. 
 
+For some objects, especially spacecraft, the photoelectric current, and the temperature of the emitted electrons are known a priori to our simulation. These values can then be specified as a input parameters to PINC.
+
+The number of super particles to inject per timestep into each cell adjacent to the sunlit surface is directly computed from the photoelectron current flux \parencite{Deca2013}
+
+\begin{equation}\label{eq:NPHelectrons}
+    N_{inject} = j_{ph} \frac{dA \cdot dt}{q_{part}}
+\end{equation}
+
+Where $N_{inject}$ is the number of super particles to inject into each photoemitting cell, $dA$ is the area of a computational cell, $dt$ is the simulation timestep, and $q_{part}$ is the charge of one computational particle. The charge on one particle is calculated as
+
+\begin{equation}
+    q_{part} = \frac{\rho \, e \, V_{cell}}{N_{p,cell}}
+\end{equation}
+
+where $\rho$ is the electron density, $V_{cell}$ is the volume of the cell, and $N_{p,cell}$ is an input parameter specifying the number of particles per computational cell. Equation \ref{eq:NPHelectrons} can be rewritten to calculate the total number of photoelectrons ejected per timestep. Since several photoelectron injection methods have been analyzed for this thesis, the total photoelectron flux per timestep is the form that has been implemented into PINC
+
+\begin{equation}
+    N_{total} =  \frac{j_{ph} \cdot A \cdot dt}{q_{part}}
+\end{equation}
+
+where the total area of the sunlit object surface $A$ has been used instead of the cell surface area. These particles are then injected into the computational domain with velocity sampled from a Maxwellian plasma with an average temperature given by the input parameters. Which method PINC uses for finding photoelectron flux is specified as a flag in the simulation input file.  
 
 \subsection{Integrating Planck's law}
 
-As discussed in the theoretical background, the photoelectron flux is dependent on the material composition of the sunlit surface. Surfaces with a lower work function tend to eject more photoelectrons.
+The photoelectron flux of a sunlit object is dependent on the material composition of the sunlit surface. Surfaces with a lower work function tend to eject more photoelectrons.
 
-Similarly, the photoelectron flux of a sunlit surface is proportional to the distance from the surface to the sun. Since the power output of the sun follows an inverse square law with the square of the distance from the sun, the closer the spacecraft is to the sun in its orbit the higher the number of photons above the work function strike the surface of the spacecraft. Both these factors need to be accounted for in order to make simulating spacecraft charging in sunlight as general as possible. 
+Similarly, the photoelectron flux of a sunlit surface is proportional to the distance from the surface to the sun. Since the power output of the sun follows an inverse square law with the square of the distance from the sun. The closer the spacecraft is to the sun in its orbit the higher the number of photons with energy greater than the work function strike the surface of the spacecraft. Both these factors need to be accounted for in order to make simulating spacecraft charging in sunlight as general as possible. 
 
-Thus, to compute the photoelectron flux for a particular spacecraft, Planck's law must be integrated in the frequency band from the work function frequency, to infinity before the main particle-in-cell loop is started. The photoelectron flux can then be directly computed from the power output received by the spacecraft, as long as the surface area exposed to the sun and work function of the spacecraft material surface is known. These variables can given as input to our simulation. Both reflectance and photoelectron yield are dependent on the energy of incoming photons, but are assumed to be constant in this thesis.  
+The number of photoelectrons emitted is however not equal to the number of impinging photons with energy higher than the surface work function. Both the reflectance of the surface, and the photoelectron yield of the surface material significantly reduce the photoelectron flux. Reflectance and photoelectron yield are both dependent on the energy of incoming photons, but are assumed to be constant in this thesis.
 
-Additionally, integrating Planck's law allows the average kinetic energy of the emitted photoelectron to be calculated, dividing the total radiation energy absorbed per timestep by the total photoelectron flux.
+Thus, to compute the photoelectron flux for a particular spacecraft, Planck's law must be integrated in the frequency band from the work function frequency, to infinity before the main particle-in-cell loop is started. The photoelectron flux can then be directly computed from the power received by the spacecraft, as long as the surface area exposed to the sun and work function of the spacecraft material surface is known. These variables, in addition to the material photoelectron yield and reflectance, can be given as inputs to our simulation.
 
-Several methods for numerically integrating Planck's law efficiently exists. In this thesis, the method settled on is based on the paper by Widger and Woodall \insertref{Integration of the Planck Blackbody Radiation Function}. A overview of the method presented in that paper, and the implementation in PINC as C pseudocode will now be given.
+Integrating Planck's additionally allows the average kinetic energy of the emitted photoelectron to be calculated, dividing the total radiation energy absorbed per timestep by the total photoelectron flux.
+
+Several methods for numerically integrating Planck's law efficiently exists. In this thesis, the method settled on is based on the paper by Widger and Woodall \parencite{Widger1976}. A overview of the method presented in that paper, and the implementation in PINC as C pseudocode will now be given.
 
 First, to simplify the integrals, Planck's law is recast in terms of the wavenumber ($cm^{-1}$) $\nu$ rather than the frequency of radiation. Planck's law then takes the form
 
@@ -477,17 +499,17 @@ void oPlanckPhotonIntegral(...){
 \end{lstlisting}
 \end{minipage}
 
-Listing \ref{lst:planck} shows a numeric implementation of equation \ref{eq:PlanckX} and equation \ref{eq:PlanckSum}. The original algorithm \insertref{https://www.spectralcalc.com/blackbody/CalculatingBlackbodyRadianceV2.pdf} has been converted from C++ code to C for compatability with the PINC framework.
+Listing \ref{lst:planck} shows a numeric implementation of equation \ref{eq:PlanckX} and equation \ref{eq:PlanckSum}. The original algorithm \parencite{Blackbody} has been converted from C++ code to C for compatibility with the PINC framework.
 
 
-\subsection{Injection of photoelectrons}
+\subsection{Injection of photoelectrons}\label{subsec:injection}
 The method selected for injecting a Maxwellian velocity distribution of electrons affect the accuracy of the results from a particle in cell simulation. Once the average kinetic energy of the photoelectrons has been calculated as seen in previous sections, a Maxwellian velocity distribution can be constructed from the average velocity. 
 
-The position of the particles must also be distributed into the computational domain in such a way that the particles remain Maxwellian in their velocity distribution. Describing an accurate particle distribution function $f(\vb{x}, \vb{v}, t)$ is especially important for simulations with timescales longer than that that of the ion transit time, and for simulations that include Monte Carlo collision modules \insertref{Loading and Injection of Maxwellian Distributions in Particle Simulations}.  
+The position of the particles must also be distributed into the computational domain in such a way that the particles remain Maxwellian in their velocity distribution. Describing an accurate particle distribution function $f(\vb{x}, \vb{v}, t)$ is especially important for simulations with timescales longer than that that of the ion transit time, and for simulations that include Monte Carlo collision modules \parencite{Cartwright2000}.  
 
 In the code developed for this thesis, three methods for injecting photoelectrons were analyzed; two methods based on injecting electrons directly from the surface nodes exposed to sunlight, and one method in which electrons were uniformly distributed in the computational cells adjacent to the emitting surfaces.
 
-Later in this chapter, these injection algorithms are tested against the charging simulations of the Solar Probe plus presented in \insertref{Spacecraft charging analysis with the implicit particle-in-cell code iPic3D}.
+Later in this chapter, these injection algorithms are tested against the charging simulations of the Solar Probe plus presented in \parencite{Deca2013}.
 
 \subsubsection*{Surface node injection}
 
@@ -499,7 +521,7 @@ The simplest method for injecting the photoelectrons from a surface, is by defin
 
 Where $x_{i,j}$ denotes the position component in the i direction of the injected particle, $x_{node,i}$ denotes the position of some node in the i direction, R is some random number on the interval $[0,1]$, and $v_i$ is the sampled velocity component in the i direction of the injected particle.
 
-Two methods for sampling the Maximilian velocity distribution were analyzed; the first was based on the Box-Mueller algorithm \insertref{Spacecraft charging analysis with the implicit particle-in-cell code iPic3D}.
+Two methods for sampling the Maximilian velocity distribution were analyzed; the first was based on the Box-Mueller algorithm \parencite{Deca2013}.
 
 In the Box-Mueller algorithm, the tangential velocities are sampled from the bivariate Maxwell distribution:
 
@@ -527,7 +549,7 @@ In PINC, the sunward unit vector is always defined as being in the negative x di
 and in the matrix form
 
 
-\begin{equation}
+\begin{equation}\label{eq:rotMatFull}
     \pmb{R} = 
         \begin{bmatrix}
             \cos \beta & 0 & \sin \beta \\
@@ -548,7 +570,7 @@ The disadvantage of using this method is that it requires calling the function t
 
 
 \subsubsection*{Filling cells adjacent to sunlit surfaces}
-This method is based on the same method utilized in the particle-in-cell code iPic3D by Deca et. al \insertref{Spacecraft charging analysis with the implicit particle-in-cell code iPic3D}; photoelectrons are distributed in a uniform random location in each computational cell adjacent to the emitting surface of the object. Based on the results from verification simulations, this cell filling algorithm was the method ultimately selected when simulating charging of the BepiColombo spacecraft MMO.
+This method is based on the same method utilized in the particle-in-cell code iPic3D by Deca et al. \parencite{Deca2013}; photoelectrons are distributed in a uniform random location in each computational cell adjacent to the emitting surface of the object. Based on the results from verification simulations, this cell filling algorithm was the method ultimately selected when simulating charging of the BepiColombo spacecraft MMO.
 
 In PINC, unlike iPic3D, objects are defined by the nodes on the computational grid rather than the computational cells. The first step in PINC is then to identify the corner nodes of the cells adjacent to the emitting surface, the pseudocode found in listing \ref{lst:sunlitCells} shows how these corner nodes are identified.
 
@@ -605,12 +627,227 @@ void pPhotoelectrons(...){
 Listing \ref{lst:cellInject} shows how this method was implemented in C style pseudocode. The velocity of a particle is sampled in the surface normal direction and the tangential direction. Then a random position within the cell is computed as an offset of the position of the corner node that defines the cell, the electron is then stored in the particle "population" structure with its new velocity and position. The next cell corner is then selected and the process repeats until the total amount of photoelectrons in the timestep has been created.
 
 \newpage
-\section{Solar Probe plus verification simulation}
+\section{Photoemission verification simulation}
 
-\subsection{}
+Before we can run any analysis on the charging behavior of MMO in its orbit around mercury, it is necessary to verify the accuracy of our implementation of photoemission. The simulations described in the paper \parencite{Deca2013} provides an excellent test case for our model. In their paper Deca et al. analyze different charging mechanisms, including photoemission, affecting a cubesat. The charging of the cubesat is simulated using the PIC codes iPic3D and PTetra. 
 
-%\section{Simulation setups}
-%\subsection{Photoemission verification simulation}
+Using a computational setup similar to Deca et al. I ran the experiments that included ambient plasma charging and photoemission, and used the floating potential of the cubesat found using iPic3D and PTetra as benchmarks for the accuracy of the code I had developed. The formation of wakes downstream from the cubesat, as well as the formation of a photoelectron cloud in front of the sunlit surface of the cubesat affects the floating potential of spacecraft \parencite{Miloch2015} \parencite{Sjogren2012}. The presence of both of these phenomena are therefore quantitatively compared with results found in the iPic3D and PTetra simulations to further verify my photoemission implementation in PINC.
+
+The simulations were carried out for all three of the photoelectron injection methods described in section \ref{subsec:injection}, the total photoelectron flux was computed using the current density method described in section \ref{subsection:CurrentDensity} as the current density is a known variable in \parencite{Deca2013}.
+
+
+\subsection{simulation setup}
+
+The simulation parameters described in \parencite{Deca2013} were used mostly as presented. However, the verification test case was also used in the development stage for testing smaller parts of the new photoemission code: In the PINC verification simulations then, slightly larger computational cells were used, and the number of computational super-particles were reduced. This greatly reduced the total time required for each simulation to complete, and allowed for rapid iteration on the development of the new code. 
+
+All verification tests were run on the supercomputer "Saga" using domain decomposition to run PINC in parallel on 16 cores. 16 cores were used since at the time of writing, PINC suffered from segmentation errors when running the code with 64 or more cores.
+
+The cubesat was modeled as a cube measuring 1 m x 1 m x 1 m placed in the center of a 10 m x 10 m x 10 m computational box. The resolution of the grid was 0.15625 m in each direction of the computational box.
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{p{5cm}p{5cm}}
+\toprule
+\toprule
+$\Delta t$         & 5e-9 s                            \\[0.5mm]
+timesteps          & 10,000                            \\[0.5mm]
+Computational box  & 10 m x 10 m x 10 m                \\[0.5mm]
+Resolution         & $\frac{10}{64}$ m x $\frac{10}{64}$ m x $\frac{10}{64}$ m \\[0.5mm]
+Particles per cell & 10 per species                    \\[0.5mm]
+Cubesat size       & 1 m x 1 m x 1 m                   \\[0.5mm]
+\bottomrule
+\bottomrule
+\end{tabular}
+\caption{Numerical parameters used in verification simulations}
+\label{tab:verificationNum}
+\end{table}
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{p{5cm}p{5cm}}
+\toprule
+\toprule
+$\frac{m_i}{m_e}$  & 1836                       \\[1mm]
+$T_e (eV)$         & 85                         \\[1mm]
+$T_i (eV)$         & 82                         \\[1mm]
+$v_{th,e} (m/s)$   & $3.86 \, \text{x} \, 10^6$ \\[1mm]
+$v_{th,i} (m/s)$   & $8.87 \, \text{x} \, 10^4$ \\[1mm]
+$n_e (m^{-3})$     & $7 \, \text{x} \, 10^9$    \\[1mm]
+$n_i (m^{-3})$     & $7 \, \text{x} \, 10^9$    \\[1mm]
+$v_{sw} (m/s)$     & $3 \, \text{x} \, 10^5$    \\[1mm]
+$j_{ph} (A/m^2)$   & $1.6 \, \text{x} \, 10^{-2}$ \\[1mm]
+\bottomrule
+\bottomrule
+\end{tabular}
+\caption{Plasma parameters used in verification simulations}
+\label{tab:verificationPla}
+\end{table}
+
+
+The complete list of numerical parameters and plasma parameters used in the verification simulations are found in table \ref{tab:verificationNum} and table \ref{tab:verificationPla} respectively. The plasma parameters found in table \ref{tab:verificationPla} are the exact same as used in \parencite{Deca2013}, and are reproduced here for ease of reference. 
+
+The numerical parameters were changed to make simulation run in PINC numerically stable. The timestep $\Delta t$ used in our verification simulation is smaller, this allowed for better convergence at small tolerances for the multigrid solver used in PINC. The number of timesteps used in the PINC simulations was selected to allow enough time for the cubesat to reach a steady-state potential. Furthermore, iPic3D uses an implicit solver \parencite{Deca2013} which is numerically stable over larger timesteps as compared to the explicit Boris solver used in PINC. 
+
+The direction of plasma drift and the direction of the sun is also different in our case; in PINC the sunward direction is always pointed along the negative X axis. The solar wind drift was then picked to flow in the positive Y direction to maintain the $\ang{90}$ angle between the drift direction and the sun as selected by Deca et al.
+
+\subsection{Floating potential of the cubesat}
+
+In PINC the potential of the cubesat is computed each timestep using equation \cref{eq:Equipotential} and output to a log file, plotting this potential versus time allows us to see the development of the floating potential of the cubesat
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{figures/DECA/NoPhotoelectrons/pNoPH.png}
+    \caption{Plot of the cubesat potential over time, in this case no photoelectrons are included and the cubesat is only charged by the ambient flowing plasma. The stippled horizontal lines show the floating potentials obtained by iPic3D and PTetra for the same simulation setup}
+    \label{fig:pNoPH}
+\end{figure}
+
+Figure \ref{fig:pNoPH} shows a time series plot of the cubesat potential relative to the upstream plasma defined as ground. As the object charges over time, and the potential becomes more and more negative, more electrons are diverted away from the cubesat thereby slowing the rate of charging. The two horizontal lines in the figure show the computed floating potential found by iPic3D and PTetra; the floating potential found using PINC is more negative, and accurate to both results found by iPic3D and PTetra within a 4\% margin. Increasing the number of computational particles would reduce this inaccuracy, additionally due to the dimensions of the computational cells, the cubesat simulated in PINC has a smaller volume than the $1 m^3$ cubesat simulated by Deca et al. leading to further inaccuracies. 
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{figures/DECA/PhotoelectronsInjectionByCellFilling/pCellFill.png}
+    \caption{Plot of the cubesat potential over time, in this case photoelectrons are injected into the domain using the adjacent cell filling method. The stippled horizontal lines show the floating potentials obtained by iPic3D and PTetra for the same simulation setup}
+    \label{fig:pCellFill}
+\end{figure}
+
+Figure \ref{fig:pCellFill} shows the timeseries of the cubesat potential when photoemission using the cell filling algorithm is included. The potential stabilizes after approximately 5,000 timesteps before it begins to oscillate steadily with an amplitude of approximately 1 Volt around a steady state value. The first hundred timesteps are cut from the plot, to better show this oscillation. Comparisons of the cubesat potentials for the different injection algorithms are averaged over time after 5,000 timesteps to remove these fluctuations and give a better sense of the accuracy of each algorithm relative to the floating potentials found with iPic3D and PTetra.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{figures/DECA/PhotoelectronInjectionByRotationMatrix/pRotMat.png}
+    \caption{Plot of the cubesat potential over time, in this case photoelectrons are injected into the domain using equation \ref{eq:injection} with velocity sampled from the univariate Maxwellian distribution and rotated using equation \ref{eq:rotMatFull}. The stippled horizontal lines show the floating potentials obtained by iPic3D and PTetra for the same simulation setup}
+    \label{fig:pRotMat}
+\end{figure}
+
+The timeseries plot of the cubesat potential in Figure \ref{fig:pRotMat} includes ambient plasma charging, and photoelectron charging where photoelectrons are emitted using the rotation matrix method. The oscillations around a steady state value are of the same amplitude as in figure \ref{fig:pCellFill}, but a less negative floating potential is predicted. Since the rotation matrix injection algorithm is based on a particle push of the sampled particle velocity distribution, this might be explained due to a higher concentration of photoelectrons near the cubesat surface as opposed to in the cell filling case. With a higher local density of electrons, the forces between the photoelectrons will be higher, thus imparting enough acceleration on a large enough mass of photoelectrons such that they pass the potential barrier formed by the photoelectron cloud. The higher number of "escaped" photoelectrons that are not reabsorbed by the cubesat then cause a less negative floating potential. 
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.45]{figures/DECA/PhotoelectronInjectionByDoubleGauss/pDoubleGauss.png}
+    \caption{Plot of the cubesat potential over time, in this case photoelectrons are injected into the domain using equation \ref{eq:injection} and sampling the surface normal and tangential velocities separately. The stippled horizontal lines show the floating potentials obtained by iPic3D and PTetra for the same simulation setup}
+    \label{fig:pDoubleGauss}
+\end{figure}
+
+Figure \ref{fig:pDoubleGauss} shows the timeseries plot of the cubesat potential where photoelectrons are injected into the computational domain by a particle push based on sampling a univariate and bivariate Maxwellian velocity distribution. This injection algorithm diverges by far by the largest amount from the floating potentials found using the iPic3D and PTetra codes. The large difference in floating potential, and the floating potential being the least negative, suggests photoelectrons injected with this algorithm have higher kinetic energy than photoelectrons injected using the two other algorithms. It could also be the case that higher densities of photoelectrons resulting from the particle push tangentially away from the surface, force more electrons away from the cubesat that are then not reabsorbed.
+
+
+
+\begin{table}[H]
+%\centering
+\begin{tabular}{p{4cm}|p{3cm}|p{3cm}|p{3cm}}
+\toprule
+\toprule
+Photoelectron injection method & Floating potential & Percentage difference from iPic3D & Percentage difference from PTetra \\
+\midrule
+No photoelectrons & -233.242 & 2.21 \% & 3.20\% \\[1mm]
+Cell filling & -35.31 & 7.33 \% & 5.09 \% \\[1mm]
+Rotation matrix  & -30.61 & 6.96 \% & 8.90 \% \\[1mm]
+Double gaussian sample & -24.03 & 26.96 \% & 28.48 \% \\[1mm]
+\bottomrule
+\bottomrule
+\end{tabular}
+\caption{Comparison of floating potentials found with iPic3D and PTetra, with the average potential of the cubesat from timestep 5,000 to timestep 10,000}
+\label{tab:verificationPla}
+\end{table}
+
+Table \ref{tab:verificationPla} is a summary of the floating potentials computed using the injection algorithms I developed for this thesis. The "No photoelectrons" case give a baseline for differences in object charging when comparing PINC to iPic3D and PTetra. There is overall good agreement with the three codes in this simplest case, with only a 2.21 \% absolute difference in the floating potentials found between PINC and iPic3D.
+
+These errors can be reduced by decreasing the tolerance of the solver used to compute the capacitance matrix in PINC, and reducing particle noise by increasing the number of computational particles introduced in the domain, at the cost of longer simulation times. 
+
+Both the cell filling and rotation matrix injection algorithms are fairly close to values found by deca et al. when ambient plasma charging and photoemission are both included. The difference in computed floating potentials could again be reduced by setting a stricter tolerance for the multigrid solver in PINC, and increasing the number of computational particles used in the simulations. 
+
+
+\subsection{Photoelectron cloud and wake formation}
+
+\begin{figure}[H]
+  \begin{subfigure}[b]{0.61\textwidth}
+    \includegraphics[width=\textwidth]{figures/DECA/NoPhotoelectrons/potentialAlongX.PNG}
+    \caption{Potential along x axis}
+    \label{fig:noPHalongX}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.61\textwidth}
+    \includegraphics[width=\textwidth]{figures/DECA/NoPhotoelectrons/potentialAlongY.PNG}
+    \caption{Potential along y axis}
+    \label{fig:noPHalongY}
+  \end{subfigure}
+  \label{fig:NOPH}
+  \caption{Potential profile along direction of flow (+Y axis), and along direction of light travelling from the sun (+X axis) when photoemission is omitted from the simulation, each line passes through the centre of the cubesat}
+\end{figure}
+
+In figures \ref{fig:noPHalongX}, and \ref{fig:noPHalongY} we have plotted the potential in Volts along the axis of drift, and along the axis of the sun through the centre of the cubesat at timestep 10,000. The spatial X-axis of each plot is multiples of the computational cell step size, in this case 0.15625 meters. 
+
+The only charging mechanism included is the charging due to the ambient flowing plasma and is included as a baseline test to check the implementation of the capacitance matrix method in PINC and so that differences due to the photoemission implemented in this thesis may be singled out from the rest of the implementation of PINC.
+
+No potential barrier can be seen in figure \ref{fig:noPHalongX}, and the plot is symmetric about the centre of the cubesat. In figure \ref{fig:noPHalongY} the potential relative to the upstream plasma rises above 0 behind the cubesat as expected due to the formation of an ion wake.
+
+
+\begin{figure}[H]
+  \begin{subfigure}[b]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{figures/DECA/PhotoelectronsInjectionByCellFilling/potentialAlongX.PNG}
+    \caption{Potential along X axis}
+    \label{fig:CellFillAlongX}
+  \end{subfigure}
+  %
+  \begin{subfigure}[b]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{figures/DECA/PhotoelectronsInjectionByCellFilling/potentialAlongY.PNG}
+    \caption{Potential along Y axis}
+    \label{fig:CellFillAlongY}
+  \end{subfigure}
+  \label{fig:CELLFILL}
+  \caption{Potential profile along direction of flow (+Y axis), and along direction of light travelling from the sun (+X axis) where photoelectrons are injected into the domain by randomly distributing the electrons uniformly into the cells adjacent to the emitting object surfaces, each line passes through the centre of the cubesat}
+\end{figure}
+
+Figure \ref{fig:CellFillAlongX} and \ref{fig:CellFillAlongY} include photoemission as a charging mechanism, where the cell filling algorithm in section \cref{subsec:injection} has been used to inject photoelectrons. Figure \ref{fig:CellFillAlongX} clearly shows a potential barrier forming in front of the object where the photoelectron cloud has formed. Figure \ref{fig:CellFillAlongY}, unlike figure \ref{fig:noPHalongY}, shows no ion wake forming behind the cubesat along the drift axis, likely due to photoelectrons reflecting off the potential barrier and drifting behind the cubesat.  
+
+\begin{figure}[H]
+  \begin{subfigure}[b]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{figures/DECA/PhotoelectronInjectionByRotationMatrix/potentialAlongX.PNG}
+    \caption{Potential along X axis}
+    \label{fig:RotMatAlongX}
+  \end{subfigure}
+  %
+  \begin{subfigure}[b]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{figures/DECA/PhotoelectronInjectionByRotationMatrix/potentialAlongY.PNG}
+    \caption{Potential along Y axis}
+    \label{fig:RotMatAlongY}
+  \end{subfigure}
+  \label{fig:RotMatAlong}
+  \caption{Potential profile along direction of flow (+Y axis), and along direction of light travelling from the sun (+X axis) where photoelectrons are emitted using the rotation matrix algorithm and a partial particle push from object surface, each line passes through the centre of the cubesat}
+\end{figure}
+
+In figures \ref{fig:RotMatAlongX} and figure \ref{fig:RotMatAlongY} photoemission is also included, but photoelectrons are injected by a partial particle push. The surface normal velocity is sampled from a univariate Maxwellian velocity distribution, then rotated by a random rotation tensor before the particle is pushed from the surface based on the computed velocity vector. The potential barrier in figure \ref{fig:RotMatAlongX} is smaller than found in figure \ref{fig:CellFillAlongX}, possibly due to more photoelectrons managing to escape the forming photoelectron cloud based on the random particle push, or due to the size of the computational cell: Refining the computational grid, and reducing the volume of the computational cells would likely decrease the difference in the potential barrier formed for the two cases. 
+
+
+\begin{figure}[H]
+  \begin{subfigure}[b]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{figures/DECA/PhotoelectronInjectionByDoubleGauss/potentialAlongX.PNG}
+    \caption{Potential along X axis}
+    \label{fig:DoubleGaussAlongX}
+  \end{subfigure}
+  %
+  \begin{subfigure}[b]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{figures/DECA/PhotoelectronInjectionByDoubleGauss/potentialAlongY.PNG}
+    \caption{Potential along Y axis}
+    \label{fig:DoubleGaussAlongY}
+  \end{subfigure}
+  \label{fig:DoubleGaussAlong}
+  \caption{Potential profile along direction of flow (+Y axis), and along direction of light travelling from the sun (+X axis) where photoelectrons are injected into the domain by a partial, random, particle push. Surface normal velocity and tangential surface velocity is sampled separately. Each line passes through the centre of the cubesat}
+\end{figure}
+
+
+Figures \ref{fig:DoubleGaussAlongX} and \ref{fig:DoubleGaussAlongY} plot potential profiles where photoelectrons are emitted similarly to the rotation matrix algorithm, but where the three dimensional particle velocity vectors are sampled in both the surface normal and tangential directions separately. Figure \ref{fig:DoubleGaussAlongX} shows the deepest potential well out of all the injection algorithms, but the least negative floating potential. A potential reason for this, is that the double sampling method increases the average kinetic energy of the emitted photoelectrons to a point where not all the photoelectrons return to the surface of the object and become reabsorbed. Figure \ref{fig:DoubleGaussAlongY} also shows another small barrier directly behind the cubesat along the direction of drift. This suggest that particles pushed based on the two samplings of velocity have higher tangential velocities in the photoelectrons than when injected using the other two algorithms, causing electrons to accumulate downstream of the object.
+
+\todo{Add lineplots here, thru x axis to see photoelectron cloud}
+\todo{Sample pop file to check if electrons are Maxwellian? Can use the plot python script called VelDistributionSingle.py}
+
+Based on the relative accuracy as shown in table \ref{tab:verificationPla} when compared to the two other PIC codes, an accurate reproduction of the expected physics, and the lower computational complexity as compared to the rotation matrix algorithm, I selected the cell filling algorithm as the injection algorithm to use when simulating MMO in its orbit around Mercury.
+
+\newpage
+
 \section{Mercury Magnetospheric Orbiter simulation setup}
 
 \section{Data analysis tools}

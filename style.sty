@@ -42,7 +42,7 @@
 \RequirePackage[obeyspaces,
                 spaces,
                 hyphens]{url}      % Typesetting URLs
-\urlstyle{sf}
+\urlstyle{same}
 \setcounter{secnumdepth}{3}
 
 %% Mathematics
@@ -82,6 +82,7 @@
 \usetikzlibrary{calc}
 \usetikzlibrary{intersections}
 \usetikzlibrary{decorations.markings}
+\RequirePackage{caption}
 \RequirePackage{subcaption}
 
 %% Organising tools
@@ -129,17 +130,21 @@
 \RequirePackage{textcomp}       % Extra symbols
 \RequirePackage{multirow}       % Rows spanning multiple lines in tables
 \RequirePackage{tablefootnote}  % Footnotes for tables
-
+\RequirePackage{array}
+\RequirePackage{booktabs}
+\RequirePackage{float} % H options for poisiton
 
 %% Bibliography
 \RequirePackage{mathscinet}
 \RequirePackage[backend    = biber,
                 sortcites  = true,
                 giveninits = true,
-                doi        = false,
-                isbn       = false,
-                url        = false,
-                style      = alphabetic]{biblatex}
+                doi        = true,
+                isbn       = true,
+                url        = true,
+                maxcitenames = 1,
+                bibstyle   = authoryear,
+                citestyle  = authoryear]{biblatex}
 \DeclareNameAlias{sortname}{family-given}
 \DeclareNameAlias{default}{family-given}
 \DeclareFieldFormat[article]{volume}{\bibstring{jourvol}\addnbspace#1}
