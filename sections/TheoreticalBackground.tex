@@ -13,10 +13,10 @@ Plasma is a collection of ionized gas, commonly referred to as the fourth state 
 The single particle description of a plasma describes the motion of individual charged particles moving in imposed magnetic and electrical fields. Assuming the force of gravity is sufficiently small, and assuming constant electrical and magnetic fields, the single particle motion of a charge $q$ moving at velocity $v$ in the electrical field $E$ and magnetic field $B$ is described by the Lorentz force law 
 
 \begin{equation}\label{eq:lorentz}
-    \vb{F} = q \vb{E} + q \vb{v} \cp \vb{B}
+    \vb{F} = q \vb{E} + q \vb{v} \cp \vb{B},
 \end{equation}
 
-Where the term $q \vb{E}$ is called the Electric force, and the term $q\vb{v} \cp \vb{B}$ is called the magnetic force. When a particle moves in a static magnetic field, and no electric field is present, the particle will gyrate around magnetic field lines. Setting $E$ to zero, we have
+where the term $q \vb{E}$ is called the Electric force, and the term $q\vb{v} \cp \vb{B}$ is called the magnetic force. When a particle moves in a static magnetic field, and no electric field is present, the particle will gyrate around magnetic field lines. Setting $E$ to zero, we have
 
 \begin{equation}\label{eq:magF}
     \vb{F} = q \vb{v} \cp \vb{B}
@@ -30,7 +30,7 @@ Setting the centripetal force equal to the magnitude of the Lorentz force, we ca
     \frac{m_s v_{\perp}^2}{r_g} = \abs{q} v_{\perp} \vb{B}
 \end{equation}
 
-Where the subscript on $m_s$ denotes the specie of the particle. and $V_\perp$ denotes the perpendicular component of velocity to  the plane of $B$. Upon rearranging, the expression for the gyroradius $r_g$ becomes
+Where the subscript on $m_s$ denotes the specie of the particle, and $v_\perp$ denotes the perpendicular component of velocity to  the plane of $B$. Upon rearranging, the expression for the gyroradius $r_g$ becomes
 
 \begin{equation}
     r_g = \frac{m_s v_\perp}{\abs{q} \vb{B}}
@@ -49,13 +49,13 @@ The motion of a particle $q_s$ is in practical cases often modelled as the drift
 \end{equation}
 
 \subsection{Kinetic description}
-In the previous section, we studied the individual motion of charged plasma particles. Although the single particle description of plasma is useful in gaining an understanding in how individual particles behave in isotropic magnetic and electrical fields; it is an impractical model for analyzing macroscopic phenomena of the plasma. \insertref{"Plasma Physics" by Alexander Piel contains a good discussion of when each plasma model should be used} The kinetic description of plasma begins with the assumption of a density distribution of charges in the six dimensional phase space varying over time. Let $f_s(\vb{x}, \vb{v}, t)$ be the continuous probability distribution, representing the probability of finding a charged particle of species $s$ at time $t$ in phase space. Multiplying the distribution of charges by the charge of the species $q_s$, and integrating over the velocity space. the charge density $\rho_s$ can be found. Summing over all the species of charge in the plasma gives us the following expression for the total charge density $\rho_c$
+In the previous section, we studied the individual motion of charged plasma particles. Although the single particle description of plasma is useful in gaining an understanding in how individual particles behave in isotropic magnetic and electrical fields; it is an impractical model for analyzing macroscopic phenomena of the plasma. \insertref{"Plasma Physics" by Alexander Piel contains a good discussion of when each plasma model should be used} The kinetic description of plasma begins with the assumption of a density distribution of charges in the six dimensional phase space varying over time. Let $f_s(\vb{x}, \vb{v}, t)$ be the continuous probability distribution, representing the probability of finding a charged particle of species $s$ at time $t$ in phase space. Multiplying the distribution of charges by the charge of the species $q_s$, and integrating over the velocity space, the charge density $\rho_s$ can be found. Summing over all the species of charge in the plasma gives us the following expression for the total charge density $\rho_c$
 
 \begin{equation}\label{eq:rhoCharge}
     \rho_c = \sum_s q_s\int f(\vb{x}, \vb{v}, t) d^3\vb{v}
 \end{equation}
 
-Similarly, an expression for the current density is obtained by multiplying the charge distribution by the velocity vector $v$ and integrating the result in a similar fashion to \ref{eq:rhoCharge}
+Similarly, an expression for the current density is obtained by multiplying the charge distribution by the velocity vector $v$ and integrating the result in a similar fashion to \eqref{eq:rhoCharge}
 
 \begin{equation}
     \vb{j} = \sum_s q_s \int \vb{v} f(\vb{x}, \vb{v}, t) d^3 \vb{v}
@@ -75,32 +75,32 @@ Where the operator notation $\grad_v = (\pdv{v_x}, \pdv{v_y}, \pdv{v_z})$ and $\
 \subsection{Fluid description}
 In previous sections, the equations of motion for characterising plasma has been modelled by analyzing the forces acting on individual particles. While this approach can be helpful in gaining insight into the physics governing the plasma behaviour, it is difficult to apply these frameworks to practical computation models. 
 \vskip 1mm
-Another method, that reduces the complexity of computing individual particle motions, is treating plasma as two continuous fluids. In this approach we are able to extract macroscopic properties of the plasma, such as the density, the velocity and the mean energy. The fluid equations are derived by taking the velocity moments of the Vlasov equation \ref{eq:Vlasov}, where the generalized velocity moment is described as
+Another method, that reduces the complexity of computing individual particle motions, is treating plasma as two continuous fluids. In this approach we are able to extract macroscopic properties of the plasma, such as the density, the velocity and the mean energy. The fluid equations are derived by taking the velocity moments of the Vlasov equation \eqref{eq:Vlasov}, where the generalized velocity moment is described as
 
 \begin{equation}\label{eq:moment}
     M^n \equiv \int f(\vb{v}) \vb{v}^n d \vb{v}
 \end{equation}
 
-The zeroth velocity moment, also called the continuity equation, can be found by multiplying equation \ref{eq:Vlasov} by the zeroth velocity moment 
+The zeroth velocity moment, also called the continuity equation, can be found by multiplying equation \eqref{eq:Vlasov} by the zeroth velocity moment 
 
 \begin{equation}\label{eq:zeromoment}
     n_s = \int f_s d \vb{v}
 \end{equation}
 
-The zeroth velocity moment for species $s$ is simply the number density for the species. Multiplying equation \ref{eq:zeromoment} by the Vlasov equation we have
+The zeroth velocity moment for species $s$ is simply the number density for the species. Multiplying equation \eqref{eq:zeromoment} by the Vlasov equation we have
 
 \begin{equation}\label{eq:continuity}
     \int \pdv{f_s}{t} d \vb{v} \int \vb{v} \vdot \grad{f_s} \vb{v} + \frac{q}{m} \int \vb{E} + \vb{v} \cp \vb{B} \vdot \pdv{f_s}{\vb{v}} d \vb{v} = 0
 \end{equation}
 
-With a considerable amount of manipulation \insertref{Chen, ch 7}, equation \ref{eq:continuity} reduces to
+With a considerable amount of manipulation \insertref{Chen, ch 7}, equation \eqref{eq:continuity} reduces to
 
 \begin{equation}\label{eq:contReduced}
     \pdv{n_s}{t} + \div{(n_s \vb{v_s})} = 0 
 \end{equation}
 
 
-In a similar fashion, the momentum equation can be derived from multiplying equation \ref{eq:Vlasov} by the the first velocity moment
+In a similar fashion, the momentum equation can be derived from multiplying equation \eqref{eq:Vlasov} by the the first velocity moment
 
 \begin{equation}\label{eq:firstmoment}
     M^1 = \int m_s \vb{v} f_s d \vb{v}
@@ -118,13 +118,13 @@ Where $P_s$ denotes the pressure tensor field. The energy equation is derived fr
     M^2 = \int \frac{1}{2} m_s \vb{v} \vb{v} f_s d \vb{v}
 \end{equation}
 
-The second order moment described the flow of momentum, and is also called the stress tensor \insertref{Fitzpatrick, eq 3.17, plasma physics: an introduction}. Applying the second velocity moment to equation \ref{eq:Vlasov} equation gives the partial differential equation
+The second order moment described the flow of momentum, and is also called the stress tensor \insertref{Fitzpatrick, eq 3.17, plasma physics: an introduction}. Applying the second velocity moment to equation \eqref{eq:Vlasov} equation gives the partial differential equation
 
 \begin{equation}\label{eq:energy}
     \pdv{t} (\frac{3}{2} p_s + \frac{1}{2} m_s n_s v_s^2) + \div{\vb{Q_s}} - e_s n_s \vb{E} \vdot \vb{v_s} = W_s + \vb{v_s} + \vb{v_s} + \vb{F_s}   
 \end{equation}
 
-Where the terms $Q_s$ and $W_s$ denote the energy flux density and total change of energy of species $s$ respectively. Equations \ref{eq:contReduced}, \ref{eq:momentum}, and \ref{eq:energy}, are collectively known as the fluid equations, and written in their convective time-derivative form, can be reduced to
+Where the terms $\vb{Q}_s$ and $\vb{W}_s$ denote the energy flux density and total change of energy of species $s$ respectively. Equations \eqref{eq:contReduced}, \eqref{eq:momentum}, and \eqref{eq:energy}, are collectively known as the fluid equations, and written in their convective time-derivative form, can be reduced to
 
 \begin{subequations}
     \begin{align}
@@ -163,22 +163,22 @@ From the assumption of a perfectly conducting fluid, and finite current density 
     \vb{E} + \vb{v} \cross \vb{B} = 0
 \end{equation}
 
- From equation \ref{eq:magHydroInf}, equation \ref{eq:curlE} reduces to
+ From equation \eqref{eq:magHydroInf}, equation \eqref{eq:curlE} reduces to
 
 \begin{equation}
-    \pdv{\vb{B}}{t} = \nabla \cross (\vb{V} \cross \vb{B})
+    \pdv{\vb{B}}{t} = \nabla \cross (\vb{v} \cross \vb{B})
 \end{equation}
 
 The equations must then be closed using the fluid continuity equations and the momentum balance equations
 
 \begin{subequations}
     \begin{align}
-        \pdv{\rho}{t} &= \nabla \cdot (\rho \vb{V}) \\
+        \pdv{\rho}{t} &= \nabla \cdot (\rho \vb{v}) \\
         \rho \dv{\vb{v}}{t} &= \grad{p} + \vb{j} \cross \vb{B}
     \end{align}
 \end{subequations}
 
-Where $\rho$ is the fluid density, $p$ is the fluid pressure, and $\dv{v}{t}$ is the material derivative, i.e the rate of change of with respect to the moving fluid particle.
+Where $\rho$ is the fluid density, $p$ is the fluid pressure, and $\dv{\vb{v}}{t}$ is the material derivative, i.e the rate of change of with respect to the moving fluid particle.
 
 
 \section{Plasma parameters}\label{subsec:pParam}
@@ -198,13 +198,13 @@ By defining the variables
     v_{th} \equiv (2 K T / m)^{\frac{1}{2}} \hspace{10pt} \text{and} \hspace{10pt} y \equiv \frac{v_{th}}{u}
 \end{equation*}
     
-and integrating the numerator by parts, equation \ref{eq:avgEint} reduces to
+and integrating the numerator by parts, equation \eqref{eq:avgEint} reduces to
 
 \begin{equation}\label{eq:avgE1D}
     E_{av} = \frac{1}{2} K T
 \end{equation}
 
-Where $K$ denotes the Boltzmann constant. Chen extends this argument for particles with three degrees of freedom. Integrating Maxwell's distribution in three dimensions in a similar fashion to \ref{eq:avgEint} and cancelling the integrals, the average kinetic energy is
+Where $K$ denotes the Boltzmann constant. Chen extends this argument for particles with three degrees of freedom. Integrating Maxwell's distribution in three dimensions in a similar fashion to \eqref{eq:avgEint} and cancelling the integrals, the average kinetic energy is
 
 \begin{equation}\label{eq:avgE3D}
     E_{av} = \frac{3}{2} K T
@@ -223,13 +223,13 @@ The Debye length is a parameter that measures the net persistence of the electro
     n_e = n_{\infty} \exp(\frac{e \phi}{T_e})
 \end{equation}
 
-Where $T_e$ denotes the electron temperature, $n_{\infty}$ is the density of electrons far away from the perturbing test charge, and where $\phi$ is the electrical potential as a function of the radial distance from the test function. Inserting equation \ref{eq:boltzmannFactor} into the Poisson's equation;
+Where $T_e$ denotes the electron temperature, $n_{\infty}$ is the density of electrons far away from the perturbing test charge, and where $\phi$ is the electrical potential as a function of the radial distance from the test function. Inserting equation \eqref{eq:boltzmannFactor} into Poisson's equation;
 
 \begin{equation}\label{eq:poissonDebye}
     \laplacian{\phi}  = - \frac{\rho}{\epsilon_0} = \frac{-e}{\epsilon_0} (n_i - n_e) = \frac{-e}{\epsilon_0} n_{\infty} \left[1 - \exp (\frac{e \phi}{T_e}) \right]
 \end{equation}
 
-Assuming $e \phi \lll T_e$, then it is reasonable to only keep the linear terms of the Taylor expansion of the $\exp (\frac{e \phi}{T_e})$ term on the right hand side of equation \ref{eq:poissonDebye}. Poisson's equation then takes the form
+Assuming $e \phi \lll T_e$, then it is reasonable to only keep the linear terms of the Taylor expansion of the $\exp (\frac{e \phi}{T_e})$ term on the right hand side of equation \eqref{eq:poissonDebye}. Poisson's equation then takes the form of Helmholtz equation
 
 \begin{equation}\label{eq:poissonSimple}
     \laplacian{\phi} - \frac{1}{\lambda_D^2} \phi = 0
@@ -242,7 +242,7 @@ Where the Debye length $\lambda_D$ has been defined as follows:
     \lambda_d \equiv \sqrt{\frac{\epsilon_0 k T_e}{n_e e^2}}
 \end{equation}
 
-The solution of equation \ref{eq:poissonSimple} takes the form
+The solution of equation \eqref{eq:poissonSimple} takes the form
 
 \begin{equation*}
     V \propto \exp (\frac{\pm x}{\lambda_D})
@@ -267,7 +267,7 @@ In plasma simulations of the solar wind an important physical phenomena is plasm
     \omega_{pe} = \sqrt{\frac{n_e e^2}{\epsilon_0 m_e}}
 \end{equation}
 
-$\omega_{pe}$ is called the electron plasma frequency. A similar expression exists for the oscillations of ions, but due to their higher mass they oscillate much slower rate than the electrons. Equation \ref{eq:plasmaFreq} is formally derived from Maxwell's equations \insertref{derivations by Chen sec 4.3, Fitzpatrick, Hutchinson} by assuming an infinite plasma not affected by an external magnetic field, no thermal motion i.e $KT = 0$, and ion fixed in space  in a uniform distribution \insertref{Chen sec 4.3}.
+$\omega_{pe}$ is called the electron plasma frequency. A similar expression exists for the oscillations of ions, but due to their higher mass they oscillate much slower rate than the electrons. Equation \eqref{eq:plasmaFreq} is formally derived from Maxwell's equations \insertref{derivations by Chen sec 4.3, Fitzpatrick, Hutchinson} by assuming an infinite plasma not affected by an external magnetic field, no thermal motion i.e $KT = 0$, and ion fixed in space  in a uniform distribution \insertref{Chen sec 4.3}.
 
 
 
@@ -318,19 +318,19 @@ The location of the magnetopause of a planet with an intrinsic field can be appr
 \begin{equation}\label{eq:pBalanceRough}
 \rho_w v^2_w \sim B^2_{\mu} / 2 \mu_0  
 \end{equation}
-Where $rho_w$ and $v_w$ is the solar wind density and velocity respectively, $B_{\mu}$ is the dipole magnetic field strength, and $\mu_0$ is the vacuum permeability. The magnetic field strength is expressed as
+Where $\rho_w$ and $v_w$ is the solar wind density and velocity respectively, $B_{\mu}$ is the dipole magnetic field strength, and $\mu_0$ is the vacuum permeability. The magnetic field strength is expressed as
 
 \begin{equation}\label{eq:magFieldStrength}
     B_{\mu} = (\mu_0 / 4 \pi) \mu / r^3_M
 \end{equation}
 
-where $\mu$ is the permeability of the planet. However, the magnetopause must carry a current to confine the planets dipole magnetic field. This current produces a magnetic field on the order of magntiude to $B_{\nu}$. Therefore, just inside the magnetopause, the magnetic field strength is approximately twice $B_{\nu}$. The balance equation \ref{eq:pBalanceRough} then becomes 
+where $\mu$ is the permeability of the planet. However, the magnetopause must carry a current to confine the planets dipole magnetic field. This current produces a magnetic field on the order of magnitude to $B_{\nu}$. Therefore, just inside the magnetopause, the magnetic field strength is approximately twice $B_{\nu}$. The balance equation \eqref{eq:pBalanceRough} then becomes 
 
 \begin{equation}\label{eq:pressureBalance}
     \rho_w v^2_w \approx \frac{(2 B_{\mu})^2}{2 \mu_0} 
 \end{equation}
 
-Substituting in the magnetic field strength from equation \ref{eq:magFieldStrength} the distance of the magnetopause on the sun-ward side to the planet is approximately 
+Substituting in the magnetic field strength from equation \eqref{eq:magFieldStrength} the distance of the magnetopause on the sun-ward side to the planet is approximately 
 
 \begin{equation}\label{eq:magnetopause}
     r_M \approx \left(\frac{\mu}{4 \pi} \sqrt{\frac{2 \mu_0}{\rho_w v^2_w}} \right)^{\frac{1}{3}}
@@ -358,7 +358,7 @@ A spacecraft collects charged particles when moving relatively to ambient plasma
     \dv{Q}{t} = \sum_s I_s(V) = 0
 \end{equation}
 
-The solution of equation \ref{eq:currentBalance} for $V$ is called the floating potential of the spacecraft, and is relative to the neutral plasma. The floating potential of a spacecraft in a drifting plasma is usually negative, since the electrons move at a higher speed than the ions.
+The solution of equation \eqref{eq:currentBalance} for $V$ is called the floating potential of the spacecraft, and is relative to the neutral plasma. The floating potential of a spacecraft in a drifting plasma is usually negative, since the electrons move at a higher speed than the ions.
 \\
 For complex geometries it is non-trivial to find analytical expressions for the currents $I_s$ charging the spacecraft; in this section, Langmuir probe theory and orbital motion-limited theory is discussed as the basic tools for analyzing spacecraft charging with simple geometries. The primary charging mechanisms that effect the overall potential of a spacecraft are then presented. Special attention is given to the photoelectric effect and the spacecraft photoelectric current, as the implementation of this current in a computational model is the overall objective of this thesis \todo{clunky?}.
 
@@ -377,7 +377,7 @@ In orbital motion limited theory, or OML theory for short, the charge flux impin
     \end{align}
 \end{subequations}
 
-Integrating the particle distribution $f_s(\vb{x}, \vb{v}, t)$ using equation \ref{eq:impactvel} and \ref{eq:distStraight} as limits of integration, we can find the flux of particles that impact the spacecraft. It is often convenient work with a normalized potential variable in the formulas for current, define
+Integrating the particle distribution $f_s(\vb{x}, \vb{v}, t)$ using equation \eqref{eq:impactvel} and \eqref{eq:distStraight} as limits of integration, we can find the flux of particles that impact the spacecraft. It is often convenient work with a normalized potential variable in the formulas for current, define
 
 \begin{equation}\label{eq:normPot}
     \eta_s \equiv - \frac{q_s V}{k T_s}
@@ -394,7 +394,7 @@ Using the normalized potential, particles with $n_s < 0$ will be repelled, and p
     \end{align}
 \end{subequations}
 
-Where equations \ref{eq:IPlane}, \ref{eq:ICylinder} and \ref{eq:Isphere} are the functions of current for a plane, a cylinder, and a sphere respectively. These functions are derived based on the assumption that the cylinder is long compared to $\lambda_D$, the radius of the sphere and the cylinder to be small compared to $\lambda_D$, and the plane to be wider than $\lambda_D$. The notation $I_{th}$ is used to denote the current collected when the object is neutrally charged, i.e $\eta_s = 0$, and $erfc(\sqrt{\eta_s})$ is the complementary error function defined as
+Where equations \eqref{eq:IPlane}, \eqref{eq:ICylinder} and \eqref{eq:Isphere} are the functions of current for a plane, a cylinder, and a sphere respectively. These functions are derived based on the assumption that the cylinder is long compared to $\lambda_D$, the radius of the sphere and the cylinder to be small compared to $\lambda_D$, and the plane to be wider than $\lambda_D$. The notation $I_{th}$ is used to denote the current collected when the object is neutrally charged, i.e $\eta_s = 0$, and $erfc(\sqrt{\eta_s})$ is the complementary error function defined as
 
 \begin{subequations}
     \begin{align*}
@@ -411,13 +411,13 @@ In 1921, Albert Einstein was awarded the Nobel price in physics for his discover
     E = h \nu - W
 \end{equation}
 
-Where $E$ denotes the maximum kinetic energy of the ejected electron, $h$ is Planck's constant, $\nu$ is the wavelength of the light quanta, and $W_f$ denotes the work function of the material. It is often useful in engineering to express equation \ref{eq:phelectron} in terms of the threshold frequency $\nu_0$ at which the photons have enough energy to cause photoemission. Using the relation $E = W_f = h \nu_0$, equation \ref{eq:phelectron} becomes
+Where $E$ denotes the maximum kinetic energy of the ejected electron, $h$ is Planck's constant, $\nu$ is the wavelength of the light quanta, and $W_f$ denotes the work function of the material. It is often useful in engineering to express equation \eqref{eq:phelectron} in terms of the threshold frequency $\nu_0$ at which the photons have enough energy to cause photoemission. Using the relation $E = W_f = h \nu_0$, equation \eqref{eq:phelectron} becomes
 
 \begin{equation}\label{eq:phfreq}
     E_{k} = h(\nu - \nu_0)
 \end{equation}
 
-From equation \ref{eq:phelectron}, it is evident that the photoelectron yield is dependent on the material composition of the spacecraft. Table \ref{tab:workfunc} shows the work functions for some of the materials commonly used in space applications, these data have been reproduced from \insertref{Handbook of Chemistry and Physics} and \insertref{Experimental Investigation of Photoemission from Satellite Surface Materials}.
+From equation \eqref{eq:phelectron}, it is evident that the photoelectron yield is dependent on the material composition of the spacecraft. Table \ref{tab:workfunc} shows the work functions for some of the materials commonly used in space applications, these data have been reproduced from \insertref{Handbook of Chemistry and Physics} and \insertref{Experimental Investigation of Photoemission from Satellite Surface Materials}.
 
 \begin{table}[h!]
     \centering
@@ -452,7 +452,7 @@ Then, the photoelectron current flux $J_{ph}$ can be found by integrating over t
 \end{equation}
 
 
-Strictly speaking, equation \ref{eq:naivePhYield} is only an approximation for the yield of photoelectrons. A more accurate description has to account for the amount of photons reflected from the surface, thereby not contributing to the total photoelectron current flux. Defining the reflectance of the surface exposed to sunlight as $R(\omega)$, equation \ref{eq:phCurrentNaive} becomes \insertref{Fundamentals of sc charging, ch 7}
+Strictly speaking, equation \eqref{eq:naivePhYield} is only an approximation for the yield of photoelectrons. A more accurate description has to account for the amount of photons reflected from the surface, thereby not contributing to the total photoelectron current flux. Defining the reflectance of the surface exposed to sunlight as $R(\omega)$, equation \eqref{eq:phCurrentNaive} becomes \insertref{Fundamentals of sc charging, ch 7}
 
 \begin{equation}\label{eq:phCurrentR}
     J_{ph}(R) = \int^\infty_0 Y(\omega, R) f_s(\omega) \, d\omega
@@ -464,7 +464,7 @@ Both the photoelectron yield, and the reflectance of the spacecraft material is 
     J_{ph}(\theta) = \int^\infty_0 f_s(\omega) Y^{*}[\omega, R(\omega, \theta)][1 - R(\omega, \theta)] \cos \theta \; d\omega
 \end{equation}
 
-Where $Y^{*}(\omega, R(\omega, \theta))$ is the photoelectron yield per \emph{absorbed} photon. Using estimates for terms $Y^{*}$ and $1 - R(\omega, \theta)$ and cancelling cosine terms in the product, equation \ref{eq:phCurrentFull} becomes
+Where $Y^{*}(\omega, R(\omega, \theta))$ is the photoelectron yield per \emph{absorbed} photon. Using estimates for terms $Y^{*}$ and $1 - R(\omega, \theta)$ and cancelling cosine terms in the product, equation \eqref{eq:phCurrentFull} becomes
 
 \begin{subequations}
     \begin{align}
@@ -480,7 +480,7 @@ Finally, the photoelectron current $I_{ph}(\theta)$ can be expressed as
     I_{ph}(\theta) = J_{ph}(0) A \cos \theta 
 \end{equation}
 
-Where $A$ is the surface area of the spacecraft exposed to sunlight. Inserting equation \ref{eq:phCurrent} into equation \ref{eq:currentBalance}, and with a known photon flux from blackbody radiation theory, the floating potential for a spacecraft subject to photoelectric and ambient plasma charging can be computed.
+Where $A$ is the surface area of the spacecraft exposed to sunlight. Inserting equation \eqref{eq:phCurrent} into equation \eqref{eq:currentBalance}, and with a known photon flux from blackbody radiation theory, the floating potential for a spacecraft subject to photoelectric and ambient plasma charging can be computed.
 
 \subsubsection*{The sun as a blackbody radiation source}
 In the previous section, an expression for the photoelectron current was shown. If we are to compute the floating potential of a spacecraft, it is necessary to either know the value of the photoelectron current a priori or to compute its value based on the amount of photon flux through the spacecraft surface. In this section we discuss the theory of blackbody radiation as a method of computing solar photon flux.
@@ -501,7 +501,7 @@ In "The theory of heat radiation" Planck derives the following expression for th
     B(\nu, T) = \frac{2 h \nu^3}{c^2} \frac{1}{\exp(\frac{h \nu}{k_B T}) - 1}
 \end{equation}
 
-Where $\nu$ is the frequency of the electromagnetic radiation emitted, $T$ is the temperature of the blackbody measured in Kelvin, $c$ is the speed of light, $h$ is the planck's constant, and $k_b$ is the Boltzmann constant. Equation \ref{eq:planckFreq} is called Planck's law, and can be similarly expressed in terms of the wavelength of the radiation $\lambda$.
+Where $\nu$ is the frequency of the electromagnetic radiation emitted, $T$ is the temperature of the blackbody measured in Kelvin, $c$ is the speed of light, $h$ is the planck's constant, and $k_b$ is the Boltzmann constant. Equation \eqref{eq:planckFreq} is called Planck's law, and can be similarly expressed in terms of the wavelength of the radiation $\lambda$.
 
 \begin{equation}\label{eq:planckWave}
     B(\lambda, T) = \frac{2 h c^2}{\lambda^5} \frac{1}{\exp(\frac{hc}{\lambda k_B T}) - 1}
@@ -509,7 +509,7 @@ Where $\nu$ is the frequency of the electromagnetic radiation emitted, $T$ is th
 
 The spectral energy computed from the equations above can be expressed in many units depending on the problem at hand. Of particular interest in this thesis is expressing the spectral energy as the number of photons emitted at a particular wavelength. In the derivation of Planck's law; Planck is often credited as the father of modern quantum mechanics by historians for his idea that the radiation emitted by a blackbody at certain frequencies as packets of energy \insertref{a historical text on the history of quantum mechanics, i.e }
 
-Figure \ref{fig:blackbody} plots the irradiance given by equation \ref{eq:planckWave} for some values of $T$, the suns radiative output can be approximated by assuming a blackbody temperature $T \approx 5800 K$, shown in the figure as a blue line.
+Figure \ref{fig:blackbody} plots the irradiance given by equation \eqref{eq:planckWave} for some values of $T$, the suns radiative output can be approximated by assuming a blackbody temperature $T \approx 5800 K$, shown in the figure as a blue line.
 
 \begin{figure}[h!]
     \centering
@@ -519,7 +519,7 @@ Figure \ref{fig:blackbody} plots the irradiance given by equation \ref{eq:planck
 \end{figure}
 
 
-The radiation calculated from equation \ref{eq:planckFreq} is commonly given in the units $W m^{-2} Sr^{-1} nm^{-1}$, called spectral radiance, it is the radiance of a surface per unit wavelength. In figure \ref{fig:blackbody}, the radiance is multiplied by the ratio $\frac{R_{\odot}}{a_{\oplus}}$ (where $R_{\odot}$ is the radius of the Earth, and $a_{\oplus}$ is the solar radius) to give the spectral irradiance as measured on earth, the units then are given as  $W ^{-2} m^{-2} nm^{-1}$.
+The radiation calculated from equation \eqref{eq:planckFreq} is commonly given in the units $W m^{-2} Sr^{-1} nm^{-1}$, called spectral radiance, it is the radiance of a surface per unit wavelength. In figure \ref{fig:blackbody}, the radiance is multiplied by the ratio $\frac{R_{\odot}}{a_{\oplus}}$ (where $R_{\odot}$ is the radius of the Earth, and $a_{\oplus}$ is the solar radius) to give the spectral irradiance as measured on earth, the units then are given as  $W ^{-2} m^{-2} nm^{-1}$.
 \\
 \insertref{The solar reference spectrum in April 2008 as recorded by the Solar instrument on the International Space Station. \url{https://www.esa.int/ESA_Multimedia/Images/2017/12/Solar_spectrum}}
 
@@ -534,7 +534,7 @@ The radiation calculated from equation \ref{eq:planckFreq} is commonly given in 
 
 Comparing figure \ref{fig:blackbody} to figure \ref{fig:solIrradiance}, it can be seen that aside from smaller fluctuations in electromagnetic radiation, due to absorption of energy at certain frequencies in the solar atmosphere, our approximation of the sun as a blackbody emitter is a good one. 
 \\
-Given the work function (or more accurately, the cut-off wavelength or frequency) of the material of a spacecraft, and assuming a photoelectron yield of one photoelectron to one photon under the cut-off wavelength, integrating equation \ref{eq:planckWave} gives the photoelectron flux emitted by the surface of a spacecraft exposed to sunlight. Integrating planck's law for a given frequency band is non-trivial, in \ref{sec:methods}, the method for integrating Planck's law by Widger and Woodall \insertref{Integration of Planck blackbody radiation function, Widger \& Woodall} is presented in detail. 
+Given the work function (or more accurately, the cut-off wavelength or frequency) of the material of a spacecraft, and assuming a photoelectron yield of one photoelectron to one photon under the cut-off wavelength, integrating equation \eqref{eq:planckWave} gives the photoelectron flux emitted by the surface of a spacecraft exposed to sunlight. Integrating planck's law for a given frequency band is non-trivial, in \ref{sec:methods}, the method for integrating Planck's law by Widger and Woodall \insertref{Integration of Planck blackbody radiation function, Widger \& Woodall} is presented in detail. 
 
 
 \subsection*{Secondary and backscattered electrons}
@@ -555,7 +555,7 @@ Backscattered electron emission is similar to secondary electron emission in tha
 \\
 The outgoing electron is the same electron that collided with the surface material, backscattering of electrons can then be thought of as a form of reflection. Since the outgoing and incoming electron is the same particle, the probability of backscattering, $\eta(E)$, cannot exceed 1. 
 
-Similarly to the secondary electron emission mechanism, the bacscattering effect is dependent on the distribution of the electrons in the ambient plasma, so a similar integral to equation \ref{eq:secondaryE} can be formed for the backscattered electron current flux 
+Similarly to the secondary electron emission mechanism, the bacscattering effect is dependent on the distribution of the electrons in the ambient plasma, so a similar integral to equation \eqref{eq:secondaryE} can be formed for the backscattered electron current flux 
 
 \begin{equation}\label{eq:backscatterE}
     j_b = \int^{\infty}_0 \eta(E) f(E) dE

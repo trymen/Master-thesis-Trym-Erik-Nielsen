@@ -44,7 +44,7 @@ Using the same notation as defined in \parencite{Birdsall2004} the Lorentz force
     \end{align}
 \end{subequations}
 
-In the Boris algorithm equation \ref{eq:borizVel} is decomposed into a series of updating steps. First, half the acceleration is added, then the intermediary velocity vector is rotated due to the external magnetic field $\vb{B}$, and finally the second half of the acceleration is added.
+In the Boris algorithm equation \eqref{eq:borizVel} is decomposed into a series of updating steps. First, half the acceleration is added, then the intermediary velocity vector is rotated due to the external magnetic field $\vb{B}$, and finally the second half of the acceleration is added.
 
 \begin{subequations}\label{eq:borisNewVel}
     \begin{align}
@@ -64,26 +64,26 @@ Where the rotational parameters $\vb{T}$ and $\vb{S}$ are expressed as
     \end{align}
 \end{subequations}
 
-Equations \ref{eq:borisNewVel} are equally suited for plasmas with time varying magnetic fields as for electrostatic plasma with a constant external magnetic field. Since PINC is an electrostatic model, equations \ref{eq:BrotParams} is solved once before the main time loop, then applied to each call to the mover method.
+Equations \eqref{eq:borisNewVel} are equally suited for plasmas with time varying magnetic fields as for electrostatic plasma with a constant external magnetic field. Since PINC is an electrostatic model, equations \eqref{eq:BrotParams} is solved once before the main time loop, then applied to each call to the mover method.
 
 \subsection{Field Solver}
 Several field solvers exists in PINC, in this thesis the multigrid solver developed by Killie \parencite{Killie} has been used. The multigrid solver is an iterative method; the basic principle of the method in a PiC context is to solve Poisson's equation first on a coarse grid, then using the solution on the course grid as a guess, solve the equation again for a finer grid. The solution for the coarse grid speeds up the solution for the finer grid, reducing the total computational time required to converge to an accurate solution. 
 \\
 There are three main types of multigrid solver, divided into the so called V-cycle, W-cycle and F-cycle, defined by when the algorithm should use a coarser or finer mesh than used in the previous iteration. Multigrid solvers are highly flexible, and many researchers have spent considerable effort in order to optimize the number of iterations \insertref{Multigrid, Trottenberg et al}, highly optimized multigrid solvers have a local complexity given by $\mathcal{O}(N_g)$, with a global complexity of $\mathcal{O}(N_g log(N_g))$ when using domain decomposition like in the case of PINC \insertref{Trottenberg2020}.
 \\
-As described earlier, the multigrid method solves Poisson's equation in PINC. Strictly speaking, the solution to Gauss's law, equation \ref{eq:gauss} is solved. In PINC however, electrostatic plasma is assumed, in this case the electric field is irrotational, i.e. $\nabla \cross \vb{E} = 0$ and the electric field can then be represented as the gradient of a scalar potential field $\vb{E} = \nabla \phi$.  Substituting the potential field back into Gauss's law, equation \ref{eq:gauss} we have Poisson's equation
+As described earlier, the multigrid method solves Poisson's equation in PINC. Strictly speaking, the solution to Gauss's law, equation \eqref{eq:gauss} is solved. In PINC however, electrostatic plasma is assumed, in this case the electric field is irrotational, i.e. $\nabla \cross \vb{E} = 0$ and the electric field can then be represented as the gradient of a scalar potential field $\vb{E} = \nabla \phi$.  Substituting the potential field back into Gauss's law, equation \eqref{eq:gauss} we have Poisson's equation
 
 \begin{equation}\label{eq:poisson}
     \nabla^2 \phi = \frac{\rho}{\epsilon}
 \end{equation}
 
-In PINC this equation is solved iteratively using the Gauss-seidel method. Gauss-Seidel discretizes \ref{eq:poisson} using the Forward-Time Central-Space (FTCS) finite difference scheme. In one spatial dimension, the electric field in terms of the potential becomes
+In PINC this equation is solved iteratively using the Gauss-seidel method. Gauss-Seidel discretizes \eqref{eq:poisson} using the Forward-Time Central-Space (FTCS) finite difference scheme. In one spatial dimension, the electric field in terms of the potential becomes
 
 \begin{equation}\label{eq:Ediscrete}
     \vb{E}_g = \frac{\phi^{n+1}_g - \phi^{n-1}_g}{2\Delta x}
 \end{equation}
 
-and Poisson's equation, equation \ref{eq:poisson}, becomes
+and Poisson's equation, equation \eqref{eq:poisson}, becomes
 
 \begin{equation}\label{eq:poissonDescrete}
     \frac{\phi^{n+1}_g - 2\phi^n_g + \phi^{n-1}_g}{{\Delta x}^2} = - \frac{\rho_g}{\epsilon}
@@ -99,7 +99,7 @@ In the particle in cell method particles can exist anywhere in the continuous sp
     \vb{w}_{i,j,k} = \vb{x}_p - \vb{X}_{i,j,k}
 \end{equation}
 
-Where $\vb{x}_p$ is the position of particle p, and $\vb{X}_{i,j,k}$ is the position of the nearest grid point closest to the origin. Using equation \ref{eq:weightFunc}, the charge distribution of particle p to a two dimensional grid can be found as
+Where $\vb{x}_p$ is the position of particle p, and $\vb{X}_{i,j,k}$ is the position of the nearest grid point closest to the origin. Using equation \eqref{eq:weightFunc}, the charge distribution of particle p to a two dimensional grid can be found as
 
 \begin{subequations}
     \begin{align*}
@@ -110,7 +110,7 @@ Where $\vb{x}_p$ is the position of particle p, and $\vb{X}_{i,j,k}$ is the posi
     \end{align*}
 \end{subequations}
 
-With similar equations for the three dimensional case can be found from equation \ref{eq:weightFunc}. From the charge distribution found above, the charge density can be found directly by dividing the charge distribution by the volume of a computational cell, i.e 
+With similar equations for the three dimensional case can be found from equation \eqref{eq:weightFunc}. From the charge distribution found above, the charge density can be found directly by dividing the charge distribution by the volume of a computational cell, i.e 
 
 \begin{equation*}
     \rho_{i,j,k} = \frac{Q_{i,j,k}}{V_{i,j,k}}
@@ -128,7 +128,7 @@ In PINC, and in other particle in cell codes, particles move in continuous space
 \end{equation}
 
 
-Where C is some constant dependent on the discretization scheme used. In the case of the CIC scheme, the constant C is approximately equal to $\pi$. Failure to meet this condition in a PIC simulation leads to unphysical heating of the plasma. Equation \ref{eq:GridSize} must therefore be satisfied in all directions of the full computational domain to ensure conservation of energy.
+Where C is some constant dependent on the discretization scheme used. In the case of the CIC scheme, the constant C is approximately equal to $\pi$. Failure to meet this condition in a PIC simulation leads to unphysical heating of the plasma. Equation \eqref{eq:GridSize} must therefore be satisfied in all directions of the full computational domain to ensure conservation of energy.
 
 \subsection{temporal resolution}
 In PINC, the boris algorithm is used for particle pushing. The boris algorithm is an explicit forward time integration scheme, and as such simulations run with PINC must satisfy temporal stability constraints associated with such schemes. A Von Neumann stability analysis of a harmonic oscillator without an external magnetic field given by the following equation \parencite{Hockney1988}, \parencite{Birdsall2004}, \parencite{Lapenta2011} 
@@ -184,7 +184,7 @@ Objects in PINC are thus stored as 1 by N arrays representing scalar fields, whe
     p = x \cdot \text{sizeProd}[0] + y \cdot \text{sizeProd}[1] + z \cdot \text{sizeProd}[2]
 \end{equation}
 
-Traversing along an axis from a point with index $p$ of the \textit{Grid} structure, is then the simple matter of adding the corresponding element of the \textit{sizeProd} array to the index $p$. We will make use of this fact, along with equation \ref{eq:PINCindex}, later in this chapter in creating an algorithm for photoemission on the surface of conducting objects. 
+Traversing along an axis from a point with index $p$ of the \textit{Grid} structure, is then the simple matter of adding the corresponding element of the \textit{sizeProd} array to the index $p$. We will make use of this fact, along with equation \eqref{eq:PINCindex}, later in this chapter in creating an algorithm for photoemission on the surface of conducting objects. 
 
 
 \subsection{The capacitance matrix method}
@@ -228,25 +228,25 @@ The correction in potential in terms of the equipotential $\phi_C$ of the surfac
     \delta \phi_{s,j} = \phi_C - \phi_{s,j}
 \end{equation}
 
-Substituting equation \ref{eq:SCphiCorrEqui} into equation \ref{eq:SCchargeCorr}, the charge density correction equation becomes
+Substituting equation \eqref{eq:SCphiCorrEqui} into equation \eqref{eq:SCchargeCorr}, the charge density correction equation becomes
 
 \begin{equation}\label{eq:SCrhoCorrNew}
     \delta \rho_{s,i} = \sum^{N_B}_{j=1} C_{ij} (\phi_C - \phi_{s,j})
 \end{equation}
 
-The equipotential $\phi_C$ is unknown in equation \ref{eq:SCrhoCorrNew}; by using the fact that charges must be conserved when impinged charges are redistributed to the object surface, the equipotential can be calculated. Conservation of charge takes the form
+The equipotential $\phi_C$ is unknown in equation \eqref{eq:SCrhoCorrNew}; by using the fact that charges must be conserved when impinged charges are redistributed to the object surface, the equipotential can be calculated. Conservation of charge takes the form
 
 \begin{equation}\label{eq:ConsSurfCharge}
     \sum^{N_B}_{i=1} \delta \rho_{s,i} = 0
 \end{equation}
 
-Substituting equation \ref{eq:SCrhoCorrNew} into equation \ref{eq:ConsSurfCharge}, $\phi_C$ can be computed as
+Substituting equation \eqref{eq:SCrhoCorrNew} into equation \eqref{eq:ConsSurfCharge}, $\phi_C$ can be computed as
 
 \begin{equation}\label{eq:Equipotential}
     \phi_C = \frac{\sum_i \sum_j C_{ij} \phi_{s,j}}{\sum_i \sum_j C_{ij}}
 \end{equation}
 
-In the conducting object run mode of PINC, after a first pass of the multigrid Poisson solver, equations \ref{eq:SCrhoCorrNew} and equation \ref{eq:Equipotential} are solved to redistribute absorbed charged particles, a new pass with the Poisson solver then solves the new potential field using the correction to the charge density field. Details on the implementation of these equations in PINC can be referenced by contacting the 4DSpace group at the University of Oslo for access to the PINC code repository.
+In the conducting object run mode of PINC, after a first pass of the multigrid Poisson solver, equations \eqref{eq:SCrhoCorrNew} and equation \eqref{eq:Equipotential} are solved to redistribute absorbed charged particles, a new pass with the Poisson solver then solves the new potential field using the correction to the charge density field. Details on the implementation of these equations in PINC can be referenced by contacting the 4DSpace group at the University of Oslo for access to the PINC code repository.
 
 \newpage
 
@@ -316,7 +316,7 @@ void oFindAllSunlitNodes(...){
 \end{minipage}
 
 \vspace{1cm}
-Listing \ref{lst:sunlitNodes} shows the basic structure of the function described above. Each column normal to the YZ plane is stepped down using the "size" array that stores the number of nodes along each axis of the domain. The linear index of the node is then found using equation \ref{eq:PINCindex} and compared with the indices of surface nodes stored in the "surface" array. 
+Listing \ref{lst:sunlitNodes} shows the basic structure of the function described above. Each column normal to the YZ plane is stepped down using the "size" array that stores the number of nodes along each axis of the domain. The linear index of the node is then found using equation \eqref{eq:PINCindex} and compared with the indices of surface nodes stored in the "surface" array. 
 
 The surface node array is initialized by a function that computes the object capacitance matrix, which is called before the sunlit surface nodes are found. In the photoelectron injection function, the indices of the sunlit nodes can then be converted into Cartesian coordinates with a helper function using the "sizeProd" array. 
 
@@ -409,7 +409,7 @@ Where $N_{inject}$ is the number of super particles to inject into each photoemi
     q_{part} = \frac{\rho \, e \, V_{cell}}{N_{p,cell}}
 \end{equation}
 
-where $\rho$ is the electron density, $V_{cell}$ is the volume of the cell, and $N_{p,cell}$ is an input parameter specifying the number of particles per computational cell. Equation \ref{eq:NPHelectrons} can be rewritten to calculate the total number of photoelectrons ejected per timestep. Since several photoelectron injection methods have been analyzed for this thesis, the total photoelectron flux per timestep is the form that has been implemented into PINC
+where $\rho$ is the electron density, $V_{cell}$ is the volume of the cell, and $N_{p,cell}$ is an input parameter specifying the number of particles per computational cell. Equation \eqref{eq:NPHelectrons} can be rewritten to calculate the total number of photoelectrons ejected per timestep. Since several photoelectron injection methods have been analyzed for this thesis, the total photoelectron flux per timestep is the form that has been implemented into PINC
 
 \begin{equation}
     N_{total} =  \frac{j_{ph} \cdot A \cdot dt}{q_{part}}
@@ -439,25 +439,25 @@ First, to simplify the integrals, Planck's law is recast in terms of the wavenum
 
 Where B(T) is the radiance, given in units of $W cm^{-2} Sr^{-1}$, T is the absolute temperature in Kelvins, and $C_1$ and $C_2$ are the first and second radiation constants respectively.
 
-Letting $x = C_2 T^{-1} \nu$, equation \ref{eq:PlanckNu} can be rewritten as 
+Letting $x = C_2 T^{-1} \nu$, equation \eqref{eq:PlanckNu} can be rewritten as 
 
 \begin{equation}\label{eq:PlanckX}
     B(T) = C_1 C_2^{-4} T^4 \int^{\infty}_x \frac{x^3}{\exp{x} - 1} dx
 \end{equation}
 
-The integrand in equation \ref{eq:PlanckX} can be expanded in a series form, substituting that series into equation \ref{eq:PlanckX} and integrating by parts, equation \ref{eq:planckX} becomes
+The integrand in equation \eqref{eq:PlanckX} can be expanded in a series form, substituting that series into equation \eqref{eq:PlanckX} and integrating by parts, equation \eqref{eq:planckX} becomes
 
 \begin{equation}\label{eq:PlanckSum}
     \int^{\infty}_x \frac{x^3}{\exp{x} - 1} dx = \sum^{\infty}_{n=1} \exp{-n x} \left(x^2 n^{-1} + 3 x^2 n^{-2} + 6 x n^{-3} + 6 n^{-4} \right)
 \end{equation}
 
-$C_1$, $C_2$ and T are known constants in equation \ref{eq:PlanckX}, and the infinite sum in equation \ref{eq:PlanckSum} is straight forward to compute to some finite tolerance using a C function. The integral in \ref{eq:PlanckSum} is computed in units of radiance $W m^2 Sr^{-1}$, the solid angle $\Omega$ of the photoemitting object with respect to the sun can be calculated as
+$C_1$, $C_2$ and T are known constants in equation \eqref{eq:PlanckX}, and the infinite sum in equation \eqref{eq:PlanckSum} is straight forward to compute to some finite tolerance using a C function. The integral in \eqref{eq:PlanckSum} is computed in units of radiance $W m^2 Sr^{-1}$, the solid angle $\Omega$ of the photoemitting object with respect to the sun can be calculated as
 
 \begin{equation*}
     \Omega = \frac{A_s}{r^2}
 \end{equation*}
 
-Where $A_s$ is the area of the sunlit surface, and $r$ is the radial distance from the center of the sun to the object. Multiplying the result of \ref{eq:PlanckSum} by the solid angle of the object with respect to the sun, and the surface area of the sun, the power output in the frequency band above the work function of interest can be found. A similar integral to the one found in equation \ref{eq:PlanckSum} can be constructed in terms of photons per second instead of Watts.
+Where $A_s$ is the area of the sunlit surface, and $r$ is the radial distance from the center of the sun to the object. Multiplying the result of \eqref{eq:PlanckSum} by the solid angle of the object with respect to the sun, and the surface area of the sun, the power output in the frequency band above the work function of interest can be found. A similar integral to the one found in equation \eqref{eq:PlanckSum} can be constructed in terms of photons per second instead of Watts.
 
 Computing the photons impinging on the surface per timestep does not however correspond to the amount of photoelectrons emitted by the sunlit surface. To compute the total photoelectron flux, the photon impinging rate must be multiplied by the surface material reflectance, and the photoelectron yield (number of electrons emitted per incoming photon above the work function of the material) as described in chapter \ref{sec:theory}.
 
@@ -499,7 +499,7 @@ void oPlanckPhotonIntegral(...){
 \end{lstlisting}
 \end{minipage}
 
-Listing \ref{lst:planck} shows a numeric implementation of equation \ref{eq:PlanckX} and equation \ref{eq:PlanckSum}. The original algorithm \parencite{Blackbody} has been converted from C++ code to C for compatibility with the PINC framework.
+Listing \ref{lst:planck} shows a numeric implementation of equation \eqref{eq:PlanckX} and equation \eqref{eq:PlanckSum}. The original algorithm \parencite{Blackbody} has been converted from C++ code to C for compatibility with the PINC framework.
 
 
 \subsection{Injection of photoelectrons}\label{subsec:injection}
@@ -537,7 +537,7 @@ Whereas the normal component of the velocity is sampled from a half-Maxwellian d
 
 The bivariate distribution is implemented in PINC by sampling a bivariate Gaussian distribution with a variation equal to the average thermal velocity of the photoelectrons. The normal component of the photoelectron velocity is sampled from a univariate Gaussian distribution, also with a variation equal to the average thermal velocity, and rejecting the negative velocities (pointing into the object).
 
-The second node injection method implemented similarly distributed emitted particles as a partial push using equation \ref{eq:injection}. The method differs in how the velocity distribution of the particles were sampled. First, the speed of the electron is sampled from a univariate Gaussian distribution and the velocity of the particle is initialized as parallel and opposite to the direction of the sun. Then, a rotation matrix is formed from subsequent rotations about each axis perpendicular to the sunward direction. Each rotation angle is randomly sampled from the range $[\ang{-90}, \ang{90}]$ to reduce the probability of the particle being injected into the object.
+The second node injection method implemented similarly distributed emitted particles as a partial push using equation \eqref{eq:injection}. The method differs in how the velocity distribution of the particles were sampled. First, the speed of the electron is sampled from a univariate Gaussian distribution and the velocity of the particle is initialized as parallel and opposite to the direction of the sun. Then, a rotation matrix is formed from subsequent rotations about each axis perpendicular to the sunward direction. Each rotation angle is randomly sampled from the range $[\ang{-90}, \ang{90}]$ to reduce the probability of the particle being injected into the object.
 
 In PINC, the sunward unit vector is always defined as being in the negative x direction. Thus, the rotation matrix in PINC is implemented as two elemental rotations about the y and z axis in either order. The rotation tensor $\pmb{R}$ is then expressed as
 
@@ -563,7 +563,7 @@ and in the matrix form
         \end{bmatrix}
 \end{equation}
 
-Where $\beta$, $\gamma$ are the rotation angles about the y and z axis, and $\pmb{Y}_{\beta}$, $\pmb{Z}_{\gamma}$ are the elemental rotation tensors about the Y and Z axis respectively. The initial velocity vector is then multiplied by the rotation matrix, and the particles are placed according to equation \ref{eq:injection}.
+Where $\beta$, $\gamma$ are the rotation angles about the y and z axis, and $\pmb{Y}_{\beta}$, $\pmb{Z}_{\gamma}$ are the elemental rotation tensors about the Y and Z axis respectively. The initial velocity vector is then multiplied by the rotation matrix, and the particles are placed according to equation \eqref{eq:injection}.
 
 The disadvantage of using this method is that it requires calling the function that generates the rotation matrix every time a photoelectron is emitted. This makes this method more computationally expensive than taking samples from the univariate and bivariate Gaussian distributions. However, the photoelectrons produced by the first method could potentially have higher average kinetic energy than what is physically correct, since the two Gaussian distributions are sampled independently in the first method.
 
@@ -588,7 +588,7 @@ Each photoelectron is placed in a cell by adding a random value in the range $[0
     \end{equation}
 \end{subequations}
 
-Where the subscript $p$ denotes the p'th photoelectron and the subscript $n$ is used for node positions. The random number $R$ is sampled independently for each position component, and the range $[0,1]$ is used since distance is normalized by stepsize in PINC. The negative sign in subequation \ref{eq:cellFillX} stems from the fact that in PINC the sunward direction is always along the negative x axis.
+Where the subscript $p$ denotes the p'th photoelectron and the subscript $n$ is used for node positions. The random number $R$ is sampled independently for each position component, and the range $[0,1]$ is used since distance is normalized by stepsize in PINC. The negative sign in subequation \eqref{eq:cellFillX} stems from the fact that in PINC the sunward direction is always along the negative x axis.
 
 The total flux of photoelectrons is divided by the number of cells adjacent to the sunlit surfaces of the object, each cell is then filled iteratively with this amount. 
 
@@ -718,7 +718,7 @@ Figure \ref{fig:pCellFill} shows the timeseries of the cubesat potential when ph
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.4]{figures/DECA/PhotoelectronInjectionByRotationMatrix/pRotMat.png}
-    \caption{Plot of the cubesat potential over time, in this case photoelectrons are injected into the domain using equation \ref{eq:injection} with velocity sampled from the univariate Maxwellian distribution and rotated using equation \ref{eq:rotMatFull}. The stippled horizontal lines show the floating potentials obtained by iPic3D and PTetra for the same simulation setup}
+    \caption{Plot of the cubesat potential over time, in this case photoelectrons are injected into the domain using equation \eqref{eq:injection} with velocity sampled from the univariate Maxwellian distribution and rotated using equation \eqref{eq:rotMatFull}. The stippled horizontal lines show the floating potentials obtained by iPic3D and PTetra for the same simulation setup}
     \captionsetup{belowskip=5pt}
     \label{fig:pRotMat}
 \end{figure}
@@ -729,7 +729,7 @@ The timeseries plot of the cubesat potential in Figure \ref{fig:pRotMat} include
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.4]{figures/DECA/PhotoelectronInjectionByDoubleGauss/pDoubleGauss.png}
-    \caption{Plot of the cubesat potential over time, in this case photoelectrons are injected into the domain using equation \ref{eq:injection} and sampling the surface normal and tangential velocities separately. The stippled horizontal lines show the floating potentials obtained by iPic3D and PTetra for the same simulation setup}
+    \caption{Plot of the cubesat potential over time, in this case photoelectrons are injected into the domain using equation \eqref{eq:injection} and sampling the surface normal and tangential velocities separately. The stippled horizontal lines show the floating potentials obtained by iPic3D and PTetra for the same simulation setup}
     \label{fig:pDoubleGauss}
 \end{figure}
 
@@ -892,40 +892,58 @@ Figures \ref{fig:MMOnoBooms} and figure \ref{fig:MMOWithBooms} show two voxelize
 
 \subsection{Magnetospheric and numerical parameters}
 
-Two spacecraft have visited Mercury at the time of writing. The first spacecraft to do so was the Mariner 10 spacecraft, performing three fly-bys of the planet, which was equipped both with plasma detectors and magnetometers to study the properties of Mercury's magnetic field and its interaction with the solar wind plasma \insertref{MESSENGER and Mariner 10 flyby observations of magnetotail structure and dynamics at Mercury}. A longer observation mission, the MESSENGER spacecraft, entered into a 
+Two spacecraft have visited Mercury at the time of writing. The first spacecraft to do so was the Mariner 10 spacecraft, performing three fly-bys of the planet, equipped both with plasma detectors and magnetometers to study the properties of Mercury's magnetic field and its interaction with the solar wind plasma \insertref{MESSENGER and Mariner 10 flyby observations of magnetotail structure and dynamics at Mercury}. A longer observation mission, the MESSENGER spacecraft, entered into orbit around Mercury as the first spacecraft to do so. It orbited the planet from 2011 to 2015 in a highly eccentric orbit, collecting data all the while on the plasma conditions of the planets magnetosphere, magnetotail and the intrinsic magnetic field of the planet.
+
+In this thesis, I have used a combination of data gathered from the MESSENGER mission, as well as MHD simulations of solar wind interaction with the magnetosphere of Mercury, to simulate the charging of the MMO spacecraft. Several assumptions were made in carrying out this analysis; first of all, the MMO spacecraft is spin-stabilized \parencite{Yamakawa2008} to reduce thermal load with its spin axis aligned along the magnetic dipole axis of Mercury. Because of the small timescales of charging relative to the rotational rate of the spacecraft, I have assumed an irrotational body fixed reference frame for the PINC simulations. Furthermore, MMO will orbit Mercury in a polar orbit with a period of 9.3 hours \insertref{ESA fact sheet}. As such, I chose to simulate the charging of the spacecraft close to the periapsis of MMO's orbit. Specifically, when the spacecraft is over Mercury's magnetic south pole where the plasma density is relatively high and exposed to direct sunlight. The distance of Mercury to the sun was also assumed to be the same as used in \parencite{Benna2009} such that the photon flux experienced by the MMO can be computed accurately. 
 
 
 \begin{table}[H]
     \centering
     \begin{tabular}{c|c}
-    \toprule
-    \toprule
-    Parameter & Value \\
-    \midrule
-    $Timesteps$ & 10,000 \\
-    dt & $5 \times 10^{-9}$ \\
-    dx, dy, dz & 0.225 m \\
-    $n_x, n_y, n_z$ & 128 \\
-    $n_0$ & $1 \times 10^8 m^{-3}$ \\
-    $m_e$ & $9.10938356 \times 10^{-31}$ kg\\
-    $m_i$ & $1.67262192 \times 10^{-27}$ kg\\
-    $\vb{B}_0$ & [0, 72.77, 342.35] nT\\
-    $drift$ & $1 \times 10^5$ m/s\\
-    $v_{th,e}$ & 4193011.62 m/s\\
-    $v_{th,i}$ & 87538.91 m/s\\
-    $n_{p,com}$ & 50 pc\\
-    $r_{\odot,sc}$ & $5.6847 \times 10^{10} m$\\
-    $\overline{Y}$ & $1 \times 10^{-3}$ \\
-    $\overline{R}$ & 0.46 \\
-    $W$ & 4.2 eV \\
-    \bottomrule
-    \bottomrule
+        \toprule
+        \toprule
+        Parameter & Value \\
+        \midrule
+        $Timesteps$ & 10,000 \\
+        dt & $5 \times 10^{-9}$ \\
+        dx, dy, dz & 0.225 m \\
+        $n_x, n_y, n_z$ & 128 \\
+        $n_0$ & $1 \times 10^8 m^{-3}$ \\
+        $m_e$ & $9.10938356 \times 10^{-31}$ kg\\
+        $m_i$ & $1.67262192 \times 10^{-27}$ kg\\
+        $\vb{B}_0$ & [8.8, 0, 99.6] nT\\
+        $v_{drift}$ & $1 \times 10^5$ m/s\\
+        $v_{th,e}$ & 4193011.62 m/s\\
+        $v_{th,i}$ & 87538.91 m/s\\
+        $n_{p,com}$ & 50 pc\\
+        $r_{sc}$ & $5.6847 \times 10^{10} m$\\
+        $\overline{Y}$ & $ 1 \times 10^{-3}$ \\
+        $A_{MMO}$ & 1.62 (3.87) \\
+        $W$ & 4.2 eV \\
+        \bottomrule
+        \bottomrule
     \end{tabular}
-\label{tab:PlasmaParamMMO}
+    \caption{Magnetospheric plasma parameters, MMO specific parameters, and numerical parameters used in MMO simulations}
+    \label{tab:PlasmaParamMMO}
 \end{table}
+
+Table \ref{tab:PlasmaParamMMO} summarizes all relevant parameters used in the charging simulation of the MMO spacecraft. The plasma density and thermal velocity values were extracted from the MHD simulation plots given in the paper by Benna et al. modelling the magnetosphere of Mercury at the first MESSENGER flyby. The intrinsic magnetic field of Mercury is dominantly dipolar, with a dipole tilt to the rotational axis constrained to being less than $\ang{5}$ \insertref{Anderson2010}. Mercury's rotational axis is tilted 2 minutes of arc with respect to its orbital plane \parencite{Rothery2015}, and has a external field strength of about $100 nT$ at the north cusp \insertref{Anderson2010}. Using the maximum dipole axis tilt angle, the value for the magnetic field $\vb{B}_0$ in table \ref{tab:PlasmaParamMMO} is then given in the Mercury solar orbital (MSO) coordinates. 
+
+The distance from the MMO to the sun $r_{sc}$ was computed using the Jet Propulsion Lab (JPL) ephemeris system HORIZONS and setting the time of the system to the day of the first MESSENGER Mercury fly-by.
+
+The parameter $\overline{Y}$ is the photoelectron yield per incoming photon and averaged over the range of photon energies that cause photoemission for MMO. Here we have assumed the MMO to be covered by Multi Layer Insulation (MLI), a thermal insulation covering consisting of several layers of plastic coated with an outer layer of Aluminium. The average photoelectron yield of Aluminium and its work function were found in \parencite{Feuerbacher1972}, the yield parameter used is dependent on the reflectance of the Aluminium, and as such the reflectance is not included as a separate parameter. 
+
+The SSM panels that cover the MMO are composed of silver films which have a slightly higher, but similar, work function to that of Aluminium. The parameter $A_{MM0}$ denotes the sunlit area of the MMO with and without the magnetometer booms. Since the booms account for a significant part of the sunlit surface area of the spacecraft the properties of Aluminium was used for simulations both with and without the booms.
+
 
 
 \subsection{Numerical experiments}
+
+The charging behaviour of a spacecraft is dependent on several factors; the material composition of the craft, its dimensions, its location in space, the local time, and the space weather \parencite{LAI2019} \todo{Update reference, bib file contains extract of the book}. In this thesis, I wish to investigate what effects the presence of MMO's booms have on its charging behaviour, additionally I wished to investigate whether the direction of the ambient plasma drift or the photoelectron temperature would significantly change how the spacecraft charges.
+
+The booms on the MMO extend the characteristic length of the spacecraft to be longer than that of the Debye length of the plasma found in table \ref{tab:PlasmaParamMMO}, as such I expect there to be a difference in the thickness of the plasma sheaths formed. 
+
+Varying the direction of drift may impact the convection of photoelectron away from the surface of the sunlit surface of the spacecraft, which could potentially lead to a difference in the floating potential. Varying the average energy of the emitted photoelectrons will change the charging behaviour of the MMO, as seen in the Rosetta charging simulation paper \parencite{Sjogren2012}. To observe to what extent the floating potential and the thickness of the plasma sheath changes is the goal of varying the photoelectron temperature. 
 
 
 \begin{table}[H]
@@ -957,7 +975,13 @@ Case 8 & & & \text{X} & \text{X} & \text{X} \\
 \label{tab:MMOexperiments}
 \end{table}
 
+Table \ref{tab:MMOexperiments} gives an overview of the numerical simulations of the MMO spacecraft carried out for this thesis, case 1 and case 5 give a baseline of the charging behaviour where no photoemission is included and serves as a point of comparison between the photoelectron current and the ambient electron plasma current the MMO is subjected to. 
+
+Cases 1 to 4, and cases 5 to 8 are equivalent but for the inclusion of the booms, with case 8 being the closest to the true conditions the MMO will experience when its orbit passes over the magnetic south pole of Mercury. As such, case 8 is used as the baseline for the simulation in which the photoelectron temperature is varied from the value computed by PINC.
+
+Save for cases 1 and 5, the simulations without photoemission, the computational domain was decomposed into 64 sub-domains for parallel processing. Cases 1 and 5 were decomposed into 128 sub-domains, the reason being that in the cases containing photoemission, the domain was not divided along the x-axis thus splitting the spacecraft in the YZ plane. This would account for another surface interior to the spacecraft that would have to be discarded as a source for photoemissive nodes.
 
 
 \todo{Remember to update the PC cycle diagram for the capacitance matrix section}
+\newpage
 %\section{Data analysis tools}
