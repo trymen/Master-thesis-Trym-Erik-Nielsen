@@ -4,22 +4,21 @@
 
 \section{Plasma modelling}
 In this section, we present a short overview of the basic mathematical framework used in the study of plasma dynamics. In section \cref{subsec:basicEq}, we briefly present the equations of motion for single particle motion in electrical and magnetic fields. Then in \cref{subsec:pParam} we give an overview of essential plasma parameters.
-Plasma is a collection of ionized gas, commonly referred to as the fourth state of matter. The solar wind, the polar aurorae, and lighting are some examples of plasmas that occur in nature. \insertref{ref a basic intro text} Plasma shares many of the same properties that describe gases, but differ in being affected by magnetic and electrical fields: since plasma consists of charged particles, ions and free electrons, they are subject to the Lorentz force. The Lorentz force acting on a charged plasma particle, causes curvilinear motion further complicated by the influence of other nearby charged particles.
+Plasma is a collection of ionized gas, commonly referred to as the fourth state of matter. The solar wind, the polar aurorae, and lighting are some examples of plasmas that occur in nature \parencite{Chen2018}. Plasma shares many of the same properties that describe gases, but differ in being affected by magnetic and electrical fields: since plasma consists of charged particles, ions and free electrons, they are subject to the Lorentz force. The Lorentz force acting on a charged plasma particle, causes curvilinear motion further complicated by the influence of other nearby charged particles.
 
 \section{Basic equations}
 
 \subsection{Single particle description}
 \label{subsec:basicEq}
-The single particle description of a plasma describes the motion of individual charged particles moving in imposed magnetic and electrical fields. Assuming the force of gravity is sufficiently small, and assuming constant electrical and magnetic fields, the single particle motion of a charge $q$ moving at velocity $v$ in the electrical field $E$ and magnetic field $B$ is described by the Lorentz force law 
+The single particle description of a plasma describes the motion of individual charged particles moving in imposed magnetic and electrical fields. Assuming the force of gravity is sufficiently small, and assuming constant electrical and magnetic fields, the single particle motion of a charge $q$ moving at velocity $v$ in the electrical field $\vb{E}$ and magnetic field $\vb{B}$ (where bolded letters denote vector fields) is described by the Lorentz force law 
 
 \begin{equation}\label{eq:lorentz}
     \vb{F} = q \vb{E} + q \vb{v} \cp \vb{B},
 \end{equation}
-
 where the term $q \vb{E}$ is called the Electric force, and the term $q\vb{v} \cp \vb{B}$ is called the magnetic force. When a particle moves in a static magnetic field, and no electric field is present, the particle will gyrate around magnetic field lines. Setting $E$ to zero, we have
 
 \begin{equation}\label{eq:magF}
-    \vb{F} = q \vb{v} \cp \vb{B}
+    \vb{F} = q \vb{v} \cp \vb{B}.
 \end{equation}
 
 The cross product of the velocity and magnetic field vector means that the magnetic force always acts perpendicularly to the direction of motion of the particle, thereby causing the particle to gyrate.
@@ -27,19 +26,19 @@ The cross product of the velocity and magnetic field vector means that the magne
 Setting the centripetal force equal to the magnitude of the Lorentz force, we can derive an expression for the gyroradius $r_g$ of the motion
 
 \begin{equation}\label{eq:gyrorad}
-    \frac{m_s v_{\perp}^2}{r_g} = \abs{q} v_{\perp} \vb{B}
+    \frac{m_s v_{\perp}^2}{r_g} = \abs{q} v_{\perp} \norm{\vb{B}}
 \end{equation}
 
-Where the subscript on $m_s$ denotes the specie of the particle, and $v_\perp$ denotes the perpendicular component of velocity to  the plane of $B$. Upon rearranging, the expression for the gyroradius $r_g$ becomes
+Where the subscript on $m_s$ denotes the specie of the particle, and $v_\perp$ denotes the perpendicular component of velocity to the plane of $\vb{B}$. Upon rearranging, the expression for the gyroradius $r_g$ becomes
 
 \begin{equation}
-    r_g = \frac{m_s v_\perp}{\abs{q} \vb{B}}
+    r_g = \frac{m_s v_\perp}{\abs{q} \norm{\vb{B}}}.
 \end{equation}
 
 The particle gyrates with an angular frequency, called the cyclotron frequency $\Omega_c$, expressed as 
 
 \begin{equation}
-    \Omega_c = \frac{v_\perp}{r_g} = \frac{\abs{q} \vb{B}}{m_s}
+    \Omega_c = \frac{v_\perp}{r_g} = \frac{\abs{q} \; \norm{\vb{B}}}{m_s}
 \end{equation}
 
 The motion of a particle $q_s$ is in practical cases often modelled as the drift of the centre of gyration of the particle. When also subjected to an isotropic electrical field, this motion is called E cross B drift, or Hall drift, and can be derived from the Lorentz force equation and Newtons' second law and solving for the acceleration of the particle: If we assume the drift velocity to be constant in time, the expression for the drift $\vb{V}_D$ becomes
@@ -49,10 +48,10 @@ The motion of a particle $q_s$ is in practical cases often modelled as the drift
 \end{equation}
 
 \subsection{Kinetic description}
-In the previous section, we studied the individual motion of charged plasma particles. Although the single particle description of plasma is useful in gaining an understanding in how individual particles behave in isotropic magnetic and electrical fields; it is an impractical model for analyzing macroscopic phenomena of the plasma. \insertref{"Plasma Physics" by Alexander Piel contains a good discussion of when each plasma model should be used} The kinetic description of plasma begins with the assumption of a density distribution of charges in the six dimensional phase space varying over time. Let $f_s(\vb{x}, \vb{v}, t)$ be the continuous probability distribution, representing the probability of finding a charged particle of species $s$ at time $t$ in phase space. Multiplying the distribution of charges by the charge of the species $q_s$, and integrating over the velocity space, the charge density $\rho_s$ can be found. Summing over all the species of charge in the plasma gives us the following expression for the total charge density $\rho_c$
+In the previous section, we studied the individual motion of charged plasma particles. Although the single particle description of plasma is useful in gaining an understanding in how individual particles behave in isotropic magnetic and electrical fields; it is an impractical model for analyzing macroscopic phenomena of the plasma. The introductory text "Plasma Physics: An Introduction to Laboratory, Space, and Fusion Plasmas" \parencite{Piel2017} contains a good discussion of when each plasma model should be used. The kinetic description of plasma begins with the assumption of a density distribution of charges in the six dimensional phase space varying over time. Let $f_s(\vb{x}, \vb{v}, t)$ be the continuous probability distribution, representing the probability of finding a charged particle of species $s$ at time $t$ in phase space. Multiplying the distribution of charges by the charge of the species $q_s$, and integrating over the velocity space, the charge density $\rho_s$ can be found. Summing over all the species of charge in the plasma gives us the following expression for the total charge density $\rho_c$
 
 \begin{equation}\label{eq:rhoCharge}
-    \rho_c = \sum_s q_s\int f(\vb{x}, \vb{v}, t) d^3\vb{v}
+    \rho_c = \sum_s q_s\int f(\vb{x}, \vb{v}, t) d^3\vb{v}.
 \end{equation}
 
 Similarly, an expression for the current density is obtained by multiplying the charge distribution by the velocity vector $v$ and integrating the result in a similar fashion to \eqref{eq:rhoCharge}
@@ -69,7 +68,7 @@ Equipped with a continuous distribution function of particles in phase-space, eq
     \pdv{f}{t} + \vb{v} \vdot \grad{f_s} + \frac{q_s}{m_s} (\vb{E} + \vb{v} \cp \vb{B}) \vdot \grad_v{f} = 0
 \end{equation}
 
-Where the operator notation $\grad_v = (\pdv{v_x}, \pdv{v_y}, \pdv{v_z})$ and $\grad = (\pdv{x},\pdv{y},\pdv{z})$ has been used. For a comprehensive derivation of the Vlasov equation see \insertref{Plasma physics via computer simulation for example}
+Where the operator notation $\grad_v = (\pdv{v_x}, \pdv{v_y}, \pdv{v_z})$ and $\grad = (\pdv{x},\pdv{y},\pdv{z})$ has been used. For a comprehensive derivation of the Vlasov equation see \parencite{Birdsall2004} or \parencite{Piel2017}.
 
 
 \subsection{Fluid description}
@@ -93,7 +92,7 @@ The zeroth velocity moment for species $s$ is simply the number density for the 
     \int \pdv{f_s}{t} d \vb{v} \int \vb{v} \vdot \grad{f_s} \vb{v} + \frac{q}{m} \int \vb{E} + \vb{v} \cp \vb{B} \vdot \pdv{f_s}{\vb{v}} d \vb{v} = 0
 \end{equation}
 
-With a considerable amount of manipulation \insertref{Chen, ch 7}, equation \eqref{eq:continuity} reduces to
+With a considerable amount of manipulation \parencite[ch 7]{Chen2018}, equation \eqref{eq:continuity} reduces to
 
 \begin{equation}\label{eq:contReduced}
     \pdv{n_s}{t} + \div{(n_s \vb{v_s})} = 0 
@@ -118,7 +117,7 @@ Where $P_s$ denotes the pressure tensor field. The energy equation is derived fr
     M^2 = \int \frac{1}{2} m_s \vb{v} \vb{v} f_s d \vb{v}
 \end{equation}
 
-The second order moment described the flow of momentum, and is also called the stress tensor \insertref{Fitzpatrick, eq 3.17, plasma physics: an introduction}. Applying the second velocity moment to equation \eqref{eq:Vlasov} equation gives the partial differential equation
+The second order moment described the flow of momentum, and is also called the stress tensor \parencite[Ch. 3]{Fitzpatrick2015}. Applying the second velocity moment to equation \eqref{eq:Vlasov} equation gives the partial differential equation
 
 \begin{equation}\label{eq:energy}
     \pdv{t} (\frac{3}{2} p_s + \frac{1}{2} m_s n_s v_s^2) + \div{\vb{Q_s}} - e_s n_s \vb{E} \vdot \vb{v_s} = W_s + \vb{v_s} + \vb{v_s} + \vb{F_s}   
@@ -134,14 +133,14 @@ Where the terms $\vb{Q}_s$ and $\vb{W}_s$ denote the energy flux density and tot
     \end{align}
 \end{subequations}
 
-Formal derivations of the fluid equations, with some differences in notation, can be found in the fundamental works of Chen \insertref{Chen 1985}, and Fitzpatrick \insertref{Fitzpatrick 2012}.
+Formal derivations of the fluid equations, with some differences in notation, can be found in the fundamental works of Chen \parencite{Chen2018}, and Fitzpatrick \parencite{Fitzpatrick2015}.
 
 \subsection{Magnetohydrodynamics}
 Solving the equations of motion discussed in \ref{subsec:basicEq} coupled with Maxwell's equations is extremely computationally demanding. As such, two common approximations to these equations are used, the electrostatic model, and magnetohydrodynamics.
 \\
 In the electrostatic approximation of plasma, the plasma currents are presumed small, thereby simplifying maxwell's equations to solving poission's equation for the electrostatic potential.
 \\
-In the magnetohydrodynamics, plasma is treated as a neutral yet conducting fluid. Assuming a quasi-neutral, plasma at thermodynamic equilibrium Maxwell's equations reduce to \insertref{Computer simulation using particles, ch 9-9-1}
+In the magnetohydrodynamics, plasma is treated as a neutral yet conducting fluid. Assuming a quasi-neutral, plasma at thermodynamic equilibrium Maxwell's equations \parencite[Ch. 9-9-1]{Hockney1988} reduce to
 
 \begin{subequations}
     \begin{align}
@@ -185,7 +184,7 @@ Where $\rho$ is the fluid density, $p$ is the fluid pressure, and $\dv{\vb{v}}{t
 In this section, the basic parameters used in the analysis and simulation will be introduced. We discuss the notion of a plasma temperature, present the characteristic length and frequency scales the Debye length, and plasma frequency. Additionally, we discuss the principle of quasineutrality in relation to plasma. 
 
 \subsection{Temperature}\label{subsec:temperature}
-The temperature of a plasma is a measure of the average kinetic energy of the individual species that make up the plasma. For a mono-atomic gas, with a probability distribution $f(u)$, Chen \insertref{Chen, section 1.3} gives the following equation for the average kinetic energy
+The temperature of a plasma is a measure of the average kinetic energy of the individual species that make up the plasma. For a mono-atomic gas, with a probability distribution $f(u)$, Chen \parencite[Section 1.3]{Chen2018} gives the following equation for the average kinetic energy
 
 \begin{equation}\label{eq:avgEint}
     E_{av} = \frac{\int^\infty_{-\infty} \frac{1}{2} m u^2 f(u) du}{\int^\infty_{-\infty} f(u) du}
@@ -217,7 +216,7 @@ In plasma physics, it is common to use average energy rather than temperature as
 \end{equation*}
 
 \subsection{Debye length}
-The Debye length is a parameter that measures the net persistence of the electrostatic effect of a charged particle. This effect is also known as Debye shielding, Hutchinson \insertref{Hutchinson plasma diagnostics sections 3.1.2} presents a definition for the Debye length by analyzing the potential profile of a test charge placed in a cold plasma. In a non isothermal plasma ions can be assumed to be stationary in relation the more energetic electrons. The electrons density is then determined from the Boltzman factor
+The Debye length is a parameter that measures the net persistence of the electrostatic effect of a charged particle. This effect is also known as Debye shielding, \parencite[Section 3.1.2]{HutchinsonIanH2002Popd} presents a definition for the Debye length by analyzing the potential profile of a test charge placed in a cold plasma. In a non isothermal plasma ions can be assumed to be stationary in relation the more energetic electrons. The electrons density is then determined from the Boltzman factor
 
 \begin{equation}\label{eq:boltzmannFactor}
     n_e = n_{\infty} \exp(\frac{e \phi}{T_e})
@@ -248,17 +247,17 @@ The solution of equation \eqref{eq:poissonSimple} takes the form
     V \propto \exp (\frac{\pm x}{\lambda_D})
 \end{equation*}
 
-The Debye length is then a measure of the shielding distance or thickness of the sheath that forms around a charged object embedded in a plasma \insertref{Chen section 1.4}.
+The Debye length is then a measure of the shielding distance or thickness of the sheath that forms around a charged object embedded in a plasma \parencite[Section 1.4]{Chen2018}.
 
 
 \subsection{quasineutrality}
-Now that we have presented an expression for the Debye length, the approximation of quasineutral plasma can be defined: When the length scale of interest is much smaller than the Debye length, i.e $\lambda_D \lll L$, the density of ions is approximately equal to the density of electrons\insertref{Chen, section 1.4 Debye Shielding}. Or in other terms
+Now that we have presented an expression for the Debye length, the approximation of quasineutral plasma can be defined: When the length scale of interest is much smaller than the Debye length, i.e $\lambda_D \lll L$, the density of ions is approximately equal to the density of electrons \parencite[Section 1.4]{Chen2018}. Or in other terms
 
 \begin{equation}
     n_i \approx n_e \approx n
 \end{equation}
 
-Where n is a common density called the plasma density \insertref{Chen, section 1.4, Debye shielding}. When this approximation holds, the plasma is said to be quasineutral. Note that this approximation still allows for variations in charge at smaller length scales than $\lambda_D$. 
+Where n is a common density called the plasma density. When this approximation holds, the plasma is said to be quasineutral. Note that this approximation still allows for variations in charge at smaller length scales than $\lambda_D$. 
 
 \subsection{Electron plasma frequency}
 In plasma simulations of the solar wind an important physical phenomena is plasma oscillation, otherwise called Langmuir waves. In a neutral plasma, disturbances in the density of electrons (and ions) cause oscillations due to the restorative Coulomb force. For solar wind, and other cold plasmas, the frequency of the oscillations of electrons are expressed as
@@ -267,14 +266,14 @@ In plasma simulations of the solar wind an important physical phenomena is plasm
     \omega_{pe} = \sqrt{\frac{n_e e^2}{\epsilon_0 m_e}}
 \end{equation}
 
-$\omega_{pe}$ is called the electron plasma frequency. A similar expression exists for the oscillations of ions, but due to their higher mass they oscillate much slower rate than the electrons. Equation \eqref{eq:plasmaFreq} is formally derived from Maxwell's equations \insertref{derivations by Chen sec 4.3, Fitzpatrick, Hutchinson} by assuming an infinite plasma not affected by an external magnetic field, no thermal motion i.e $KT = 0$, and ion fixed in space  in a uniform distribution \insertref{Chen sec 4.3}.
+$\omega_{pe}$ is called the electron plasma frequency. A similar expression exists for the oscillations of ions, but due to their higher mass they oscillate much slower rate than the electrons. Equation \eqref{eq:plasmaFreq} is formally derived from Maxwell's equations \parencite{Fitzpatrick2015}, \parencite{HutchinsonIanH2002Popd} by assuming an infinite plasma not affected by an external magnetic field, no thermal motion i.e $KT = 0$, and ion fixed in space  in a uniform distribution \parencite[Section 4.3]{Chen2018}.
 
 
 
 \section{The solar wind plasma environment}
 In this section, a brief overview of the physics and basic plasma parameter values of the solar wind are presented. These data will be necessary in building the computational parameters required for the charging simulations of space probes moving in the interplanetary medium presented later in this thesis.
 \\
-The solar wind is a non-isothermal plasma with a temperature averaging around 10 $eV$, that is primarily composed of free electrons, ions and alpha particles. The density of the solar wind plasma is relatively low as compared to other naturally occurring plasmas with a mean value of around 5 $cm^{-3}$. It flows with a drift velocity ranging from 400 $km/s$ up to 900 $km/s$ during periods of high solar activity, \insertref{fundamentals of spacecraft charing, prologue}. In close proximity to the sun, the solar wind density increases significantly, potentially charging space probes to values as low as hundreds of volts \insertref{Deca 2013, and introduction to spacecraft charging (?)}.
+The solar wind is a non-isothermal plasma with a temperature averaging around 10 $eV$, that is primarily composed of free electrons, ions and alpha particles. The density of the solar wind plasma is relatively low as compared to other naturally occurring plasmas with a mean value of around 5 $cm^{-3}$. It flows with a drift velocity ranging from 400 $km/s$ up to 900 $km/s$ during periods of high solar activity \parencite{LAI2019}. In close proximity to the sun, the solar wind density increases significantly, potentially charging space probes to values as low as hundreds of volts \parencite{LAI2019}, \parencite{Deca2013}, \parencite{Garrett1981}.
 
 
 \todo{Check if I am allowed to use an image from copyrighted works!}
@@ -286,9 +285,8 @@ The solar wind is a non-isothermal plasma with a temperature averaging around 10
 %\end{figure}
 
 \subsection*{Interactions with solar system objects}
-The properties of the solar wind can change significantly in regions in close proximity to solar system objects. Planets with internal magnetic fields, will cause magnetohydrodynamic (MHD) shock formation \insertref{one of the magnetosphere papers?}, and bodies without an intrinsic magnetic field may still affect the flow of the solar wind plasma due to induced magnetic fields from solar wind charge collection or interaction with the ionosphere of the body.
+The properties of the solar wind can change significantly in regions in close proximity to solar system objects. Planets with internal magnetic fields, will cause magnetohydrodynamic (MHD) shock formation \parencite{Luhmann2004}, \parencite{Benna2009}, and bodies without an intrinsic magnetic field may still affect the flow of the solar wind plasma due to induced magnetic fields from solar wind charge collection or interaction with the ionosphere of the body.
 
-\insertref{figure ref, Induced magnetospheres}
 \begin{figure}
 \centering
 \begin{subfigure}{.5\textwidth}
@@ -309,11 +307,11 @@ The properties of the solar wind can change significantly in regions in close pr
 
 Figure \ref{fig:magnetosphere} shows the basic structure, and differences, in the magnetospheres of two bodies with and without internal magnetic fields. This thesis is concerned with simulating the charging characteristics of the BepiColombo satellite, the MMO (Mercury Magnetospheric Orbiter). Mercury has an intrinsic, yet relatively weak, magnetic field. 
 \\
-As such, figure \ref{fig:EarthMagSph} is illustrative of the magnetic environment the MMO spacecraft will be subjected to. The bow-shock forms due to the compression of the solar wind from the obstruction of the magnetosphere of the body in question, the shocks location and properties changes dynamically depending on the pressure exerted by the solar wind. Immediately behind the bow-shock is the region called the magnetosheath. In this region the charged particles have a lower density yet higher average temperature than that of the solar wind \insertref{}. 
+As such, figure \ref{fig:EarthMagSph} is illustrative of the magnetic environment the MMO spacecraft will be subjected to. The bow-shock forms due to the compression of the solar wind from the obstruction of the magnetosphere of the body in question, the shocks location and properties changes dynamically depending on the pressure exerted by the solar wind. Immediately behind the bow-shock is the region called the magnetosheath. In this region the charged particles have a lower density yet higher average temperature than that of the solar wind \parencite{Benna2009}. 
 \\
 Separating the magnetosphere of the earth, or Mercury, is the magnetopause. The magnetopause is defined as the region around an object where the dynamic pressure of the solar wind balances with the pressure from the intrinsic magnetic field of the object. Beyond the magnetopause, the intrinsic magnetic field of the planet dominates. In this region charged plasma particles move in spirals following magnetic field lines of the planet, the magnetosphere of Earth also contains a region of high density cold plasma called the plasmasphere. The composition of the plasma, its temperature and density in these regions vary significantly. The charging of a spacecraft will then vary significantly as a spacecraft orbits a planet, and it is therefore important to determine the location of these regions with respect to the planet. 
 \\
-The location of the magnetopause of a planet with an intrinsic field can be approximated by substituting the distance of the magnetopause $r_M$ into the balance expression for the planets magnetic field strength. Balancing the dynamic pressure of the sun with the magnetic pressure, we have \insertref{basics of the solar wind}
+The location of the magnetopause of a planet with an intrinsic field can be approximated by substituting the distance of the magnetopause $r_M$ into the balance expression for the planets magnetic field strength. Balancing the dynamic pressure of the sun with the magnetic pressure \parencite{Meyer-Vernet2007}, we have
 
 \begin{equation}\label{eq:pBalanceRough}
 \rho_w v^2_w \sim B^2_{\mu} / 2 \mu_0  
@@ -343,7 +341,7 @@ This can be expressed as a relative distance by introducing the radius of the pl
 \end{equation}
 
 
-In her book \insertref{Basics of the Solar wind}, Meyer-Vernet also gives an approximation for the distance from the planet to the bow-shock by assuming a conical function describing the radius $r$ from the foci (the planet) to the bow shock. The radius $r$ on the line extending from the planet to the sun is approximately
+In her book \parencite{Meyer-Vernet2007}, Meyer-Vernet also gives an approximation for the distance from the planet to the bow-shock by assuming a conical function describing the radius $r$ from the foci (the planet) to the bow shock. The radius $r$ on the line extending from the planet to the sun is approximately
 
 \begin{equation}
     r \simeq (1 + \epsilon) \, r_M
@@ -352,7 +350,7 @@ In her book \insertref{Basics of the Solar wind}, Meyer-Vernet also gives an app
 Where $\epsilon$ is the eccentricity of the conic section. Typically this value is around $\epsilon \simeq 0.5$.
 
 \section{Spacecraft charging in plasma}
-A spacecraft collects charged particles when moving relatively to ambient plasma, this change in net charge on the spacecraft causes an electrical field according to Gauss's Law \insertref{Fundamentals of SC charging ch 1}. When the charging of the spacecraft reaches a non-oscillatory steady state, the sum of currents from all the species in the plasma is zero, and the net charging is constant. This is expressed as 
+A spacecraft collects charged particles when moving relatively to ambient plasma, this change in net charge on the spacecraft causes an electrical field according to Gauss's Law \parencite[Ch. 1]{LAI2019}. When the charging of the spacecraft reaches a non-oscillatory steady state, the sum of currents from all the species in the plasma is zero, and the net charging is constant. This is expressed as 
 
 \begin{equation} \label{eq:currentBalance}
     \dv{Q}{t} = \sum_s I_s(V) = 0
@@ -364,11 +362,11 @@ For complex geometries it is non-trivial to find analytical expressions for the 
 
 
 \subsection{Langmuir probe theory}
-A Langmuir probe is a simple device used in the laboratory to measure the temperature, the density, and the electrical potential of a plasma. A Langmuir probe consists of one or more, often spherical, electrodes inserted into the ambient plasma. Either a time varying or constant potential is induced between the electrodes, or between the electrodes and some electrical ground, causing the probe to collect charged particles. By analysing the current $I(V)$ for different potentials, the properties of the surrounding plasma can be extracted \insertref{Marholm Ph.D ch 3, fundamentals of S/C charging, Wojciech et al.}. When immersed in a plasma, a spacecraft behaves in a similar fashion to a Langmuir probe. The difference is that in the case of a spacecraft a potential is not applied, but can be measured as a response to incoming and outgoing currents \insertref{Fundamentals of sc charging, ch 2}. 
+A Langmuir probe is a simple device used in the laboratory to measure the temperature, the density, and the electrical potential of a plasma. A Langmuir probe consists of one or more, often spherical, electrodes inserted into the ambient plasma. Either a time varying or constant potential is induced between the electrodes, or between the electrodes and some electrical ground, causing the probe to collect charged particles. By analysing the current $I(V)$ for different potentials, the properties of the surrounding plasma can be extracted  \parencite{Garrett1981}, \parencite{LAI2019}, \parencite{Miloch2012}. When immersed in a plasma, a spacecraft behaves in a similar fashion to a Langmuir probe. The difference is that in the case of a spacecraft a potential is not applied, but can be measured as a response to incoming and outgoing currents \parencite[Ch. 2]{LAI2019}. 
 
 
 \subsection*{Orbital motion-limited theory}
-In orbital motion limited theory, or OML theory for short, the charge flux impinging on a spacecraft is determined from the conservation of energy and angular momentum of species travelling in proximity to a spacecraft \insertref{Marholm Ph.D ch 3}. From conservation of energy, an expression for the impact velocity on a spherical spacecraft can be obtained, and from conservation of momentum an expression for the distance from the centre of the spacecraft to the straight line of travel can be found. In \insertref{Fundamentals of sc charging, Lai, Ch2.1} these expressions are given as 
+In orbital motion limited theory, or OML theory for short, the charge flux impinging on a spacecraft is determined from the conservation of energy and angular momentum of species travelling in proximity to a spacecraft \parencite{LAI2019}, \parencite{Garrett1981}. From conservation of energy, an expression for the impact velocity on a spherical spacecraft can be obtained, and from conservation of momentum an expression for the distance from the centre of the spacecraft to the straight line of travel can be found. In \parencite[Ch. 2.1]{LAI2019} these expressions are given as 
 
 \begin{subequations}
     \begin{align}
@@ -383,7 +381,7 @@ Integrating the particle distribution $f_s(\vb{x}, \vb{v}, t)$ using equation \e
     \eta_s \equiv - \frac{q_s V}{k T_s}
 \end{equation}
 
-Using the normalized potential, particles with $n_s < 0$ will be repelled, and particles with $n_s > 0$ will be attracted to the spacecraft \insertref{Marholm Ph.d ch 3.1}. Expressions for the integration of the particle distribution has been found for some simple geometries, for species with $n_s > 0$ with the assumption of a plasma with no internal magnetic field and zero drift, by Mott-Smith and Langmuir \insertref{Mott-Smith and Langmuir}
+Using the normalized potential, particles with $n_s < 0$ will be repelled, and particles with $n_s > 0$ will be attracted to the spacecraft \parencite{Marholm2019}. Expressions for the integration of the particle distribution has been found for some simple geometries, for species with $n_s > 0$ with the assumption of a plasma with no internal magnetic field and zero drift, by Mott-Smith and Langmuir \parencite{Mott-Smith1926}
 
 \begin{subequations}
     \begin{align}
@@ -405,7 +403,7 @@ Where equations \eqref{eq:IPlane}, \eqref{eq:ICylinder} and \eqref{eq:Isphere} a
 
 
 \subsection*{The photoemission current}\todo{Includes discussion on Blackbody radiation..}
-In 1921, Albert Einstein was awarded the Nobel price in physics for his discovery of the mathematical law governing the photoelectric effect \insertref{(2020, ). Nobel Media AB 2020. Retrieved March 1, 2020,}. Qualitatively, the photoelectric effect occurs when a quantum of light, a photon, is absorbed by an electron in some material causing its energy to exceed the binding energy of that material and being ejected from the surface of the material. This binding energy of the material is called the work function of the material. Mathematically, with differences in notation, Einstein's law is expressed as \insertref{https://doi.org/10.1002/andp.19053220607}
+In 1921, Albert Einstein was awarded the Nobel price in physics for his discovery of the mathematical law governing the photoelectric effect \parencite{NobelMediaAB}. Qualitatively, the photoelectric effect occurs when a quantum of light, a photon, is absorbed by an electron in some material causing its energy to exceed the binding energy of that material and being ejected from the surface of the material. This binding energy of the material is called the work function of the material. Mathematically, with differences in notation \parencite{Einstein1905}, Einstein's law is expressed as
 
 \begin{equation}\label{eq:phelectron}
     E = h \nu - W
@@ -555,7 +553,7 @@ Backscattered electron emission is similar to secondary electron emission in tha
 \\
 The outgoing electron is the same electron that collided with the surface material, backscattering of electrons can then be thought of as a form of reflection. Since the outgoing and incoming electron is the same particle, the probability of backscattering, $\eta(E)$, cannot exceed 1. 
 
-Similarly to the secondary electron emission mechanism, the bacscattering effect is dependent on the distribution of the electrons in the ambient plasma, so a similar integral to equation \eqref{eq:secondaryE} can be formed for the backscattered electron current flux 
+Similarly to the secondary electron emission mechanism, the backscattering effect is dependent on the distribution of the electrons in the ambient plasma, so a similar integral to equation \eqref{eq:secondaryE} can be formed for the backscattered electron current flux 
 
 \begin{equation}\label{eq:backscatterE}
     j_b = \int^{\infty}_0 \eta(E) f(E) dE
