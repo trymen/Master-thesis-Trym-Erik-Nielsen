@@ -415,7 +415,7 @@ Where $E$ denotes the maximum kinetic energy of the ejected electron, $h$ is Pla
     E_{k} = h(\nu - \nu_0)
 \end{equation}
 
-From equation \eqref{eq:phelectron}, it is evident that the photoelectron yield is dependent on the material composition of the spacecraft. Table \ref{tab:workfunc} shows the work functions for some of the materials commonly used in space applications, these data have been reproduced from \insertref{Handbook of Chemistry and Physics} and \insertref{Experimental Investigation of Photoemission from Satellite Surface Materials}.
+From equation \eqref{eq:phelectron}, it is evident that the photoelectron yield is dependent on the material composition of the spacecraft. Table \ref{tab:workfunc} shows the work functions for some of the materials commonly used in space applications, these data have been reproduced from \parencite{Feuerbacher1972} and \parencite{TaylorandFrancisGroup2019}.
 
 \begin{table}[h!]
     \centering
@@ -443,20 +443,20 @@ With an expression for the minimum frequency below which photoemission occurs it
 \end{equation}
 
 
-Then, the photoelectron current flux $J_{ph}$ can be found by integrating over the energy of the incoming photons \insertref{Fundamentals of sc, ch 7}
+Then, the photoelectron current flux $J_{ph}$ can be found by integrating over the energy of the incoming photons \parencite[Ch. 7]{Chen2018}
 
 \begin{equation}\label{eq:phCurrentNaive}
-    J_{ph} = \int^\infty_0 Y(\omega) f_s(\omega) \, d\omega
+    J_{ph} = \int^\infty_0 Y(\omega) f_s(\omega) \, d\omega.
 \end{equation}
 
 
-Strictly speaking, equation \eqref{eq:naivePhYield} is only an approximation for the yield of photoelectrons. A more accurate description has to account for the amount of photons reflected from the surface, thereby not contributing to the total photoelectron current flux. Defining the reflectance of the surface exposed to sunlight as $R(\omega)$, equation \eqref{eq:phCurrentNaive} becomes \insertref{Fundamentals of sc charging, ch 7}
+Strictly speaking, equation \eqref{eq:naivePhYield} is only an approximation for the yield of photoelectrons. A more accurate description has to account for the amount of photons reflected from the surface, thereby not contributing to the total photoelectron current flux. Defining the reflectance of the surface exposed to sunlight as $R(\omega)$, equation \eqref{eq:phCurrentNaive} becomes
 
 \begin{equation}\label{eq:phCurrentR}
     J_{ph}(R) = \int^\infty_0 Y(\omega, R) f_s(\omega) \, d\omega
 \end{equation}
 
-Both the photoelectron yield, and the reflectance of the spacecraft material is additionally dependent on the incident angle $\theta$ of the surface to the direction of travel of the photons. Lai gives the following equation \insertref{} for current flux $J_{ph}(\theta)$ when incidence angle is accounted for
+Both the photoelectron yield, and the reflectance of the spacecraft material is additionally dependent on the incident angle $\theta$ of the surface to the direction of travel of the photons. Lai gives the following equation for current flux $J_{ph}(\theta)$ when incidence angle is accounted for
 
 \begin{equation}\label{eq:phCurrentFull}
     J_{ph}(\theta) = \int^\infty_0 f_s(\omega) Y^{*}[\omega, R(\omega, \theta)][1 - R(\omega, \theta)] \cos \theta \; d\omega
@@ -483,15 +483,13 @@ Where $A$ is the surface area of the spacecraft exposed to sunlight. Inserting e
 \subsubsection*{The sun as a blackbody radiation source}
 In the previous section, an expression for the photoelectron current was shown. If we are to compute the floating potential of a spacecraft, it is necessary to either know the value of the photoelectron current a priori or to compute its value based on the amount of photon flux through the spacecraft surface. In this section we discuss the theory of blackbody radiation as a method of computing solar photon flux.
 \\
-A blackbody is an object in thermodynamic equilibrium that absorbs all frequencies of radiation, without reflecting any of the incoming radiation\insertref{Kirchhoff, 1860, Annalen der Physik und Chemie}. In Planck's seminal paper on the theory of heat radiation, Planck gives the following three conditions that a blackbody must satisfy \insertref{Planck, The theory of heat radiation, translation, p10.}
+A blackbody is an object in thermodynamic equilibrium that absorbs all frequencies of radiation, without reflecting any of the incoming radiation \parencite{} \insertref{Kirchhoff, 1860, Annalen der Physik und Chemie}. In Planck's seminal paper on the theory of heat radiation, Planck gives the following three conditions that a blackbody must satisfy \parencite{Planck}
 
 \begin{quote}
     First, the body must have a black surface in order to allow the incident rays to enter without reflection. [...] Second, the black body must have a certain minimum thickness depending on its absorbing power, in order to insure that the rays after passing into the body shall not leave it again at a different point of the surface. [...] Third, the black body must have a vanishingly small coefficient of scattering. Otherwise the rays received by it would be partly scattered in the interior and might leave again through the surface
 \end{quote}
 
-The sun does not perfectly absorb all frequencies of electromagnetic radiation, and neither is it in perfect thermodynamic equilibrium; sunspots have a measurably lower temperature than the surrounding photosphere \insertref{The
-observations also suggest that the coronal temperature above sunspots is lower than in
-their surroundings, Sunspots: An overview}. However, energy absorbed and emitted by the sun is in steady state and can therefore be approximated as a black body radiator. 
+The sun does not perfectly absorb all frequencies of electromagnetic radiation, and neither is it in perfect thermodynamic equilibrium; sunspots have a measurably lower temperature than the surrounding photosphere \parencite{Solanki2003}. However, energy absorbed and emitted by the sun is in steady state and can therefore be approximated as a black body radiator. 
 //
 In "The theory of heat radiation" Planck derives the following expression for the energy density of the electromagnetic radiation emitted by a blackbody  
 
@@ -505,7 +503,7 @@ Where $\nu$ is the frequency of the electromagnetic radiation emitted, $T$ is th
     B(\lambda, T) = \frac{2 h c^2}{\lambda^5} \frac{1}{\exp(\frac{hc}{\lambda k_B T}) - 1}
 \end{equation}
 
-The spectral energy computed from the equations above can be expressed in many units depending on the problem at hand. Of particular interest in this thesis is expressing the spectral energy as the number of photons emitted at a particular wavelength. In the derivation of Planck's law; Planck is often credited as the father of modern quantum mechanics by historians for his idea that the radiation emitted by a blackbody at certain frequencies as packets of energy \insertref{a historical text on the history of quantum mechanics, i.e }
+The spectral energy computed from the equations above can be expressed in many units depending on the problem at hand. Of particular interest in this thesis is expressing the spectral energy as the number of photons emitted at a particular wavelength. In the derivation of Planck's law; Planck is often credited as the father of modern quantum mechanics by historians for his idea that the radiation emitted by a blackbody at certain frequencies as packets of energy 
 
 Figure \ref{fig:blackbody} plots the irradiance given by equation \eqref{eq:planckWave} for some values of $T$, the suns radiative output can be approximated by assuming a blackbody temperature $T \approx 5800 K$, shown in the figure as a blue line.
 
@@ -532,15 +530,15 @@ The radiation calculated from equation \eqref{eq:planckFreq} is commonly given i
 
 Comparing figure \ref{fig:blackbody} to figure \ref{fig:solIrradiance}, it can be seen that aside from smaller fluctuations in electromagnetic radiation, due to absorption of energy at certain frequencies in the solar atmosphere, our approximation of the sun as a blackbody emitter is a good one. 
 \\
-Given the work function (or more accurately, the cut-off wavelength or frequency) of the material of a spacecraft, and assuming a photoelectron yield of one photoelectron to one photon under the cut-off wavelength, integrating equation \eqref{eq:planckWave} gives the photoelectron flux emitted by the surface of a spacecraft exposed to sunlight. Integrating planck's law for a given frequency band is non-trivial, in \ref{sec:methods}, the method for integrating Planck's law by Widger and Woodall \insertref{Integration of Planck blackbody radiation function, Widger \& Woodall} is presented in detail. 
+Given the work function (or more accurately, the cut-off wavelength or frequency) of the material of a spacecraft, and assuming a photoelectron yield of one photoelectron to one photon under the cut-off wavelength, integrating equation \eqref{eq:planckWave} gives the photoelectron flux emitted by the surface of a spacecraft exposed to sunlight. Integrating planck's law for a given frequency band is non-trivial, in \ref{sec:methods}, the method for integrating Planck's law by Widger and Woodall \parencite{Widger1976} is presented in detail. 
 
 
 \subsection*{Secondary and backscattered electrons}
-Secondary and backscattered electrons can, depending on the ambient plasma environment and the material properties of the spacecraft in question, contribute significantly to the overall charge of a spacecraft. Both secondary and backscattered electrons provide a source of outgoing electrons from surfaces \insertref{Fundamentals of sc charging}. 
+Secondary and backscattered electrons can, depending on the ambient plasma environment and the material properties of the spacecraft in question, contribute significantly to the overall charge of a spacecraft. Both secondary and backscattered electrons provide a source of outgoing electrons from surfaces \parencite{LAI2019}, \parencite{Lai2005}, \parencite{Miloch2015}. 
 \\
 At higher electron temperatures, the electrons impinging on a spacecraft may have high enough energy to interact with the electrons embedded in the surface material thereby releasing one or more electrons from the surface. The yield of secondary electron emission, or probability of emission, is a function of energy and is denoted as $\delta(E)$. 
 \\
-In a finite range ambient electron temperature, certain materials $\delta(E)$ can exceed one; gold, aluminum oxide, and Kapton are some common materials used in spacecraft for which $\delta(E)$ exceeds one \insertref{Fundamentals of sc charging}. When $\delta(E) > 1$ there is a net total flux of outgoing electrons thereby causing the spacecraft to charge positively.  
+In a finite range ambient electron temperature, certain materials $\delta(E)$ can exceed one; gold, aluminum oxide, and Kapton are some common materials used in spacecraft for which $\delta(E)$ exceeds one \parencite{Lai2006}, \parencite{LAI2019}. When $\delta(E) > 1$ there is a net total flux of outgoing electrons thereby causing the spacecraft to charge positively.  
 \\
 Since the outgoing flux of electrons are dependent on the incoming electrons, one can calculate the secondary electron flux based on the incoming electron distribution $f(E)$. The current flux equation for secondary electrons is then
 
@@ -560,11 +558,11 @@ Similarly to the secondary electron emission mechanism, the backscattering effec
 \end{equation}
 
 \subsection*{Artificial sources of spacecraft charging}
-Artificial sources of charging can occur both as a method for charge mitigation on spacecraft, as well as an adverse side effect of charged particle emitting equipment onboard. The SCATHA spacecraft launched by NASA was one of the first flown mission that successfully proved that spacecraft could be discharged safely without damaging scientific instruments \insertref{SCATHA}. 
+Artificial sources of charging can occur both as a method for charge mitigation on spacecraft, as well as an adverse side effect of charged particle emitting equipment onboard. The SCATHA spacecraft launched by NASA was one of the first flown mission that successfully proved that spacecraft could be discharged safely without damaging scientific instruments  \parencite{Wade}. 
 \\
 Charge mitigation methods can be subdivided into active and passive methods, the difference being passive methods require no control mechanisms and are automatic, whereas active mitigation requires some form of control system. These systems can be further subdivided into where the discharging occurs, whether it is on the spacecraft frame or dielectric surfaces.
 \\
-One of the simplest methods for discharging a spacecraft is by using a simple sharp spike protruding from the spacecraft surface. Since the radius of curvature is small at the tip of the spike, a large electrical field is generated causing electron emission from the tip. The flux of outgoing electrons reduces the negative potential the spike is connected to. Lai \insertref{A critical overview on spacecraft charging mitigation methods, 2003} gives the following equation, with differences in notation, for the current flux of a sharp spike 
+One of the simplest methods for discharging a spacecraft is by using a simple sharp spike protruding from the spacecraft surface. Since the radius of curvature is small at the tip of the spike, a large electrical field is generated causing electron emission from the tip. The flux of outgoing electrons reduces the negative potential the spike is connected to. Lai \parencite{Lai2003} gives the following equation, with differences in notation, for the current flux of a sharp spike 
 
 \begin{equation}
     j_{spike} = A E^2 \exp \left(- \frac{B W^{\frac{3}{2}}}{E} \right)
