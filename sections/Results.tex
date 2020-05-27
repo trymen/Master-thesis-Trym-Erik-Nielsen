@@ -2,6 +2,13 @@
 \label{sec:results}
 
 \section{Charging without photoemission}
+%FLOATING POTENTIAL CONVERGENCE
+%POTENTIAL THROUGH CENTER OF OBJECT
+%PARTICLE DENSITIES (rho_i and rho_e)
+%RHO_I
+%RHO_E
+%AVERAGE POTENTIAL ISOLINES XY
+
 
 \section{Charging with photoemission}
 
@@ -48,11 +55,10 @@
 
 %PARTICLE DENSITIES (rho_i and rho_e)
 %RHO_I
-\begin{comment}
 \begin{center}
     \begin{figure}[H]
       \begin{subfigure}[b]{0.61\textwidth}
-      \includegraphics[width=\textwidth]{figures/MMO/plusX/Booms/BoomsPlusXrhoIT5000.png}
+      \includegraphics[width=\textwidth]{figures/MMO/plusX/Booms/BoomPlusXrhoET5000XYRestr05.png}
       \caption{Booms}
       \label{fig:PhiXBoomsPlusX}
     \end{subfigure}
@@ -83,7 +89,7 @@
   \caption{Dummy text}
   \end{figure}
 \end{center}
-\end{comment}
+
 
 
 
@@ -109,53 +115,114 @@
 
 
 \subsection*{Drift parallel to Z axis}
+%FLOATING POTENTIAL CONVERGENCE
+\begin{center}
+    \begin{figure}[H]
+      \begin{subfigure}[b]{0.75\textwidth}
+      \includegraphics[width=\columnwidth]{figures/MMO/minZ/Booms/MMO_Booms_driftMinZ_timeseries.png}
+      \caption{Booms}
+      \label{fig:MMO_Booms_driftMinZ_timeseries}
+    \end{subfigure}
+    \par\bigskip
+    \begin{subfigure}[b]{0.75\textwidth}
+      \includegraphics[width=\columnwidth]{figures/MMO/minZ/noBooms/MMO_noBooms_driftMinZ_timeseries.png}
+      \caption{Without booms}
+      \label{fig:MMO_noBooms_driftMinZ_timeseries}
+    \end{subfigure}
+  \label{fig:DriftMinZTimeseries}
+  \caption{Time series plot of the potential of the MMO with and without booms. Where the drift is along the negative Z axis. The inset plots the same timeseries after 1000 timesteps, where the potential of the spacecraft has begun to oscillate about the floating potential.}
+  \end{figure}
+\end{center}
+
+%POTENTIAL THROUGH CENTER OF OBJECT
+\begin{center}
+    \begin{figure}[H]
+      \begin{subfigure}[b]{0.61\textwidth}
+      \includegraphics[width=\textwidth]{figures/MMO/minZ/Booms/PhiXBoomsMinZ.png}
+      \caption{Booms}
+      \label{fig:PhiXBoomsPlusX}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.61\textwidth}
+      \includegraphics[width=\textwidth]{figures/MMO/minZ/noBooms/PhiXnoBoomsMinZ.png}
+      \caption{Without booms}
+      \label{fig:PhiXnoBoomsMinZ}
+    \end{subfigure}
+  \label{fig:PhiXDriftMinZ}
+  \caption{Dummy text}
+  \end{figure}
+\end{center}
 
 
 %PARTICLE DENSITIES (rho_i and rho_e)
 %RHO_I
-\begin{comment}
 \begin{center}
     \begin{figure}[H]
       \begin{subfigure}[b]{0.61\textwidth}
-      \includegraphics[width=\textwidth]{}
+      \includegraphics[width=\textwidth]{figures/MMO/minZ/Booms/BoomMinZrhoIT5000YZ.png}
       \caption{Booms}
-      \label{fig:PhiXBoomsPlusX}
+      \label{fig:BoomMinZrhoI}
     \end{subfigure}
     \begin{subfigure}[b]{0.61\textwidth}
-      \includegraphics[width=\textwidth]{figures/MMO/minZ/noBooms/noBoomMinZrhoIT5000XZRestr05.png}
+      \includegraphics[width=\textwidth]{figures/MMO/minZ/noBooms/noBoomMinZrhoIT5000YZ.png}
       \caption{Without booms}
-      \label{fig:PhiXnoBoomsPlusX}
+      \label{fig:noBoomMinZrhoI}
     \end{subfigure}
-  \label{fig:PhiXDriftX}
+  \label{fig:noBoomMinZrhoIMain}
   \caption{Dummy text}
   \end{figure}
 \end{center}
 
+%RHO_E
 \begin{center}
     \begin{figure}[H]
       \begin{subfigure}[b]{0.61\textwidth}
-      \includegraphics[width=\textwidth]{}
+      \includegraphics[width=\textwidth]{figures/MMO/minZ/noBooms/BoomMinZrhoET5000XYRestr01.png}
       \caption{Booms}
-      \label{fig:PhiXBoomsPlusX}
+      \label{fig:PhiXBoomsMinZ}
     \end{subfigure}
     \begin{subfigure}[b]{0.61\textwidth}
-      \includegraphics[width=\textwidth]{figures/MMO/minZ/noBooms/noBoomMinZrhoET5000XZRestr01.png}
+      \includegraphics[width=\textwidth]{figures/MMO/minZ/noBooms/noBoomMinZrhoET5000XYRestr01.png}
       \caption{Without booms}
-      \label{fig:PhiXnoBoomsPlusX}
+      \label{fig:PhiXnoBoomsMinZ}
     \end{subfigure}
-  \label{fig:PhiXDriftX}
+  \label{fig:PhiXDriftMinZ}
   \caption{Dummy text}
   \end{figure}
 \end{center}
-\end{comment}
 
+
+%AVERAGE POTENTIAL ISOLINES XY
+\begin{center}
+\begin{figure}[H]
+  \begin{subfigure}[b]{0.61\textwidth}
+    \includegraphics[width=\textwidth]{figures/MMO/minZ/Booms/PhiXBoomsMinZ.png}
+    \caption{Booms}
+    \label{fig:AvgAfter1000BoomsPlusX}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.61\textwidth}
+    \includegraphics[width=\textwidth]{figures/MMO/minZ/noBooms/PhiXnoBoomsMinZ.png}
+    \caption{Without booms}
+    \label{fig:AvgAfter1000noBoomsPlusX}
+  \end{subfigure}
+  \label{fig:AvgPhiDriftX}
+  \caption{Dummy text}
+\end{figure}
+\end{center}
 
 \section{Charging in an external magnetic field}
-
-
-
-
-
+%FLOATING POTENTIAL CONVERGENCE
+%POTENTIAL THROUGH CENTER OF OBJECT
+%PARTICLE DENSITIES (rho_i and rho_e)
+%RHO_I
+%RHO_E
+%AVERAGE POTENTIAL ISOLINES XY
 
 
 \section{Charging at different photoelectron temperatures}
+%FLOATING POTENTIAL CONVERGENCE
+%POTENTIAL THROUGH CENTER OF OBJECT
+%PARTICLE DENSITIES (rho_i and rho_e)
+%RHO_I
+%RHO_E
+%AVERAGE POTENTIAL ISOLINES XY

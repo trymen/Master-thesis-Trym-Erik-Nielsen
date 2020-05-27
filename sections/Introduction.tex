@@ -1,12 +1,25 @@
 \chapter{Introduction}
 \label{sec:intro}
 
-On January 20th 1994 Canadians experienced an unexpected interruption to their television programming: The Canadian Telsat spacecraft Anik E1 and Anik E2 had experienced sudden failures of their gyroscopic guidance systems and had begun to tumble out of control. Later attributed to the phenomena of spacecraft charging, the Anik spacecraft had experienced electrostatic discharge of the gyroscope circuitry causing permanent damage to critical systems. Although engineers were able to restore the gyroscopes of Anik E1, the Anik E2 would never recover, representing a loss of several hundred million dollars \insertref{Leach1995}.
+On January 20th 1994 Canadians experienced an unexpected interruption to their television programming: The Canadian Telsat spacecraft Anik E1 and Anik E2 had experienced sudden failures of their gyroscopic guidance systems and had begun to tumble out of control. Later attributed to the phenomena of spacecraft charging, the Anik spacecraft had experienced electrostatic discharge in the gyroscope circuitry, causing permanent damage to critical systems. Although engineers were able to restore the gyroscopes of Anik E1, the Anik E2 would never recover, representing a loss of several hundred million dollars \parencite{Leach1995}.
 
-Spacecraft charging has been studied as a disparate field of space physics since the mid twentieth century, with fundamental theories describing the phenomena developed by Irving Langmuir in 1924. 
+Spacecraft charging has been studied as a disparate field of space physics since the mid twentieth century, with fundamental theories describing the phenomena developed by Irving Langmuir in in the early 1920's. Langmuir and his colleagues worked extensively with electrode probes of different geometries, studying the development of sheaths of charged particles formed around the probe when the probe was at its so called "floating potential", i.e, when there is no net current flowing between the probe and its surroundings \parencite{Mott-Smith1926}, \parencite{Garrett1981}. 
+
+The probe theory developed by Langmuir, and others, not only gave rise to the plasma instrument still in use on spacecraft today; the Langmuir probe. But also gave scientists and engineers the necessary theoretical framework to analyze the charging of spacecraft with the key insight of the spacecraft as a floating probe. 
+
+With the advent of the development of spaceflight in the middle of the twentieth century, these theories were no longer only used in analyzing the charging properties of interstellar dust, but for practical reasons relating to protecting sensitive electronics onboard spacecraft and rockets. This practical concern cumulated in the launch of the "Spacecraft Charging At High Altitudes" (SCATHA) spacecraft in 1979 with the mission of gaining a better understanding of the development of the charging process due to the formation of a plasma sheet, and in testing strategies for controlling the potential of a spacecraft \parencite{SCATHA2020}. 
+
+Among the findings from the SCATHA mission, a difference in the potential of SCATHA of several hundred volts were measured between the day side and night side of the orbit \parencite{Mullen1986}. This difference is due to the photoelectric effect; when the conducting surfaces of the spacecraft are exposed to sunlight, electrons gain enough energy from the photons to escape the surface, thereby causing an outgoing negative current. The photoemission current on spacecraft are often much larger than the charging caused by electrons in the ambient plasma impinging on the spacecraft, in the case of the SCATHA, the photoelectric current was greater by a factor of 20 at some points in the orbit \parencite{LAI2019}.  
+
+Modern spacecraft are designed with spacecraft charging in mind; both passive and active methods for controlling the potential of a spacecraft exists, a good overview of such methods can be found in the work by Lai \parencite{Lai2003}. Nevertheless, spacecraft that carry scientific instruments as part of its payload must still account for the effects that spacecraft charging have on the data these instruments produce. 
+
+One such spacecraft, and the focus of this thesis, is the joint Japan Aerospace Exploration Agency (JAXA) and European Space Agency (ESA) mission BepiColombo. Launched in 2018, the BepiColombo consists of two orbiters that will begin to explore Mercury and its surrounding plasma environment when it arrives in 2025 \parencite{Benkhoff2009}. This thesis will focus on one of the orbiters exclusively, the Mercury Magnetospheric Orbiter (MMO). The MMO carries as part of its payload, charged particle detectors, and magnetometers to measure the solar wind plasma around Mercury and its magnetic field respectively \parencite{Saito2010}, \parencite{Benkhoff2009}. 
+
+The main aim of this thesis is to simulate the charging of the MMO spacecraft in its polar orbit around Mercury when the spacecraft is exposed to direct sunlight. By simulating the charging of the spacecraft, we hope to gain insight into what effects the formation of a plasma sheet around the spacecraft could have on the data collection of the spacecraft's scientific payload.
+
+In order to accomplish this, a series of numerical experiments will be carried out using numerical methods. At the University of Oslo (UIO) for the past years, the 4DSpace Strategic Research Initiative has developed a new Particle-In-Cell (PIC) called PINC, with the capability of simulating the charging of objects in an ambient plasma. PINC will be used as a framework in this thesis then to simulate the charging of the MMO.
+
+Due to the conducting surfaces on the MMO and its close proximity to the Sun while in orbit around Mercury, we further developed the object module of PINC with methods for including a photoemission current. 
 
 
-\parencite{Garrett1981} 
-
-
-
+\newpage
