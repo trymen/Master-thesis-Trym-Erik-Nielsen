@@ -10,12 +10,12 @@ The PM method computes the forces of a system as field quantities, first by assi
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[scale=0.6]{figures/PiC.png}
+    \includegraphics[scale=0.6]{figures/ReferenceFigures/PiC.png}
     \caption{Particle in cell compute cycle}
     \label{fig:pic}
 \end{figure}
 
-The PiC algorithm is an example of the PM method, figure \ref{fig:pic} shows an overview of a computational cycle for each timestep in the PiC algorithm. Beginning at the box on the right in the figure, a distribution of $N_p$ particles with position $\vb{x}_p$ is interpolated to get the charge $\rho_g$ and current density $\vb{J}_g$ at the surrounding grid points. The two most common methods for this interpolation is the Nearest Grid Point (NGP) scheme, and Cloud in Cell (CIC) scheme.\\
+The PiC algorithm is an example of the PM method, figure \ref{fig:pic} shows an overview of a computational cycle for each timestep in the PiC algorithm. Beginning at the box on the right in the figure, a distribution of $N_p$ particles with position $\vb{x}_p$ is interpolated to get the charge $\rho_g$ and current density $\vb{j}_g$ at the surrounding grid points. The two most common methods for this interpolation is the Nearest Grid Point (NGP) scheme, and Cloud in Cell (CIC) scheme.\\
 Once the charge and current densities are known on the grid, the next step is to solve for the $\vb{E}$ and $\vb{B}$ fields. This is accomplished by solving Maxwell's equations at the grid points
 
 \begin{subequations}
@@ -60,11 +60,11 @@ Where the rotational parameters $\vb{T}$ and $\vb{S}$ are expressed as
 \begin{subequations}\label{eq:BrotParams}
     \begin{align}
         \vb{T} &= \hat{\vb{B}}_p \cdot \tan\left(\frac{q_s \Delta t}{2m} B_p \right) \\
-        \vb{S} &= \frac{2 \vb{T}}{1 + \vb{T}^2} 
+        \vb{S} &= \frac{2 \vb{T}}{1 + \norm{\vb{T}}^2}. 
     \end{align}
 \end{subequations}
 
-Equations \eqref{eq:borisNewVel} are equally suited for plasmas with time varying magnetic fields as for electrostatic plasma with a constant external magnetic field. Since PINC is an electrostatic model, equations \eqref{eq:BrotParams} is solved once before the main time loop, then applied to each call to the mover method.
+Where $\hat{\vb{B}}_p$ is the magnetic unit vector acting on particle $p$. Equations \eqref{eq:borisNewVel} are equally suited for plasmas with time varying magnetic fields as for electrostatic plasma with a constant external magnetic field. Since PINC is an electrostatic model, equations \eqref{eq:BrotParams} is solved once before the main time loop, then applied to each call to the mover method.
 
 \subsection{Field Solver}
 Several field solvers exists in PINC, in this thesis the multigrid solver developed by Killie \parencite{Killie} has been used. The multigrid solver is an iterative method; the basic principle of the method in a PiC context is to solve Poisson's equation first on a coarse grid, then using the solution on the course grid as a guess, solve the equation again for a finer grid. The solution for the coarse grid speeds up the solution for the finer grid, reducing the total computational time required to converge to an accurate solution. 
@@ -325,7 +325,7 @@ Since PINC does not store data defining cells, and each node is surrounded by 8 
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[scale=0.6]{figures/nodes.png}
+    \includegraphics[scale=0.6]{figures/ReferenceFigures/nodes.png}
     \caption{Surface nodes on a box exposed to sunlight}
     \label{fig:sunlitNodes}
 \end{figure}

@@ -20,31 +20,27 @@ where the term $q \vb{E}$ is called the Electric force, and the term $q\vb{v} \c
 \begin{equation}\label{eq:magF}
     \vb{F} = q \vb{v} \cp \vb{B}.
 \end{equation}
-
 The cross product of the velocity and magnetic field vector means that the magnetic force always acts perpendicularly to the direction of motion of the particle, thereby causing the particle to gyrate.
 
 Setting the centripetal force equal to the magnitude of the Lorentz force, we can derive an expression for the gyroradius $r_g$ of the motion
 
 \begin{equation}\label{eq:gyrorad}
-    \frac{m_s v_{\perp}^2}{r_g} = \abs{q} v_{\perp} \norm{\vb{B}}
+    \frac{m_s v_{\perp}^2}{r_g} = \abs{q} v_{\perp} \norm{\vb{B}},
 \end{equation}
-
-Where the subscript on $m_s$ denotes the specie of the particle, and $v_\perp$ denotes the perpendicular component of velocity to the plane of $\vb{B}$. Upon rearranging, the expression for the gyroradius $r_g$ becomes
+where the subscript on $m_s$ denotes the specie of the particle, and $v_\perp$ denotes the perpendicular component of velocity to the plane of $\vb{B}$. We have also used the notation $\norm{\vb{B}}$ to denote the magnitude of the vector. Upon rearranging, the expression for the gyroradius $r_g$ becomes
 
 \begin{equation}
     r_g = \frac{m_s v_\perp}{\abs{q} \norm{\vb{B}}}.
 \end{equation}
-
 The particle gyrates with an angular frequency, called the cyclotron frequency $\Omega_c$, expressed as 
 
 \begin{equation}
-    \Omega_c = \frac{v_\perp}{r_g} = \frac{\abs{q} \; \norm{\vb{B}}}{m_s}
+    \Omega_c = \frac{v_\perp}{r_g} = \frac{\abs{q} \; \norm{\vb{B}}}{m_s}.
 \end{equation}
-
 The motion of a particle $q_s$ is in practical cases often modelled as the drift of the centre of gyration of the particle. When also subjected to an isotropic electrical field, this motion is called E cross B drift, or Hall drift, and can be derived from the Lorentz force equation and Newtons' second law and solving for the acceleration of the particle: If we assume the drift velocity to be constant in time, the expression for the drift $\vb{V}_D$ becomes
 
 \begin{equation}
-    \vb{V}_D = \frac{\vb{E} \cp \vb{B}}{B^2}
+    \vb{V}_D = \frac{\vb{E} \cp \vb{B}}{B^2}.
 \end{equation}
 
 \subsection{Kinetic description}
@@ -53,22 +49,18 @@ In the previous section, we studied the individual motion of charged plasma part
 \begin{equation}\label{eq:rhoCharge}
     \rho_c = \sum_s q_s\int f(\vb{x}, \vb{v}, t) d^3\vb{v}.
 \end{equation}
-
 Similarly, an expression for the current density is obtained by multiplying the charge distribution by the velocity vector $v$ and integrating the result in a similar fashion to \eqref{eq:rhoCharge}
 
 \begin{equation}
-    \vb{j} = \sum_s q_s \int \vb{v} f(\vb{x}, \vb{v}, t) d^3 \vb{v}
+    \vb{j} = \sum_s q_s \int \vb{v} f(\vb{x}, \vb{v}, t) d^3 \vb{v},
 \end{equation}
-
-
-Equipped with a continuous distribution function of particles in phase-space, equations of motion that describe the flow of the charged particles can be derived from solving the Boltzmann equation. Or alternatively, when assuming a non-collisional plasma, the set of vector equations called the Vlasov equation can be used
+equipped with a continuous distribution function of particles in phase-space, equations of motion that describe the flow of the charged particles can be derived from solving the Boltzmann equation. Or alternatively, when assuming a non-collisional plasma, the set of vector equations called the Vlasov equation can be used
 
 
 \begin{equation}\label{eq:Vlasov}
-    \pdv{f}{t} + \vb{v} \vdot \grad{f_s} + \frac{q_s}{m_s} (\vb{E} + \vb{v} \cp \vb{B}) \vdot \grad_v{f} = 0
+    \pdv{f}{t} + \vb{v} \vdot \grad{f_s} + \frac{q_s}{m_s} (\vb{E} + \vb{v} \cp \vb{B}) \vdot \grad_v{f} = 0.
 \end{equation}
-
-Where the operator notation $\grad_v = (\pdv{v_x}, \pdv{v_y}, \pdv{v_z})$ and $\grad = (\pdv{x},\pdv{y},\pdv{z})$ has been used. For a comprehensive derivation of the Vlasov equation see \parencite{Birdsall2004} or \parencite{Piel2017}.
+Equation \eqref{eq:Vlasov} is coordinate independent, in PINC the Cartesian coordinate system is used for all computations. The operator notation $\grad_v = (\pdv{v_x}, \pdv{v_y}, \pdv{v_z})$ and $\grad = (\pdv{x},\pdv{y},\pdv{z})$ has therefore been used. For a comprehensive derivation of the Vlasov equation see \parencite{Birdsall2004} or \parencite{Piel2017}.
 
 
 \subsection{Fluid description}
@@ -77,19 +69,18 @@ In previous sections, the equations of motion for characterising plasma has been
 Another method, that reduces the complexity of computing individual particle motions, is treating plasma as two continuous fluids. In this approach we are able to extract macroscopic properties of the plasma, such as the density, the velocity and the mean energy. The fluid equations are derived by taking the velocity moments of the Vlasov equation \eqref{eq:Vlasov}, where the generalized velocity moment is described as
 
 \begin{equation}\label{eq:moment}
-    M^n \equiv \int f(\vb{v}) \vb{v}^n d \vb{v}
+    \vb{M}^n \equiv \int \vb{v}\vb{v} \ldots \vb{v} f_s(\vb{x}, \vb{v}, t) d^3 \vb{v}
 \end{equation}
 
-The zeroth velocity moment, also called the continuity equation, can be found by multiplying equation \eqref{eq:Vlasov} by the zeroth velocity moment 
+Where $\vb{M}^n$ is a tensor of rank $n$. The zeroth velocity moment, also called the continuity equation, can be found by multiplying equation \eqref{eq:Vlasov} by the zeroth velocity moment 
 
 \begin{equation}\label{eq:zeromoment}
-    n_s = \int f_s d \vb{v}
+    n_s(\vb{x}, t) = \int f_s(\vb{x}, \vb{v}, t) d^3 \vb{v},
 \end{equation}
-
-The zeroth velocity moment for species $s$ is simply the number density for the species. Multiplying equation \eqref{eq:zeromoment} by the Vlasov equation we have
+the zeroth velocity moment for species $s$ is simply the number density for the species. Multiplying equation \eqref{eq:zeromoment} by the Vlasov equation we have
 
 \begin{equation}\label{eq:continuity}
-    \int \pdv{f_s}{t} d \vb{v} \int \vb{v} \vdot \grad{f_s} \vb{v} + \frac{q}{m} \int \vb{E} + \vb{v} \cp \vb{B} \vdot \pdv{f_s}{\vb{v}} d \vb{v} = 0
+    \int \pdv{f_s}{t} d \vb{v} \int \vb{v} \vdot \grad{f_s} \vb{v} + \frac{q}{m} \int \vb{E} + \vb{v} \cp \vb{B} \vdot \grad_v{f_s}{\vb{v}}  \;d \vb{v} = 0
 \end{equation}
 
 With a considerable amount of manipulation \parencite[ch 7]{Chen2018}, equation \eqref{eq:continuity} reduces to
@@ -102,28 +93,28 @@ With a considerable amount of manipulation \parencite[ch 7]{Chen2018}, equation 
 In a similar fashion, the momentum equation can be derived from multiplying equation \eqref{eq:Vlasov} by the the first velocity moment
 
 \begin{equation}\label{eq:firstmoment}
-    M^1 = \int m_s \vb{v} f_s d \vb{v}
+    \vb{M}^1 = \int m_s \vb{v} f_s d^3 \vb{v}
 \end{equation}
 
 this multiplication yields
 
 \begin{equation}\label{eq:momentum}
-     \pdv{\vb{m_s n_s v_s}}{t} + \div{\vb{P_s}} - e_s n_s (\vb{E} \ \vb{v_s} \cross \vb{B}) = \vb{F_s}
+     \pdv{m_s n_s \vb{v_s}}{t} + \div{\vb{P_s}} - e_s n_s (\vb{E} + \vb{v_s} \cross \vb{B}) = \vb{F_s}
 \end{equation}
 
-Where $P_s$ denotes the pressure tensor field. The energy equation is derived from the second velocity moment
+Where $\vb{P}_s$ denotes the pressure tensor field. The energy equation is derived from the second velocity moment
 
 \begin{equation}
-    M^2 = \int \frac{1}{2} m_s \vb{v} \vb{v} f_s d \vb{v}
+    \vb{M}^2 = \int \frac{1}{2} m_s \vb{v} \vb{v} f_s d^3 \vb{v}
 \end{equation}
 
 The second order moment described the flow of momentum, and is also called the stress tensor \parencite[Ch. 3]{Fitzpatrick2015}. Applying the second velocity moment to equation \eqref{eq:Vlasov} equation gives the partial differential equation
 
 \begin{equation}\label{eq:energy}
-    \pdv{t} (\frac{3}{2} p_s + \frac{1}{2} m_s n_s v_s^2) + \div{\vb{Q_s}} - e_s n_s \vb{E} \vdot \vb{v_s} = W_s + \vb{v_s} + \vb{v_s} + \vb{F_s}   
+    \pdv{t} (\frac{3}{2} p_s + \frac{1}{2} m_s n_s v_s^2) + \div{\vb{Q_s}} - e_s n_s \vb{E} \vdot \vb{v_s} = W_s + \vb{v_s} \cdot \vb{F_s}.   
 \end{equation}
 
-Where the terms $\vb{Q}_s$ and $\vb{W}_s$ denote the energy flux density and total change of energy of species $s$ respectively. Equations \eqref{eq:contReduced}, \eqref{eq:momentum}, and \eqref{eq:energy}, are collectively known as the fluid equations, and written in their convective time-derivative form, can be reduced to
+Where $v_s$ is the thermal velocity of species $s$. The terms $\vb{Q}_s$ and ${W}_s$ denote the energy flux density and total change of energy of species $s$ respectively, and the notation $p_s = Tr(\vb{P})_s$ has been used for the scalar pressure, where $Tr$ is the trace function. Equations \eqref{eq:contReduced}, \eqref{eq:momentum}, and \eqref{eq:energy}, are collectively known as the fluid equations, and written in their convective time-derivative form, can be reduced to
 
 \begin{subequations}
     \begin{align}
@@ -291,13 +282,13 @@ The properties of the solar wind can change significantly in regions in close pr
 \centering
 \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/EarthMagnetosphere.PNG}
+    \includegraphics[width=\linewidth]{figures/ReferenceFigures/EarthMagnetosphere.PNG}
     \caption{Magnetosphere of Earth}
     \label{fig:EarthMagSph}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{figures/inducedMagnetosphere.PNG}
+    \includegraphics[width=\linewidth]{figures/ReferenceFigures/inducedMagnetosphere.PNG}
     \caption{Induced magnetosphere on Venus}
     \label{fig:VenusMagSph}
 \end{subfigure}
@@ -509,7 +500,7 @@ Figure \ref{fig:blackbody} plots the irradiance given by equation \eqref{eq:plan
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[scale=0.6]{figures/blackbody.png}
+    \includegraphics[scale=0.6]{figures/ReferenceFigures/blackbody.png}
     \caption{Irradiance of blackbody radiation for different temperatures}
     \label{fig:blackbody}
 \end{figure}
@@ -521,7 +512,7 @@ The radiation calculated from equation \eqref{eq:planckFreq} is commonly given i
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.6]{figures/solarspectrum.png}
+    \includegraphics[scale=0.6]{figures/ReferenceFigures/solarspectrum.png}
     \caption{Solar irradiance as measured onboard the International Space Station}
     \label{fig:solIrradiance}
 \end{figure}
