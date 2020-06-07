@@ -14,8 +14,6 @@
 % \label{tab:FlotingPotSummary}
 % \end{table}
 
-
-
 \section{Charging without photoemission}
 %FLOATING POTENTIAL CONVERGENCE
 \begin{center}
@@ -32,7 +30,7 @@
       \label{fig:C_noPH_NB}
     \end{subfigure}
   \label{fig:ConvnoPH}
-  \caption{Dummy text}
+  \caption{Timeseries plot of potential of the MMO with and without booms. The potential has been converted from PINC dimensionless units to Volts. The inset plots shows the potential of the two configurations for last 10,000 timesteps.}
   \end{figure}
 \end{center}
 
@@ -50,7 +48,7 @@
       \label{fig:L_noPH_NB}
     \end{subfigure}
   \label{fig:Line_noPH}
-  \caption{Dummy text}
+  \caption{\ref{fig:L_noPH_NB} and \ref{fig:L_noPH_WB} show a potential profile along the X axis for the MMO without and with booms respectively. The line is plotted at $(x,y) = (13.95 m, 13.95 m)$, or node points $(x,y) = (62,62)$, and passes through the main octagonal body of the spacecraft. The X axis units are in number of nodes from the origin.}
   \end{figure}
 \end{center}
 
@@ -69,7 +67,7 @@
     \label{fig:P_noPH_NB}
   \end{subfigure}
   \label{fig:Pot_noPH}
-  \caption{Dummy text}
+  \caption{\ref{fig:P_noPH_WB} and \ref{fig:P_noPH_WB} are 2D slice through $Z = 14.4 m$ showing the potential profile of the entire computational domain.}
 \end{figure}
 \end{center}
 
@@ -88,7 +86,7 @@
       \label{fig:I_noPH_NB}
     \end{subfigure}
   \label{fig:Ions_noPH}
-  \caption{Dummy text}
+  \caption{Ion density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the ion plasma density from table \ref{tab:PlasmaParamMMO}.}
   \end{figure}
 \end{center}
 
@@ -106,7 +104,7 @@
       \label{fig:E_noPH_NB}
     \end{subfigure}
   \label{fig:Elec_noPH}
-  \caption{Dummy text}
+  \caption{Electron density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the electron plasma density from table \ref{tab:PlasmaParamMMO}.}
   \end{figure}
 \end{center}
 
@@ -130,7 +128,7 @@
   \label{fig:C_posX_NB}
 \end{subfigure}
 \label{fig:Conv_posX}
-\caption{Time series plot of the potential of the MMO with and without booms. The inset plots the same timeseries after 1000 timesteps, where the potential of the spacecraft has begun to oscillate about the floating potential.}
+\caption{Time series plot of the potential of the two MMO configurations for drift along X axis. The insets plots the same timeseries starting at 1000 timesteps, where the potential of the spacecraft has begun to oscillate about the floating potential.}
 \end{figure}
 
 
@@ -148,7 +146,7 @@
   \label{fig:L_posX_NB}
 \end{subfigure}
 \label{fig:Line_posX}
-\caption{Dummy text}
+\caption{Potential profile along the X axis for the two MMO configurations with drift along the X axis and photoemission included. The line is plotted at $(x,y) = (13.95 m, 13.95 m)$, or node points $(x,y) = (62,62)$, and passes through the main octagonal body of the spacecraft. The X axis units are in number of nodes from the origin. The two values in each plot show the height of the potential barrier formed.}
 \end{figure}
 
 
@@ -166,7 +164,7 @@
     \label{fig:P_posX_NB}
   \end{subfigure}
   \label{fig:Pot_posX}
-  \caption{Dummy text}
+  \caption{2D slice through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along X axis, and photoemission included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
 \end{figure}
 
 
@@ -186,7 +184,7 @@
   \label{fig:I_posX_NB}
 \end{subfigure}
 \label{fig:Ions_posX}
-\caption{Dummy text}
+\caption{Ion density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the ion plasma density from table \ref{tab:PlasmaParamMMO}. Plasma drift is along the X axis, and photoemission is included}
 \end{figure}
 
 
@@ -204,7 +202,7 @@
   \label{fig:E_posX_NB}
 \end{subfigure}
 \label{fig:Elec_posX}
-\caption{Dummy text}
+\caption{Electron density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the electron plasma density from table \ref{tab:PlasmaParamMMO}. Drift is along the X axis, and photoemission is included, the sun is located in the negative X direction.}
 \end{figure}
 
 
@@ -227,12 +225,11 @@
   \label{fig:C_minZ_NB}
 \end{subfigure}
 \label{fig:Conv_minZ}
-\caption{Time series plot of the potential of the MMO with and without booms. Where the drift is along the negative Z axis. The inset plots the same timeseries after 1000 timesteps, where the potential of the spacecraft has begun to oscillate about the floating potential.}
+\caption{Time series plot of the potential of the MMO with and without booms, where the drift is along the negative Z axis and photoemission is included. The inset plots the same timeseries after 1000 timesteps, where the potential of the spacecraft has begun to oscillate about the floating potential.}
 \end{figure}
 
 
 %POTENTIAL THROUGH CENTER OF OBJECT
-
 \begin{figure}[H]
   \begin{subfigure}[b]{0.6\textwidth}
   \includegraphics[width=\textwidth]{figures/MMO/minZ/WB/L_minZ_WB.png}
@@ -245,7 +242,7 @@
   \label{fig:L_minZ_N}
 \end{subfigure}
 \label{fig:Line_minZ}
-\caption{Dummy text}
+\caption{Potential profile along the X axis for the two MMO configurations with drift along the negative Z axis and photoemission included. The line is plotted at $(x,y) = (13.95 m, 13.95 m)$, or node points $(x,y) = (62,62)$, and passes through the main octagonal body of the spacecraft. The X axis units are in number of nodes from the origin. The two values in each plot show the height of the potential barrier formed.}
 \end{figure}
 
 
@@ -263,7 +260,7 @@
     \label{fig:P_minZ_NB}
   \end{subfigure}
   \label{fig:Pot_minZ}
-  \caption{Dummy text}
+  \caption{2D slice through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along the negative Z axis, and photoemission included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
 \end{figure}
 
 %PARTICLE DENSITIES (rho_i and rho_e)
@@ -280,7 +277,7 @@
   \label{fig:I_minZ_NB}
 \end{subfigure}
 \label{fig:Ion_minZ}
-\caption{Dummy text}
+\caption{Ion density profile plotted at $Y = 14.4 m$, the color gradient is normalized against the ion plasma density from table \ref{tab:PlasmaParamMMO}. Drift is along the negative Z axis. and photoemission is included.}
 \end{figure}
 
 %RHO_E
@@ -296,7 +293,7 @@
   \label{fig:E_minZ_NB}
 \end{subfigure}
 \label{fig:Elec_minZ}
-\caption{Dummy text}
+\caption{Electron density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the electron plasma density from table \ref{tab:PlasmaParamMMO}. Drift is directed into the page, and photoemission is included. The sun is located in the negative X direction.}
 \end{figure}
 
 
@@ -316,7 +313,7 @@
   \label{fig:C_BField_NB}
 \end{subfigure}
 \label{fig:Conv_BField}
-\caption{Dummy text}
+\caption{Timeseries plot of the potential of the two configurations of the MMO, drift is along the negative Z axis, photoemission and an external magnetic field are included. The potential has been converted from PINC dimensionless units to Volts. The inset plots shows the potential of the two configurations for last 9,000 timesteps.}
 \end{figure}
 
 
@@ -334,7 +331,7 @@
   \label{fig:L_BField_NB}
 \end{subfigure}
 \label{fig:Line_BField}
-\caption{Dummy text}
+\caption{Potential profile along the X axis for the two MMO configurations with drift along the negative Z axis, photoemission and an external magnetic field are included. The line is plotted at $(x,y) = (13.95 m, 13.95 m)$, or node points $(x,y) = (62,62)$, and passes through the main octagonal body of the spacecraft. The X axis units are in number of nodes from the origin. The two values in each plot show the height of the potential barrier formed.}
 \end{figure}
 
 %AVERAGE POTENTIAL ISOLINES XY
@@ -351,7 +348,7 @@
     \label{fig:P_BField_NB}
   \end{subfigure}
   \label{fig:Pot_BField}
-  \caption{Dummy text}
+  \caption{2D slice through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along the negative Z axis, photoemission and an external magnetic field are included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
 \end{figure}
 
 %PARTICLE DENSITIES (rho_i and rho_e)
@@ -368,7 +365,7 @@
   \label{fig:I_BField_NB}
 \end{subfigure}
 \label{fig:Ions_BField}
-\caption{Dummy text}
+\caption{Ion density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the ion plasma density from table \ref{tab:PlasmaParamMMO}. Drift is along the negative Z axis, photoemission and an external magnetic field are included.}
 \end{figure}
 
 %RHO_E
@@ -384,7 +381,7 @@
   \label{fig:E_BField_NB}
 \end{subfigure}
 \label{fig:Elec_BField}
-\caption{Dummy text}
+\caption{Electron density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the electron plasma density from table \ref{tab:PlasmaParamMMO}.Drift is along the negative Z axis, photoemission and an external magnetic field are included. The direction of the sun is along the negative X axis.}
 \end{figure}
 
 \section{Charging at different photoelectron temperatures}
@@ -404,7 +401,7 @@
   \label{fig:C_PHTemp_NB}
 \end{subfigure}
 \label{fig:Conv_PHTemp}
-\caption{Dummy text}
+\caption{Timeseries plot of the potential of the two configurations of the MMO, drift is along the negative Z axis and the photoelectron temperature has been set to $3 \; eV$. The potential has been converted from PINC dimensionless units to Volts. The inset plots the same timeseries after 1000 timesteps, where the potential of the spacecraft has begun to oscillate about the floating potential.}
 \end{figure}
 
 %POTENTIAL THROUGH CENTER OF OBJECT
@@ -420,7 +417,7 @@
   \label{fig:L_PHTemp_NB}
 \end{subfigure}
 \label{fig:Line_PHTemp}
-\caption{Dummy text}
+\caption{Potential profile along the X axis for the two MMO configurations with drift along the negative Z axis, photoemission is included with a photoelectron temperature of $3 \; eV$. The line is plotted at $(x,y) = (13.95 m, 13.95 m)$, or node points $(x,y) = (62,62)$, and passes through the main octagonal body of the spacecraft. The X axis units are in number of nodes from the origin. The two values in each plot show the height of the potential barrier formed.}
 \end{figure}
 
 %AVERAGE POTENTIAL ISOLINES XY
@@ -437,7 +434,7 @@
     \label{fig:P_PHTemp_NB}
   \end{subfigure}
   \label{fig:Pot_PHTemp}
-  \caption{Dummy text}
+  \caption{2D cut through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along the negative Z axis, photoemission is included with a photoelectron temperature of $3 \; eV$. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
 \end{figure}
 
 %PARTICLE DENSITIES (rho_i and rho_e)
@@ -454,7 +451,7 @@
   \label{fig:I_PHTemp_NB}
 \end{subfigure}
 \label{fig:Ions_PHTemp}
-\caption{Dummy text}
+\caption{Ion density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the ion plasma density from table \ref{tab:PlasmaParamMMO}. Drift is along the negative Z axis, and photoemission is included with a photoelectron temperature of $3 \; eV$.}
 \end{figure}
 
 %RHO_E
@@ -470,5 +467,5 @@
   \label{fig:E_PHTemp_NB}
 \end{subfigure}
 \label{fig:Elec_PHTemp}
-\caption{Dummy text}
+\caption{Electron density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the electron plasma density from table \ref{tab:PlasmaParamMMO}. Drift is along the negative Z axis, and photoemission is included with a photoelectron temperature of $3 \; eV$.}
 \end{figure}
