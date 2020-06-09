@@ -50,7 +50,7 @@ In order to compare our results with theory, we can estimate the floating potent
 \begin{equation*}
     \phi(t) = \phi_f \frac{t}{h + t},
 \end{equation*}
-where $\phi_f$ is the MMO floating potential without a photoemission current present, we estimate a floating potential of $\phi_f \approx 283 V$. A full analysis of the curve fitting and the Python script used to fit the curves is given in  \cref{sec:appendixC}.
+where $\phi_f$ is the MMO floating potential without a photoemission current present, we estimate a floating potential of $\phi_f \approx 283 V$. A full analysis of the curve fitting and the Python script used to fit the curves is given in  \cref{sec:appendixC}, and a current balance analysis of the theoretical floating potential for the boomless configurations of the MMO (with and without the photoemission current) will be presented in the impending section. 
 
 
 %POTENTIAL THROUGH CENTER OF OBJECT
@@ -66,16 +66,31 @@ where $\phi_f$ is the MMO floating potential without a photoemission current pre
       \caption{Without booms}
       \label{fig:L_noPH_NB}
     \end{subfigure}
-  \label{fig:Line_noPH}
+  \label{fig:Line_noPH_comb}
   \caption{\ref{fig:L_noPH_NB} and \ref{fig:L_noPH_WB} show a potential profile along the X axis for the MMO without and with booms respectively. The line is plotted at $(x,y) = (13.95 m, 13.95 m)$, or node points $(x,y) = (62,62)$, and passes through the main octagonal body of the spacecraft. The X axis units are in number of nodes from the origin.}
   \end{figure}
 \end{center}
 
-Even without PINC converging to a floating potential, we can still make comparisons of the plasma sheath formed around the spacecraft by plotting the potential profile of the domain. Figure \ref{fig:Line_noPH}, shows the potential relative to the ambient plasma plotted on a center line passing through the spacecraft octohedral body. comparing figure \ref{fig:L_noPH_WB} with figure \ref{fig:L_noPH_NB}, we see a pre-sheath between node 0 and 20 (4.5 meters from the $X = 0$ wall) in the MMO configuration without booms. In figure \ref{fig:L_noPH_WB}, zero potential is only reached at the computational boundary, suggesting the sheath would physically extend beyond the defined computational domain.   
+Even without PINC converging to a floating potential, we can still make comparisons of the plasma sheath formed around the spacecraft by plotting the potential profile of the domain. Figure \ref{fig:Line_noPH_comb}, shows the potential relative to the ambient plasma plotted on a center line passing through the spacecraft octahedral body. comparing figure \ref{fig:L_noPH_WB} with figure \ref{fig:L_noPH_NB}, we see a difference in sheath thickness. For a negatively charged probe, we can estimate the thickness of the sheath using Bohm's sheath criterion \parencite{Chen2018}:
+\begin{equation}
+    u_0 \approx \left(\frac{K T_e}{m_i}\right)^{1/2},
+\end{equation}
+where $u_0$ is the velocity required by ions at the sheath boundary. For ions to be accelerated to this velocity we can estimate the required sheath edge potential as
+\begin{equation}
+    \phi_s = -\frac{1}{2} \frac{K T_e}{e}.
+\end{equation}
 
+Where $\phi_s$ is the potential relative to the ambient plasma. Setting the electron temperature, $T_e$, to $1.16 \times 10^6$ we find the sheath boundary potential to be approximately $-50 V$ relative to the main plasma body. The sheath thickness is then the distance from the potential along the x axis to where the potential is the same as the sheath boundary potential. From the plots we then estimate a sheath thickness of 2.5 meters for the MMO configuration without booms, and 3.2 meters for the configuration with booms.
 
-
-
+The sheath thickness, $d$, can also be computed directly by re-arranging the Child-Langmuir law \parencite{Chen2018}:
+\begin{equation}
+    d^2 = \frac{4}{9} \left(\frac{2e}{m_i}\right)^{1/2} \frac{\abs{\phi_w}^{3/2}}{4 \pi \abs{\vb{j_{i,s}}}}.
+\end{equation}
+where $\phi_w$ is the "wall", or spacecraft potential, and $\abs{\vb{j_{i,s}}}$ is the ion saturation current density. The ion saturation current density is given by
+\begin{equation}
+    \abs{\vb{j_{i,s}}} = q_e n_e c_s.
+\end{equation}
+The speed $c_s$ is the ion speed of sound, and can be estimated as $c_s = \sqrt{k_b T_e / m_i}$ for a cold plasma. These equations are straight forward to solve by plugging in the known spacecraft potential, the electron density, and electron temperature. Using the parameters from table \ref{tab:PlasmaParamMMO}  the plasma thickness comes out to be 3.13 meters. 
 
 %AVERAGE POTENTIAL ISOLINES XY
 \begin{center}
@@ -91,10 +106,12 @@ Even without PINC converging to a floating potential, we can still make comparis
     \caption{Without booms}
     \label{fig:P_noPH_NB}
   \end{subfigure}
-  \label{fig:Pot_noPH}
-  \caption{\ref{fig:P_noPH_WB} and \ref{fig:P_noPH_WB} are 2D slice through $Z = 14.4 m$ showing the potential profile of the entire computational domain.}
+  \label{fig:PMMOnoPH}
+  \caption{\ref{fig:P_noPH_WB} and \ref{fig:P_noPH_WB} are 2D slices through $Z = 14.4 m$ showing the potential profile of the entire computational domain.}
 \end{figure}
 \end{center}
+
+Figure \ref{fig:PMMOnoPH} shows 2D cut in the plane $Z=14.4$, dividing the spacecraft in half, and is plotted at the last simulated timestep (timestep 40,000). The contours are plotted using the matplotlib Python package, with contour lines subdivided into 500 levels to better distinguish the plasma sheath. Values are converted from normalized PINC internal values to Volts. The color boundary between orange and red approximately marks the plasma sheath edge. We can see this boundary is equidistant from the MMO body in the boomless configuration, whereas the sheath boundary is relatively closer to the boom tips than to the main octagonal body of the spacecraft. 
 
 %PARTICLE DENSITIES (rho_i and rho_e)
 %RHO_I
@@ -110,7 +127,7 @@ Even without PINC converging to a floating potential, we can still make comparis
       \caption{Without booms}
       \label{fig:I_noPH_NB}
     \end{subfigure}
-  \label{fig:Ions_noPH}
+  \label{fig:IonsNoPH}
   \caption{Ion density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the ion plasma density from table \ref{tab:PlasmaParamMMO}.}
   \end{figure}
 \end{center}
@@ -128,13 +145,16 @@ Even without PINC converging to a floating potential, we can still make comparis
       \caption{Without booms}
       \label{fig:E_noPH_NB}
     \end{subfigure}
-  \label{fig:Elec_noPH}
+  \label{fig:ElectronsNoPH}
   \caption{Electron density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the electron plasma density from table \ref{tab:PlasmaParamMMO}.}
   \end{figure}
 \end{center}
 
+Figures \ref{fig:IonsNoPH} and \ref{fig:ElectronsNoPH} show the density of ions (protons) and electrons respectively plotted at timestep 400, 1\% through the total simulation time. Similarly to figure \ref{fig:PMMOnoPH}, the 2D slice is placed at $Z = 14.4 m$, dividing the spacecraft in halves. The density values have been normalized against the ambient plasma density, and as before, 500 levels were used for the contour lines drawn. For cases 1 and 6, we set the plasma drift along the positive X axis, \ref{fig:IonsNoPH} clearly shows an ion wake forming "behind" the spacecraft for both boom configurations. We also note the slightly higher density of ions directly in "front" of the spacecraft, denoting the plasma sheath that has formed even this early in the simulation. Figure \ref{fig:ElectronsNoPH} gives the clearest picture of the shape of the plasma sheath formed around the spacecraft, in the MMO configuration with booms, the sheath forms an ellipsoid around the spacecraft where, relative to the ambient plasma, almost no electrons reside. The sheath in the boomless MMO configuration is circular in shape, which gives a good indication that computing the theoretical floating potential of the boomless MMO configuration can be done by assuming the MMO to be a cylinder with the same radius as the circle circumscribing the MMO octagonal body.
 
 \section{Charging with photoemission}
+
+
 
 \subsection*{Drift parallel to X axis}
 
@@ -189,7 +209,7 @@ Even without PINC converging to a floating potential, we can still make comparis
     \label{fig:P_posX_NB}
   \end{subfigure}
   \label{fig:Pot_posX}
-  \caption{2D slice through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along X axis, and photoemission included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
+  \caption{2D slices through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along X axis, and photoemission included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
 \end{figure}
 
 
@@ -285,7 +305,7 @@ Even without PINC converging to a floating potential, we can still make comparis
     \label{fig:P_minZ_NB}
   \end{subfigure}
   \label{fig:Pot_minZ}
-  \caption{2D slice through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along the negative Z axis, and photoemission included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
+  \caption{2D slices through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along the negative Z axis, and photoemission included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
 \end{figure}
 
 %PARTICLE DENSITIES (rho_i and rho_e)
@@ -373,7 +393,7 @@ Even without PINC converging to a floating potential, we can still make comparis
     \label{fig:P_BField_NB}
   \end{subfigure}
   \label{fig:Pot_BField}
-  \caption{2D slice through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along the negative Z axis, photoemission and an external magnetic field are included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
+  \caption{2D slices through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along the negative Z axis, photoemission and an external magnetic field are included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
 \end{figure}
 
 %PARTICLE DENSITIES (rho_i and rho_e)
