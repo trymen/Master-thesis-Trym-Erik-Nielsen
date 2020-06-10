@@ -935,58 +935,5 @@ The parameter $\overline{Y}$ is the photoelectron yield per incoming photon and 
 
 The SSM panels that cover the MMO are composed of silver films which have a slightly higher, but similar, work function to that of Aluminium. The parameter $A_{MM0}$ denotes the sunlit area of the MMO with and without the magnetometer booms. Since the booms account for a significant part of the sunlit surface area of the spacecraft the properties of Aluminium was used for simulations both with and without the booms.
 
-
-
-\subsection{Numerical experiments}
-
-The charging behaviour of a spacecraft is dependent on several factors; the material composition of the craft, its dimensions, its location in space, the local time, and the space weather \parencite{LAI2019} \todo{Update reference, bib file contains extract of the book}. In this thesis, I wish to investigate what effects the presence of MMO's booms have on its charging behaviour, additionally I wished to investigate whether the direction of the ambient plasma drift or the photoelectron temperature would significantly change how the spacecraft charges.
-
-The booms on the MMO extend the characteristic length of the spacecraft to be longer than that of the Debye length of the plasma found in table \ref{tab:PlasmaParamMMO}, as such I expect there to be a difference in the thickness of the plasma sheaths formed. 
-
-Varying the direction of drift may impact the convection of photoelectron away from the surface of the sunlit surface of the spacecraft, which could potentially lead to a difference in the floating potential. Varying the average energy of the emitted photoelectrons will change the charging behaviour of the MMO, as seen in the Rosetta charging simulation paper \parencite{Sjogren2012}. To observe to what extent the floating potential and the thickness of the plasma sheath changes is the goal of varying the photoelectron temperature. 
-
-\begin{center}
-\begin{table}[H]
-%\centering
-\begin{tabular}{p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}}
-\toprule
-\toprule
- & No photoelectrons & drift along $+X$ axis & drift along $-Z$ axis & Inclusion of booms & Mercury magnetic field & Photoelectron temp. $3 \; eV$ \\
-\hline
-Case 1 & \text{X} & \text{X} & & & &\\
-\hline
-Case 2 & & \text{X} & & & &\\
-\hline
-Case 3 & & & \text{X} & & &\\
-\hline
-Case 4 & & & \text{X} & & \text{X} &\\
-\hline
-Case 5 & & & \text{X} & & & \text{X}\\
-\hline
-Case 6 & \text{X} & \text{X} & & \text{X} & &\\
-\hline
-Case 7 & & \text{X} & & \text{X} & &\\
-\hline
-Case 8 & & & \text{X} & \text{X} & &\\
-\hline
-Case 9 & & & \text{X} & \text{X} & \text{X} &\\
-\hline
-Case 10 & & & \text{X} & \text{X} & & \text{X}\\
-\bottomrule
-\bottomrule
-\end{tabular}
-\caption{Summary of the numerical experiments of the MMO in orbit around Mercury, carried out with PINC}
-\label{tab:MMOexperiments}
-\end{table}
-\end{center}
-
-Table \ref{tab:MMOexperiments} gives an overview of the numerical simulations of the MMO spacecraft carried out for this thesis, case 1 and case 5 give a baseline of the charging behaviour where no photoemission is included and serves as a point of comparison between the photoelectron current and the ambient electron plasma current the MMO is subjected to. 
-
-Cases 1 to 5, and cases 5 to 10 are equivalent but for the inclusion of the booms, with case 9 being the closest to the true conditions the MMO will experience when its orbit passes over the north cusp (ecliptic north) of Mercury. As such, case 8 is used as the baseline for the simulation in which the photoelectron temperature is varied from the value computed by PINC.
-
-Save for cases 1 and 6, the simulations without photoemission, the computational domain was decomposed into 64 sub-domains for parallel processing. Cases 1 and 6 were decomposed into 128 sub-domains, the reason being that in the cases containing photoemission, the domain was not divided along the x-axis thus splitting the spacecraft in the YZ plane. This would account for another surface interior to the spacecraft that would have to be discarded as a source for photoemissive nodes.
-
-
-\todo{Remember to update the PC cycle diagram for the capacitance matrix section}
 \newpage
 %\section{Data analysis tools}
