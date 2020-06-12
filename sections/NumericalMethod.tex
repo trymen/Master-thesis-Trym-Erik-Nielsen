@@ -222,28 +222,28 @@ Where the matrix $C$ is the inverted sub matrix of B. Qualitatively $C$ is the c
 
 In the simulation time-loop of PINC, after the potential has been updated, but before charges have been distributed to the surface, the surface potential of the conducting body $\phi_{s,j}$ is not the same value for all values of j and is therefore not at an equipotential. 
 
-The correction in potential in terms of the equipotential $\phi_C$ of the surface is given by
+The correction in potential in terms of the equipotential $\phi_c$ of the surface is given by
 
 \begin{equation}\label{eq:SCphiCorrEqui}
-    \delta \phi_{s,j} = \phi_C - \phi_{s,j}
+    \delta \phi_{s,j} = \phi_c - \phi_{s,j}
 \end{equation}
 
 Substituting equation \eqref{eq:SCphiCorrEqui} into equation \eqref{eq:SCchargeCorr}, the charge density correction equation becomes
 
 \begin{equation}\label{eq:SCrhoCorrNew}
-    \delta \rho_{s,i} = \sum^{N_B}_{j=1} C_{ij} (\phi_C - \phi_{s,j})
+    \delta \rho_{s,i} = \sum^{N_B}_{j=1} C_{ij} (\phi_c - \phi_{s,j})
 \end{equation}
 
-The equipotential $\phi_C$ is unknown in equation \eqref{eq:SCrhoCorrNew}; by using the fact that charges must be conserved when impinged charges are redistributed to the object surface, the equipotential can be calculated. Conservation of charge takes the form
+The equipotential $\phi_c$ is unknown in equation \eqref{eq:SCrhoCorrNew}; by using the fact that charges must be conserved when impinged charges are redistributed to the object surface, the equipotential can be calculated. Conservation of charge takes the form
 
 \begin{equation}\label{eq:ConsSurfCharge}
     \sum^{N_B}_{i=1} \delta \rho_{s,i} = 0
 \end{equation}
 
-Substituting equation \eqref{eq:SCrhoCorrNew} into equation \eqref{eq:ConsSurfCharge}, $\phi_C$ can be computed as
+Substituting equation \eqref{eq:SCrhoCorrNew} into equation \eqref{eq:ConsSurfCharge}, $\phi_c$ can be computed as
 
 \begin{equation}\label{eq:Equipotential}
-    \phi_C = \frac{\sum_i \sum_j C_{ij} \phi_{s,j}}{\sum_i \sum_j C_{ij}}
+    \phi_c = \frac{\sum_i \sum_j C_{ij} \phi_{s,j}}{\sum_i \sum_j C_{ij}}
 \end{equation}
 
 In the conducting object run mode of PINC, after a first pass of the multigrid Poisson solver, equations \eqref{eq:SCrhoCorrNew} and equation \eqref{eq:Equipotential} are solved to redistribute absorbed charged particles, a new pass with the Poisson solver then solves the new potential field using the correction to the charge density field. Details on the implementation of these equations in PINC can be referenced by contacting the 4DSpace group at the University of Oslo for access to the PINC code repository.
