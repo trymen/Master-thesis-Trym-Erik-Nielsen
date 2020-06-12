@@ -338,9 +338,9 @@ Drift along the negative Z axis, with photoemission, and no external electric fi
 
 Figures \ref{fig:C_minZ_WB} and \ref{fig:C_minZ_NB} show the potential convergence to the floating potential for both MMO configurations. Comparing these figures to \ref{fig:C_posX_WB} and \ref{fig:C_posX_WB}, we can see that the final floating potential, and total charging time to the floating potential, seem to be independent of the drift direction. In the configuration of MMO with booms \ref{fig:C_posX_WB}, the potential converges to 105.42 V, and in the boomless configuration \ref{fig:C_minZ_NB} converges to 100.71 V. The difference in floating potential for the two directions of drift are so small as to be negligible. Since the photoemission current, and the emissive surfaces remain the same, only the ambient electron charging could be the cause of a difference in floating potential. The MMO without booms can be approximated as a cylinder, equation \eqref{eq:ICylinder} then gives the approximate current due to impining electrons. The current collected when the spacecraft is neutrally charged, $I_{th,e}$ is dependent on the cylinder geometry \parencite{LAI2019}
 \begin{equation}\label{eq:Ith_cylinder}
-    I_{th,e} = I(0) = 2 \pi a n_e q v_e L.    
+    I_{th,e} = I(0) = 2 \pi a n_e q v L.    
 \end{equation}
-Where $a$ is the cylinder radius, $L$ is the cylinder length, and $v_e$ is the magnitude of the upstream electron velocity. From equation \eqref{eq:Ith_cylinder}, it is apparent then that the current from the ambient electrons is dependent on the total surface area of the spacecraft and the magnitude of the drift velocity, but not on its direction.
+Where $a$ is the cylinder radius, $L$ is the cylinder length, and $v$ is the magnitude of the upstream drift. From equation \eqref{eq:Ith_cylinder}, it is apparent then that the current from the ambient electrons is dependent on the total surface area of the spacecraft and the magnitude of the drift velocity, but not on its direction.
 
 %POTENTIAL THROUGH CENTER OF OBJECT
 \begin{figure}[H]
@@ -358,7 +358,7 @@ Where $a$ is the cylinder radius, $L$ is the cylinder length, and $v_e$ is the m
 \label{fig:Line_minZ}
 \end{figure}
 
-Figures \ref{fig:L_minZ_NB} and \ref{fig:L_minZ_WB} show the potential profile along the X axis for cases 3 and 8. The minimum potential in the potential barrier is slightly lower than for cases 2 and 6, the potential barrier height from \ref{fig:L_minZ_WB} is 93.33 V, and for the MMO without booms figure \ref{fig:L_minZ_NB} gives a barrier height of 92.81.
+Figures \ref{fig:L_minZ_NB} and \ref{fig:L_minZ_WB} show the potential profile along the X axis for cases 3 and 8. The minimum potential in the potential barrier is slightly lower than for cases 2 and 6, the potential barrier height from figure \ref{fig:L_minZ_WB} is $093.33 V$, and for the MMO without booms figure \ref{fig:L_minZ_NB} gives a barrier height of $92.81 V$.
 
 %AVERAGE POTENTIAL ISOLINES XY
 \begin{figure}[H]
@@ -393,8 +393,8 @@ Figure \ref{fig:Pot_minZ} the 2D potential profile for simulation cases 3 and 8;
   \caption{Without booms}
   \label{fig:I_minZ_NB}
 \end{subfigure}
+\caption{Ion density profile plotted at $X = 14.4 m$, the color gradient is normalized against the ion plasma density from table \ref{tab:PlasmaParamMMO}. Drift is along the negative Z axis. and photoemission is included.}
 \label{fig:Ion_minZ}
-\caption{Ion density profile plotted at $Y = 14.4 m$, the color gradient is normalized against the ion plasma density from table \ref{tab:PlasmaParamMMO}. Drift is along the negative Z axis. and photoemission is included.}
 \end{figure}
 
 %RHO_E
@@ -409,9 +409,11 @@ Figure \ref{fig:Pot_minZ} the 2D potential profile for simulation cases 3 and 8;
   \caption{Without booms}
   \label{fig:E_minZ_NB}
 \end{subfigure}
-\label{fig:Elec_minZ}
 \caption{Electron density profile plotted at $Z = 14.4 m$, the color gradient is normalized against the electron plasma density from table \ref{tab:PlasmaParamMMO}. Drift is directed into the page, and photoemission is included. The sun is located in the negative X direction.}
+\label{fig:Electron_minZ}
 \end{figure}
+
+The ion density and electron density contour plots for simulation cases 3 and 8 are given by figure \ref{fig:Ion_minZ} and figure \ref{fig:Electron_minZ} respectively, since drift is along the negative Z axis the ion densities are plotted in the YZ plane. Similarly to the ion densities for cases 2 and 7 both MMO configurations show a thin ion depletion wake downstream of the spacecraft.
 
 
 \section{Charging in an external magnetic field}
@@ -429,11 +431,18 @@ Figure \ref{fig:Pot_minZ} the 2D potential profile for simulation cases 3 and 8;
   \caption{Without booms}
   \label{fig:C_BField_NB}
 \end{subfigure}
-\label{fig:Conv_BField}
 \caption{Timeseries plot of the potential of the two configurations of the MMO, drift is along the negative Z axis, photoemission and an external magnetic field are included. The potential has been converted from PINC dimensionless units to Volts. The inset plots shows the potential of the two configurations for last 9,000 timesteps.}
+\label{fig:Conv_BField}
 \end{figure}
 
+The convergence of the potential of the two MMO configurations to a floating potential for simulate case 4 and 9 are given in figure \ref{fig:Conv_BField}. Similarly to case 3 and case 9, the plasma drift is along the minus Z axis of the domain. It is apparent from both figures \ref{fig:C_BField_WB} and \ref{fig:C_BField_NB}, that the potential of the two MMO configurations converge to almost exactly the same floating potential as for the two simulations without an external field: $105.4 V$ for the MMO with booms, and $100.7 V$ in the boomless configuration. The same overshoot behaviour of the potential before convergence as seen in figure \ref{fig:C_BField_WB}, is also seen in figure \ref{fig:C_minZ_WB}. Figure \ref{fig:C_BField_NB} also displays the same behaviour of convergence to the floating potential as in figure \ref{fig:C_minZ_NB} without overshooting the floating potential.
 
+Particles that enter the computational domain experience a force given by equation \eqref{eq:lorentz}, in the absence of an external electric field, this equation becomes
+\begin{equation}
+    \vb{F} = q\left(\vb{v} \cross \vb{B}\right) = - q \abs{v} \abs{B} \sin{\theta} \; \vb{j}.
+\end{equation}
+Here, we have used $\theta$ to denote the angle between the velocity vector and the magnetic field vector in the XZ plane, and $\vb{j}$ as the unit vector along the Y axis. Plugging in the drift velocity, the magnetic field strength, and $\theta = \ang{5.03}$  
+a force of $1.404 \times 10^{-22} N$ will act on the proton and electron in the negative $\vb{j}$ and positive $\vb{j}$ direction respectively. This force will cause the ions and electron to spiral in opposite direction along guiding centers aligned with the magnetic field lines. We have already seen that drift direction does not affect the floating potential obtained from previous results, thus the floating potential remains the same. So called E cross B drift found close to the MMO where the electrical field is non-zero, is discussed in more detail in appendix \ref{sec:appendixD}. 
 %POTENTIAL THROUGH CENTER OF OBJECT
 
 \begin{figure}[H]
@@ -447,8 +456,8 @@ Figure \ref{fig:Pot_minZ} the 2D potential profile for simulation cases 3 and 8;
   \caption{Without booms}
   \label{fig:L_BField_NB}
 \end{subfigure}
-\label{fig:Line_BField}
 \caption{Potential profile along the X axis for the two MMO configurations with drift along the negative Z axis, photoemission and an external magnetic field are included. The line is plotted at $(x,y) = (13.95 m, 13.95 m)$, or node points $(x,y) = (62,62)$, and passes through the main octagonal body of the spacecraft. The X axis units are in number of nodes from the origin. The two values in each plot show the height of the potential barrier formed relative to the ambient plasma.}
+\label{fig:Line_BField}
 \end{figure}
 
 %AVERAGE POTENTIAL ISOLINES XY
@@ -464,9 +473,14 @@ Figure \ref{fig:Pot_minZ} the 2D potential profile for simulation cases 3 and 8;
     \caption{Without booms}
     \label{fig:P_BField_NB}
   \end{subfigure}
-  \label{fig:Pot_BField}
   \caption{2D slices through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along the negative Z axis, photoemission and an external magnetic field are included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
+  \label{fig:Pot_BField}
 \end{figure}
+
+Figures \ref{fig:L_BField_WB} and \ref{fig:L_BField_NB} show the potential profile for simulation cases 4 and 9 respectively. The potential barrier height with boom configuration of the MMO is $93.33 V$, and the barrier height for the configuration without booms is $92.81 V$. These potential barrier heights are the exact same as in simulation cases 3 and 8, with very small differences in floating potential and the minimum potential of the barrier: the difference in potential between the minimum potential in the barrier between case 8 and case 9 is only $0.02 V$.
+
+Figure \ref{fig:Pot_BField} shows the 2D potential profile for cases 4 and 9. The overall structure of the potential sheath in both configurations of the MMO are similar to those found in cases 3 and 8. From figure \ref{fig:P_BField_WB}, the thickness in the sheath on the sunward side is however slightly larger than the sheath thickness seen in figure \ref{fig:P_minZ_WB}.
+
 
 %PARTICLE DENSITIES (rho_i and rho_e)
 %RHO_I

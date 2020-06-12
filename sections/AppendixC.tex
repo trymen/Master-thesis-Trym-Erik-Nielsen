@@ -9,16 +9,15 @@ Three functions were optimized to fit against the absolute value of the potentia
     \begin{align}
         \text{Hill function:} \: y(t) &= \frac{x}{h + t}\label{eq:Hill} \\
         \text{Exponential function:} \: y(t) &= a \exp{-b t} - c \label{eq:expFit} \\
-        \text{Generalized logistic function} \: y(t) &=  A + \frac{K - A}{\left(C + Q e^{-B t}\right)^{\frac{1}{\nu}}}.\label{eq:genLog}
+        \text{Generalized logistic function} \: y(t) &=  A + \frac{K - A}{\left(C + Q e^{-B t}\right)^{\frac{1}{\nu}}}.\label{eq:genLog}.
     \end{align}
 \end{subequations}
 The three functions described all converge to a finite value, and the rate of growth can be easily controlled. The function parameters, except the independent variable $t$ denoting time, are constants and can be adjusted for optimum fit. The Python package Scipy contains a curve fitting function. This curve fitting function uses a non-linear least squares algorithm to fit some function to a data set. This was combined with a trial and error checking of parameters since the optimization function did not converge for the exponential and generalized logistic function when all the controllable parameters were included. 
 
-The python script below also outputs the root mean square error, such that the fit of our trial functions could be tested during trial and error testing. The root mean square error is described as:
+The python script below also outputs the root mean square error, such that the fit of our trial functions could be checked numerically during trial and error testing. The root mean square error is described as:
 \begin{equation}\label{eq:RMSE}
-    \text{RMSE} = \sqrt{\frac{\sum^n_{i=1} \left(y_{pred,i} - y_i \right)^2}{n}}
+    \text{RMSE} = \sqrt{\frac{\sum^n_{i=1} \left(y_{pred,i} - y_i \right)^2}{n}}.
 \end{equation}
-
 The absolute value of the potential found with PINC simulation was used to simplify fitting the trial functions to the data, the independent time variable $t$ was also normalized by 10,000 timesteps to reduce errors from small floating point operations when computing the $e^{-b t}$ term found in two of the trial functions.
 \begin{center}
 \begin{figure}[H]

@@ -11,56 +11,45 @@ Plasma is a collection of ionized gas, commonly referred to as the fourth state 
 \subsection{Single particle description}
 \label{subsec:basicEq}
 The single particle description of a plasma describes the motion of individual charged particles moving in imposed magnetic and electrical fields. Assuming the force of gravity is sufficiently small, and assuming constant electrical and magnetic fields, the single particle motion of a charge $q$ moving at velocity $v$ in the electrical field $\vb{E}$ and magnetic field $\vb{B}$ (where bolded letters denote vector fields) is described by the Lorentz force law 
-
 \begin{equation}\label{eq:lorentz}
     \vb{F} = q \vb{E} + q \vb{v} \cp \vb{B},
 \end{equation}
 where the term $q \vb{E}$ is called the Electric force, and the term $q\vb{v} \cp \vb{B}$ is called the magnetic force. When a particle moves in a static magnetic field, and no electric field is present, the particle will gyrate around magnetic field lines. Setting $E$ to zero, we have
-
 \begin{equation}\label{eq:magF}
     \vb{F} = q \vb{v} \cp \vb{B}.
 \end{equation}
-The cross product of the velocity and magnetic field vector means that the magnetic force always acts perpendicularly to the direction of motion of the particle, thereby causing the particle to gyrate.
-
-Setting the centripetal force equal to the magnitude of the Lorentz force, we can derive an expression for the gyroradius $r_g$ of the motion
-
+The cross product of the velocity and magnetic field vector means that the magnetic force always acts perpendicularly to the direction of motion of the particle, thereby causing the particle to gyrate. Setting the centripetal force equal to the magnitude of the Lorentz force, we can derive an expression for the gyroradius $r_g$ of the motion
 \begin{equation}\label{eq:gyrorad}
     \frac{m_s v_{\perp}^2}{r_g} = \abs{q} v_{\perp} \norm{\vb{B}},
 \end{equation}
 where the subscript on $m_s$ denotes the specie of the particle, and $v_\perp$ denotes the perpendicular component of velocity to the plane of $\vb{B}$. We have also used the notation $\norm{\vb{B}}$ to denote the magnitude of the vector. Upon rearranging, the expression for the gyroradius $r_g$ becomes
-
 \begin{equation}
     r_g = \frac{m_s v_\perp}{\abs{q} \norm{\vb{B}}}.
 \end{equation}
 The particle gyrates with an angular frequency, called the cyclotron frequency $\Omega_c$, expressed as 
-
 \begin{equation}
     \Omega_c = \frac{v_\perp}{r_g} = \frac{\abs{q} \; \norm{\vb{B}}}{m_s}.
 \end{equation}
-The motion of a particle $q_s$ is in practical cases often modelled as the drift of the centre of gyration of the particle. When also subjected to an isotropic electrical field, this motion is called E cross B drift, or Hall drift, and can be derived from the Lorentz force equation and Newtons' second law and solving for the acceleration of the particle: If we assume the drift velocity to be constant in time, the expression for the drift $\vb{V}_D$ becomes
 
+The motion of a particle $q_s$ is in practical cases often modelled as the drift of the centre of gyration of the particle. When also subjected to an isotropic electrical field, this motion is called E cross B drift, or Hall drift, and can be derived from the Lorentz force equation and Newtons' second law and solving for the acceleration of the particle: If we assume the drift velocity to be constant in time, the expression for the drift $\vb{V}_D$ becomes
 \begin{equation}
     \vb{V}_D = \frac{\vb{E} \cp \vb{B}}{B^2}.
 \end{equation}
 
 \subsection{Kinetic description}
 In the previous section, we studied the individual motion of charged plasma particles. Although the single particle description of plasma is useful in gaining an understanding in how individual particles behave in isotropic magnetic and electrical fields; it is an impractical model for analyzing macroscopic phenomena of the plasma. The introductory text "Plasma Physics: An Introduction to Laboratory, Space, and Fusion Plasmas" \parencite{Piel2017} contains a good discussion of when each plasma model should be used. The kinetic description of plasma begins with the assumption of a density distribution of charges in the six dimensional phase space varying over time. Let $f_s(\vb{x}, \vb{v}, t)$ be the continuous probability distribution, representing the probability of finding a charged particle of species $s$ at time $t$ in phase space. Multiplying the distribution of charges by the charge of the species $q_s$, and integrating over the velocity space, the charge density $\rho_s$ can be found. Summing over all the species of charge in the plasma gives us the following expression for the total charge density $\rho_c$
-
 \begin{equation}\label{eq:rhoCharge}
     \rho_c = \sum_s q_s\int f(\vb{x}, \vb{v}, t) d^3\vb{v}.
 \end{equation}
 Similarly, an expression for the current density is obtained by multiplying the charge distribution by the velocity vector $v$ and integrating the result in a similar fashion to \eqref{eq:rhoCharge}
-
 \begin{equation}
     \vb{j} = \sum_s q_s \int \vb{v} f(\vb{x}, \vb{v}, t) d^3 \vb{v},
 \end{equation}
 equipped with a continuous distribution function of particles in phase-space, equations of motion that describe the flow of the charged particles can be derived from solving the Boltzmann equation. Or alternatively, when assuming a non-collisional plasma, the set of vector equations called the Vlasov equation can be used
-
-
 \begin{equation}\label{eq:Vlasov}
     \pdv{f}{t} + \vb{v} \vdot \grad{f_s} + \frac{q_s}{m_s} (\vb{E} + \vb{v} \cp \vb{B}) \vdot \grad_v{f} = 0.
 \end{equation}
-Equation \eqref{eq:Vlasov} is coordinate independent, in PINC the Cartesian coordinate system is used for all computations. The operator notation $\grad_v = (\pdv{v_x}, \pdv{v_y}, \pdv{v_z})$ and $\grad = (\pdv{x},\pdv{y},\pdv{z})$ has therefore been used. For a comprehensive derivation of the Vlasov equation see \parencite{Birdsall2004} or \parencite{Piel2017}.
+Equation \eqref{eq:Vlasov} is coordinate system independent, in PINC the Cartesian coordinate system is used for all computations. The operator notation $\grad_v = (\pdv{v_x}, \pdv{v_y}, \pdv{v_z})$ and $\grad = (\pdv{x},\pdv{y},\pdv{z})$ has therefore been used. For a comprehensive derivation of the Vlasov equation see \parencite{Birdsall2004} or \parencite{Piel2017}.
 
 
 \subsection{Fluid description}
