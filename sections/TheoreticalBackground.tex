@@ -346,40 +346,40 @@ A Langmuir probe is a simple device used in the laboratory to measure the temper
 
 
 \subsection*{Orbital motion-limited theory}
-In orbital motion limited theory, or OML theory for short, the charge flux impinging on a spacecraft is determined from the conservation of energy and angular momentum of species travelling in proximity to a spacecraft \parencite{LAI2019}, \parencite{Garrett1981}. From conservation of energy, an expression for the impact velocity on a spherical spacecraft can be obtained, and from conservation of momentum an expression for the distance from the centre of the spacecraft to the straight line of travel can be found. In \parencite[Ch. 2.1]{LAI2019} these expressions are given as 
-
+In orbital motion limited theory, or OML theory for short, the charge flux impinging on a spacecraft is determined from the conservation of energy and angular momentum of species travelling in proximity to a spacecraft \parencite{LAI2019}, \parencite{Garrett1981}. From conservation of energy, an expression for the impact velocity on a spherical spacecraft can be obtained, and from conservation of momentum an expression for the distance from the centre of the spacecraft to the straight line of travel can be found. In \parencite[Ch. 2.1]{LAI2019} these expressions are given as
 \begin{subequations}
     \begin{align}
         v_a &= v_{th} \left(1 - \frac{q \phi}{kT} \right) \label{eq:impactvel} \\
-        h &= a \left(1 - \frac{q \phi}{kT} \right) \label{eq:distStraight}
+        h &= a \left(1 - \frac{q \phi}{kT} \right). \label{eq:distStraight}
     \end{align}
 \end{subequations}
-
 Integrating the particle distribution $f_s(\vb{x}, \vb{v}, t)$ using equation \eqref{eq:impactvel} and \eqref{eq:distStraight} as limits of integration, we can find the flux of particles that impact the spacecraft. It is often convenient work with a normalized potential variable in the formulas for current, define
-
 \begin{equation}\label{eq:normPot}
-    \eta_s \equiv - \frac{q_s V}{k T_s}
+    \eta_s \equiv - \frac{q_s \phi}{k T_s}.
 \end{equation}
 
-Using the normalized potential, particles with $n_s < 0$ will be repelled, and particles with $n_s > 0$ will be attracted to the spacecraft \parencite{Marholm2019}. Expressions for the integration of the particle distribution has been found for some simple geometries, for species with $n_s > 0$ with the assumption of a plasma with no internal magnetic field and zero drift, by Mott-Smith and Langmuir \parencite{Mott-Smith1926}
-
+Using the normalized potential, particles with $\eta_s < 0$ will be repelled, and particles with $\eta_s > 0$ will be attracted to the spacecraft \parencite{Marholm2019}. Expressions for the integration of the particle distribution has been found for some simple geometries, for species with $n_s > 0$ with the assumption of a plasma with no internal magnetic field and zero drift, by Mott-Smith and Langmuir \parencite{Mott-Smith1926}
 \begin{subequations}
     \begin{align}
         I_s (\eta_s) &= I_{th,s} \label{eq:IPlane} \\
         I_s (\eta_s) &= I_{th,s} \left(\frac{2}{\sqrt{\pi}} \sqrt{\eta_s} + \exp(\eta_s) \hspace{2pt} \text{erfc}(\sqrt{\eta_s}) \right) \label{eq:ICylinder}\\
         & \approx I_{th,s} \frac{2}{\sqrt{\pi}} \sqrt{1 + \eta_s} \\
-        I_s(\eta_s)  &= I_{th,s} (1 + \eta_s) \label{eq:Isphere}
+        I_s(\eta_s)  &= I_{th,s} (1 + \eta_s). \label{eq:Isphere}
     \end{align}
 \end{subequations}
-
 Where equations \eqref{eq:IPlane}, \eqref{eq:ICylinder} and \eqref{eq:Isphere} are the functions of current for a plane, a cylinder, and a sphere respectively. These functions are derived based on the assumption that the cylinder is long compared to $\lambda_D$, the radius of the sphere and the cylinder to be small compared to $\lambda_D$, and the plane to be wider than $\lambda_D$. The notation $I_{th}$ is used to denote the current collected when the object is neutrally charged, i.e $\eta_s = 0$, and $erfc(\sqrt{\eta_s})$ is the complementary error function defined as
-
 \begin{subequations}
     \begin{align*}
         \text{erfc}(z) &\equiv 1 - \text{erf}(z) \\
-        &= \frac{2}{\sqrt{\pi}} \int^\infty_z e^{-t^2} dt
+        &= \frac{2}{\sqrt{\pi}} \int^\infty_z e^{-t^2} dt.
     \end{align*}
 \end{subequations}
+
+Finally, for any repelled species, i.e. $\eta_s < 0$, the current is given by
+\begin{equation}\label{eq:Irepelled}
+    I_s(\eta_s) = I_{th,s} \exp{\eta_s}.
+\end{equation}
+Where equation \eqref{eq:Irepelled} holds for any geometric shape. 
 
 
 \subsection*{The photoemission current}
