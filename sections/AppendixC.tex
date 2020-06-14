@@ -7,7 +7,7 @@ From \cref{sec:results} it became apparent from the timeseries plot of the poten
 Three functions were optimized to fit against the absolute value of the potential and compared for accuracy.
 \begin{subequations}
     \begin{align}
-        \text{Hill function:} \: y(t) &= \frac{x}{h + t}\label{eq:Hill} \\
+        \text{Hill function:} \: y(t) &= a \frac{x}{h + t}\label{eq:Hill} \\
         \text{Exponential function:} \: y(t) &= a \exp{-b t} - c \label{eq:expFit} \\
         \text{Generalized logistic function} \: y(t) &=  A + \frac{K - A}{\left(C + Q e^{-B t}\right)^{\frac{1}{\nu}}}.\label{eq:genLog}.
     \end{align}
@@ -33,7 +33,7 @@ The absolute value of the potential found with PINC simulation was used to simpl
     \label{fig:C_fit_NB_lim}
   \end{subfigure}
   \label{fig:Pot_noPH}
-  \caption{Curve fitting using a generalized logistic function, Hall function, and exponential function of the potential of the MMO spacecraft without booms}
+  \caption{Curve fitting using a generalized logistic function, Hall function, and exponential function of the potential of the MMO spacecraft without booms. The Y axis is the absolute potential in Volts, and the X axis is units of 1,000 timesteps}
 \end{figure}
 \end{center}
 
@@ -51,9 +51,11 @@ The absolute value of the potential found with PINC simulation was used to simpl
     \label{fig:C_fit_NB_lim}
   \end{subfigure}
   \label{fig:Pot_noPH}
-  \caption{Curve fitting using a generalized logistic function, Hall function, and exponential function of the potential of the MMO spacecraft with booms}
+  \caption{Curve fitting using a generalized logistic function, Hall function, and exponential function of the potential of the MMO spacecraft with booms. The Y axis is the absolute potential in Volts, and the X axis is units of 1,000 timesteps}
 \end{figure}
 \end{center}
+
+The Hill function was found to fit the curves of the absolute value of potential best. The lowest RMSE values for the Hill fitting found that the potential converged to $-283 \; V$ for the MMO with deployed booms, and $-281 \; V$ for the MMO without deployed booms. 
 
 
 \begin{longlisting}

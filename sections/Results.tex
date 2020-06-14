@@ -52,7 +52,7 @@ For the sake of brevity, we will refer to the case number as shown in table \ref
 
 Except for a computational charging analysis of the combined BepiColombo spacecraft under thrust (using the MTM, the Mercury Transfer Module) \insertref{ESA Bepi sim} we were unable to find similar numerical experiments of the charging of the MMO spacecraft, we will therefore compare our results to theory through current balance analysis as presented in \ref{sec:theory}. We will also compare our results qualitatively to numerical charging experiments for different plasma parameters and different objects, such as in the paper by Deca et al. \parencite{Deca2013} used for our verification simulations.
 \todo{Add sheath thickness analysis}
-From current balance, with photoemission included, we expect the variation of drift direction (comparing cases 2 and 3 to cases 7 and 8) to have minimal impact on the floating potential PINC will converge to, similarly we expect the sheath thickness and sheath plasma densities to be comparable for different drift directions. Across all five simulation types run, we expect the floating potential and sheath thickness to be larger in magnitude when the booms on the MMO are fully extended; since the booms are modeled as photoemissive, the greater surface area will lead to an overall higher electron current flowing from the spacecraft leading to a higher floating potential. 
+From current balance, with photoemission included, we expect the variation of drift direction (comparing cases 2 and 3 to cases 7 and 8) to have minimal impact on the floating potential PINC will converge to. Similarly we expect the sheath thickness and sheath plasma densities to be comparable for different drift directions. Across all five simulation types run, we expect the floating potential and sheath thickness to be larger in magnitude when the booms on the MMO are fully extended; since the booms are modeled as photoemissive, the greater surface area will lead to an overall higher electron current flowing from the spacecraft leading to a higher floating potential \todo{That can't be right...}. 
 
 The inclusion of the external magnetic field of Mercury could potentially impact the fraction of photoelectrons with a greater than average temperature being able to leave the surface of the spacecraft, if the particles' velocity vector does not align with the magnetic field the force exerted by the magnetic field could trap electrons more efficiently, leading to a lower floating potential.        
 
@@ -68,7 +68,7 @@ The inclusion of the external magnetic field of Mercury could potentially impact
 % \caption{Dummy text}
 % \label{tab:FlotingPotSummary}
 % \end{table}
-\section{Charging without photoemission}
+\section{Charging without photoemission}\label{subsec:noPHsec}
 %FLOATING POTENTIAL CONVERGENCE
 \begin{center}
     \begin{figure}[H]
@@ -94,9 +94,9 @@ In order to compare our results with theory, we can estimate the floating potent
 \begin{equation*}
     \phi(t) = \phi_f \frac{t}{h + t},
 \end{equation*}
-where $\phi_f$ is the MMO floating potential without a photoemission current present, we estimate a floating potential of $\phi_f \approx 283 V$. A full analysis of the curve fitting and the Python script used to fit the curves is given in  \cref{sec:appendixC}.
+where $\phi_f$ is the MMO floating potential without a photoemission current present, we estimate a floating potential of $\phi_f \approx - 283 V$. A full analysis of the curve fitting and the Python script used to fit the curves is given in  \cref{sec:appendixC}.
 
-From chapter \cref{sec:theory}, we know that we can estimate the floating potential from OML theory and a current balance equation. However, one of the assumptions of OML theory is that the plasma must be non-drifting and Maxwellian. For non drifting plasmas, the thermal speed of the charged particles is significantly larger than the relative velocity of a spacecraft to the plasma \parencite{Jacobsen2010}. For our simulations, we assume a drift speed of $100 km s^{-1}$. From table \ref{tab:PlasmaParamMMO} the magnetospheric plasma has an electron temperature of $T_e = 1.16 \times 10^6$ which amounts to a thermal speed of $4193 km s^{-1}$. Since the electron thermal speed is so high compared to our plasma drift, we can safely make the approximation that electrons in the plasma are non-drifting. 
+From chapter \cref{sec:theory}, we know that we can estimate the floating potential from OML theory and a current balance equation. However, one of the assumptions of OML theory is that the plasma must be non-drifting and Maxwellian \parencite{Shipple1981}. For non drifting plasmas, the thermal speed of the charged particles is significantly larger than the relative velocity of a spacecraft to the plasma \parencite{Jacobsen2010}. For our simulations, we assume a drift speed of $100 km s^{-1}$. From table \ref{tab:PlasmaParamMMO} the magnetospheric plasma has an electron temperature of $T_e = 1.16 \times 10^6$ which amounts to a thermal speed of $4193 km s^{-1}$. Since the electron thermal speed is so high compared to our plasma drift, we can safely make the approximation that electrons in the plasma are non-drifting. 
 
 For cases 1 and 6, the only currents affecting the spacecraft potential are the currents due to impinging ions and electron. The current balance equation is therefore
 \begin{equation}\label{eq:noPHCurrentBal}
@@ -134,29 +134,29 @@ Here we have assumed that the floating potential of the MMO will be negative, an
 \end{center}
 
 Even without PINC converging to a floating potential, we can still make comparisons of the plasma sheath formed around the spacecraft by plotting the potential profile of the domain. Figure \ref{fig:Line_noPH_comb}, shows the potential relative to the ambient plasma plotted on a center line passing through the spacecraft octagonal body. comparing figure \ref{fig:L_noPH_WB} with figure \ref{fig:L_noPH_NB}, we see a difference in sheath thickness. For a negatively charged probe, we can estimate the thickness of the sheath using Bohm's sheath criterion \parencite{Chen2018}:
-\begin{equation}
+\begin{equation}\label{eq:BohmCrit}
     u_0 \approx \left(\frac{K T_e}{m_i}\right)^{1/2},
 \end{equation}
 where $u_0$ is the velocity required by ions at the sheath boundary. For ions to be accelerated to this velocity we can estimate the required sheath edge potential as
-\begin{equation}
+\begin{equation}\label{eq:PhiSheathEdge}
     \phi_s = -\frac{1}{2} \frac{K T_e}{e}.
 \end{equation}
 
 Where $\phi_s$ is the potential relative to the ambient plasma. Setting the electron temperature, $T_e$, to $1.16 \times 10^6$ we find the sheath boundary potential to be approximately $-50 V$ relative to the main plasma body. The sheath thickness is then the distance from the potential along the x axis to where the potential is the same as the sheath boundary potential. From the plots we then estimate a sheath thickness of 2.5 meters for the MMO configuration without booms, and 3.2 meters for the configuration with booms.
 
 The sheath thickness, $d$, can also be computed directly by re-arranging the Child-Langmuir law \parencite{Chen2018}:
-\begin{equation}
-    d^2 = \frac{4}{9} \left(\frac{2e}{m_i}\right)^{1/2} \frac{\abs{\phi_w}^{3/2}}{4 \pi \abs{\vb{j_{i,s}}}}.
+\begin{equation}\label{eq:childLangmuir}
+    d^2 = \frac{4}{9} \left(\frac{2e}{m_i}\right)^{1/2} \frac{\abs{\phi_w}^{3/2}}{4 \pi j_{i,s}}.
 \end{equation}
-where $\phi_w$ is the "wall", or spacecraft potential, and $\abs{\vb{j_{i,s}}}$ is the ion saturation current density. The ion saturation current density is given by
+where $\phi_w$ is the "wall", or spacecraft potential, and $j_{i,s}$ is the ion saturation current density. The ion saturation current density is given by
 \begin{equation}
-    \abs{\vb{j_{i,s}}} = q_e n_e c_s.
+    j_{i,s} = q_e n_e c_s.
 \end{equation}
 Where $c_s$ is the ion speed of sound, and is computed as \parencite{Paulsson2019}
 \begin{equation}\label{eq:ionMach}
     c_s = \sqrt{\left(\frac{K_b T_e}{m_i}\right)},
 \end{equation}
-Plugging in the known spacecraft potential, the electron density, and electron temperature from table \ref{tab:PlasmaParamMMO}  the plasma thickness comes out to be 3.63 meters, which is comperable to our estimates. 
+Plugging in the known spacecraft potential, the electron density, and electron temperature from table \ref{tab:PlasmaParamMMO}  the plasma thickness comes out to be 3.63 meters, which is comparable to our estimates. 
 
 %AVERAGE POTENTIAL ISOLINES XY
 \begin{center}
@@ -172,7 +172,8 @@ Plugging in the known spacecraft potential, the electron density, and electron t
     \caption{Without booms}
     \label{fig:P_noPH_NB}
   \end{subfigure}
-  \caption{\ref{fig:P_noPH_WB} and \ref{fig:P_noPH_WB} are 2D slices through $Z = 14.4 m$ showing the potential profile of the entire computational domain.}    \label{fig:PMMOnoPH}
+  \caption{\ref{fig:P_noPH_WB} and \ref{fig:P_noPH_WB} are 2D slices through $Z = 14.4 m$ showing the potential profile of the entire computational domain for simulation cases 1 and 6.}
+  \label{fig:PMMOnoPH}
 \end{figure}
 \end{center}
 
@@ -240,6 +241,21 @@ Figures \ref{fig:IonsNoPH} and \ref{fig:ElectronsNoPH} show the density of ions 
 \end{figure}
 
 Figure \ref{fig:Conv_posX} shows the convergence to the floating potential of both MMO configurations. Unlike the numerical simulations without photoemission, the potential of both configurations of the MMO converge rapidly to a its floating potential. The slope of the increase in potential early on in the simulation points to the high ratio between the photoemission current and the charging from the impinging electrons from the ambient plasma. The floating potential for MMO with booms, as seen in figure \ref{fig:C_posX_WB} overshoots the floating potential by several volts, before converging to 105.4 V. In the boomless configuration, figure \ref{fig:C_posX_NB}, the overshoot is much smaller, and the potential shows oscillatory behaviour around a floating potential of 100.7 V. The overshoot in the floating potential could result from the thin booms extending far from the main body of the MMO developing a potential barrier slower, and smaller in height, than the central body leading to a gradual rather than sudden decrease in the effective photoemission current.
+
+% We can compute the theoretical floating potential of the MMO with booms undeployed with a photoemission current present using the same method as in \cref{subsec:noPHsec}. The current balance equation must include the photoemission current, and therefore takes the form
+% \begin{equation}
+%     I_i(\phi_f) - I_e(\phi_f) + I_{ph}(\phi_f) = 0.
+% \end{equation}
+% If we assume a highly positively charged spacecraft, the $I_i{\phi_f}$ term can be neglected, therefore reducing the current balance equation to
+% \begin{equation}
+%     I_e(\phi_f) = I_e(0)\left(\frac{2}{\sqrt{\pi}} \; \sqrt{\eta_e} \text{erfc}(\sqrt{\eta_e}) \right) \approx I_{ph}.
+% \end{equation}
+% The photoemission current $I_{ph}$ is dependent on the potential of the spacecraft, since only photoelectrons with trajectories not returning to the spacecraft surface contribute to the spacecraft potential. The photoelectron current is computed as
+% \begin{equation}
+%     I_{ph} = \frac{N_p \overline{Y}_{ph} q_e}{dt}, 
+% \end{equation}
+% where $N_p$ is the number of impinging photons per timestep with energy higher than the material work function, and $\overline{Y}_{ph}$ is the averaged photoelectron yield. Plugging in $N_p$ output by the simulation, and $\overline{Y}_{ph}$ from \cref{tab:PlasmaParamMMO}, we have a photoemission current of $I_{ph} = 0.384 A$.
+
 
 %POTENTIAL THROUGH CENTER OF OBJECT
 
@@ -333,6 +349,13 @@ In equation \eqref{eq:orbSpeed}, $r$ denotes the distance from the MMO to the ce
 Figures \ref{fig:E_posX_WB} and \ref{fig:E_posX_NB} show high concentration of electrons adjacent to the sunlit surfaces of the MMO, with electron densities as high as 1175 times the density of electrons in the ambient plasma. 
 
 At such high densities, the local Debye length is significantly shorter than that of the ambient plasma. We can compute the local Debye length from equation \eqref{eq:debyelength} and from the photoelectron temperature. The photoelectron temperature is computed in PINC internally by numerical integration of equation \eqref{eq:PlanckSum} in terms of energy and photons per second, subtracting the work function of the surface material gives the photoelectron temperature of $T_{ph} = 0.62 \; eV$. Substituting the photoelectron density and temperature into equation \eqref{eq:debyelength} we have a local Debye length of only 0.017 meters. Since our grid resolution is 0.225 meters, we are unable to resolve the local small scale variations in electrical potential due to Debye shielding.
+
+We can estimate the thickness of the photoelectron sheath using the equation \parencite{Zhao1996}
+\begin{equation}\label{eq:PhSheathThickness}
+    n_{ph}(x_{ph}) = n_{e0}
+\end{equation}
+Where $n_{ph}(x_{ph})$ is the density of photoelectrons at a distance $x_{ph}$ from the spacecraft, and $n_{e0}$ is the electron density in the ambient plasma. The distance $x_{ph}$ is the radial distance from the spacecraft, and is normalized by the spacecraft radius $R$. Note that the implementation of photoelectron injection in this thesis does not separate photoelectrons as a separate species from the ambient plasma, and the distance between density measurements is relatively high (one cell width being 0.225 meters). By plotting the electron density as a line through the spacecraft parallel to the X axis, we estimate the photoelectron sheath to be 6.75 meters thick.
+
 
 \subsection*{Drift parallel to Z axis}
 Drift along the negative Z axis, with photoemission, and no external electric field (cases 3 and 8) is a more accurate plasma flow conditions that the MMO will experience in its orbit over the ecliptic north pole as opposed to drift along the X axis (cases2 and 7). Results for cases 3 and 8 will be compared to previous results shown for cases  2 and 7 to discern what effect, if any, drift direction has on the photoelectron barrier, the floating potential, and the plasma sheath. 
@@ -639,8 +662,46 @@ The 2D electron density profile for case 10 and case 5 are given in figure \ref{
 \begin{equation}
     n_{ph}(x) = \frac{J_{ph}(x)}{e \overline{v}_{ph}}.
 \end{equation}
-Where $J_{ph}$ has been used to denote the absolute value of the effective photoelectron current density, and $\overline{v}_{ph}$ denotes the mean velocity of emitted photoelectrons. The effective photoelectron current density is however proportional to the height of the potential barrier
+Where $J_{ph}$ has been used to denote the absolute value of the effective photoelectron current density, and $\overline{v}_{ph}$ denotes the mean velocity of emitted photoelectrons. The effective photoelectron current density is however proportional to the height of the potential barrier \parencite{Zhao1996}
 \begin{equation}
-    J_{ph} \propto \exp{- \frac{e \phi_b}{k T_{ph}}},
+    J_{ph} \propto \exp{- \frac{e \phi_b}{k T_{ph}}}.
 \end{equation}
 Where $\phi_b$ denotes the potential barrier height. Since the barrier height is much larger in case 8, the effective current density flux compensates for the higher average velocity of photoelectrons in case 10, leading to a higher maximum density of photoelectrons in case 10.
+
+\section{Summary of results}
+We can now summarize the results for all the simulation cases completed. For all the simulation cases, the floating potential of the MMO was computed, and an estimate for the plasma sheath thickness was found. In the simulation cases where the photoemission current was included, we also computed the potential barrier height due to the photoelectron cloud formed adjacent to the sunlit surfaces of the spacecraft. Table \ref{tab:MMOresultsSummary} shows these values for all simulation cases run for this thesis.
+
+\begin{center}
+\begin{table}[H]
+%\centering
+\begin{tabular}{p{2cm}|p{1.5cm}|p{1.5cm}|p{3cm}}
+\toprule
+\toprule
+ Simulation case & Floating potential (V) & Barrier height (V) & sheath thickness(m)\\
+\hline
+Case 1 & $-283^{*}$ & N/A & 2.5\\
+\hline
+Case 2 & 100.70 & 92.58 & 6.75\\
+\hline
+Case 3 & 100.71 & 92.81 & 6.75\\
+\hline
+Case 4 & 100.70 & 92.81 & 6.3 \\
+\hline
+Case 5 & 75.75 & 85.23 & 4.95 \\
+\hline
+Case 6 & $-281^{*}$ & N/A & 3.2\\
+\hline
+Case 7 & 105.40 & 93.17 & 6.525 \\
+\hline
+Case 8 & 105.42 & 93.33 & 6.75 \\
+\hline
+Case 9 & 105.40 & 93.33 & 6.3 \\
+\hline
+Case 10 & 78.15 & 85.58 & 6.75 \\
+\bottomrule
+\bottomrule
+\end{tabular}
+\caption{Summary of computed floating potentials, barrier height for photoemissive simulation cases, and the plasma sheath thickness. The asterisk over the floating potential values for cases 1 and 6 indicate the values as estimations from the curve fitting given in \cref{sec:appendixC}}
+\label{tab:MMOresultsSummary}
+\end{table}
+\end{center}
