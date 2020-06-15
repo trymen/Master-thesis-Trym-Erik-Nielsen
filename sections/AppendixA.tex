@@ -1,1 +1,165 @@
 \chapter{Pseudocode of photoemission functions}\label{sec:appendixA}
+
+
+\section*{Identification of sunlit surface nodes}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=C, caption={Pseudo code for finding sunlit object surface nodes},
+label={lst:sunlitNodes}]
+void oFindAllSunlitNodes(...){
+
+    ... define and initialize variables ...
+
+    for(int k = 0; k<size[z]; k++){
+    
+        for(int j = 0; j<size[y]; j++){
+                
+            int flag = 0;
+            for(int i = 0; i<size[x]; i++){
+                
+                index = i*sizeProd[1] + j*sizeProd[2] + k*sizeProd[3];
+                for(int n = 0; n < nSurfaceNodes; n++){
+                    
+                    surfNode = surface[n];
+                    if(surfNode == index){
+                        ... append index to exposed node array ...
+                        flag = 1;
+                        break;
+                    }
+                    
+                if(flag) break;
+                
+                }
+            }
+        }
+    }
+}
+\end{lstlisting}
+\end{minipage}
+
+\section*{Identification of cells adjacent to sunlit spacecraft surfaces}
+\begin{minipage}{\linewidth}
+    \begin{lstlisting}[language=C, caption={C pseudocode for finding cells adjacent
+    to sunlit object surfaces},
+    label={lst:sunlitCells}]
+    
+    void oCellFillingNodes(...){
+        
+        ... variable definitions and initialization ...
+    
+        for(long int i = surfaceOffset[a]; i<surfaceOffset[a+1]; i++){
+                    
+            int nObjNode = 0;
+            int yzPlane = 0;        
+          
+            //cell nodes
+            long int p = surface[i];
+            long int pu = p + sizeProd[3];
+            long int plu = p + sizeProd[2] + sizeProd[3];
+            long int pl = p + sizeProd[2]; 
+            long int po = p - sizeProd[1];
+            long int pou = p - sizeProd[1] + sizeProd[3];
+            long int poul = p - sizeProd[1] + sizeProd[3] + sizeProd[2];
+            long int pol = p - sizeProd[1] + sizeProd[2];
+        
+            for(int j = interiorOffset[a]; j < interiorOffset[a+1]; j++){
+                long int intNode = interior[j];
+                if(po == intNode || pou == intNode ||
+                   poul == intNode || pol == intNode){
+                    nObjNode++;
+                }
+            }
+        
+            for(int j = surfaceOffset[a]; j < surfaceOffset[a+1]; j++){
+                long int surfNode = surface[j];
+                if(po == surfNode || pou == surfNode || 
+                   poul == surfNode || pol == surfNode){
+                    nObjNode++;
+                }
+        
+                if(p == surfNode || pu == surfNode || 
+                   plu == surfNode || pl == surfNode){
+                    yzPlane++;
+                }
+            }
+        
+            if(yzPlane == 4 && nObjNode < 8){
+                ... store index p as an emitting node for cell filling ...
+            }
+        }
+    }
+    \end{lstlisting}
+\end{minipage}
+
+\section*{Numerical integration of Planck's blackbody radiation law}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=C, caption={Numerical integration of Planck's law in terms of photon flux}, label={lst:planck}]
+void oPlanckPhotonIntegral(...){
+
+  ... Variable and constant definitions and initialization ...
+    
+  for(int a=0; a<nObj; a++){
+	//sigma[a] = ((double)sigma[a]) / (Planck * speedOfLight * 100.);
+	double c1 = Planck * speedOfLight / Boltzmann;
+	double x = c1 * 100. * (double)sigma[a]/temperature;
+	double x2 = x * x;
+
+	// decide how many terms of sum are needed
+	double iterations = 2.0 + 20.0/x;
+	iterations = (iterations < 512.) ? iterations : 512;
+	int iter = (int)(iterations);
+	// add up terms of sum
+	double sum = 0.;
+	for (int n=1; n<iter; n++) {
+	  double dn = 1.0 / n;
+	  sum += exp(-n*x) * (x2 + 2.0*(x + dn)*dn) * dn;
+	}
+	//result, in units of photons/s/m2/sr, convert to photons/timestep
+	double kTohc = (Boltzmann * (double)temperature) / (Planck * speedOfLight);
+	double solidAngle = (double)area[a] / pow(distFromSun,2.);
+	radiance[a] = 2.0 * pow(kTohc,3.) * speedOfLight;
+	radiance[a] = radiance[a] * sum;
+	radiance[a] *= solidAngle * sunSurfaceArea;
+	radiance[a] *= (1.0 - reflectance) * phYield;
+	radiance[a] *= time;
+  }
+    
+  ... Store radiance to object structure here ...
+
+}
+\end{lstlisting}
+\end{minipage}
+
+Listing \ref{lst:planck} shows a numeric implementation of equation \eqref{eq:PlanckX} and equation \eqref{eq:PlanckSum}. The original algorithm \parencite{Blackbody} has been converted from C++ code to C for compatibility with the PINC framework.
+
+
+\section*{Particle injection into cells adjacent to sunlit spacecraft surfaces}
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=C, caption={C style pseudocode of cell filling algorithm},
+                    label={lst:cellInject}]
+void pPhotoelectrons(...){
+
+  ... initialize variables ...
+  ... divide photoelectron flux by total number of cells to be filled ...
+
+  for(int a=0; a < nObjects; a++){
+    for(long int j=0; j<(long)flux[a]; j++){
+      for(int i = 0; i < nEmittingNodes; i++){
+
+        long int node = emittingNodes[emittingOffset[a] + i];
+        gNodeToGrid3D(... node, pos ... ); //computes node location in grid
+        memcpy(newPos, pos, pop->nDims * sizeof(*newPos));
+        while(vel[0] >= 0.0){
+          vel[0] = univariate_gaussian(... avgVel[a] ...); //normal velocity component
+        }
+        bivariate_gaussian( ...avgVel[a], &vel[1], &vel[2] ...); //tangential velocity components
+        newPos[0] -= random(...); //subtract a random value in range [0,1]
+        newPos[1] += random(...);
+        newPos[2] += random(...);
+        pNewParticle(...); //create the new particle
+        ... reset "vel" array to zeroes ...
+      }
+    }
+  }   
+}
+\end{lstlisting}
+\end{minipage}

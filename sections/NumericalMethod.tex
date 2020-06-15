@@ -68,99 +68,74 @@ Where $\hat{\vb{B}}_p$ is the magnetic unit vector acting on particle $p$. Equat
 
 \subsection{Field Solver}
 Several field solvers exists in PINC, in this thesis the multigrid solver developed by Killie \parencite{Killie} has been used. The multigrid solver is an iterative method; the basic principle of the method in a PiC context is to solve Poisson's equation first on a coarse grid, then using the solution on the course grid as a guess, solve the equation again for a finer grid. The solution for the coarse grid speeds up the solution for the finer grid, reducing the total computational time required to converge to an accurate solution. 
-\\
-There are three main types of multigrid solver, divided into the so called V-cycle, W-cycle and F-cycle, defined by when the algorithm should use a coarser or finer mesh than used in the previous iteration. Multigrid solvers are highly flexible, and many researchers have spent considerable effort in order to optimize the number of iterations \insertref{Multigrid, Trottenberg et al}, highly optimized multigrid solvers have a local complexity given by $\mathcal{O}(N_g)$, with a global complexity of $\mathcal{O}(N_g log(N_g))$ when using domain decomposition like in the case of PINC \insertref{Trottenberg2020}.
-\\
+
+There are three main types of multigrid solver, divided into the so called V-cycle, W-cycle and F-cycle, defined by when the algorithm should use a coarser or finer mesh than used in the previous iteration. Multigrid solvers are highly flexible, and many researchers have spent considerable effort in order to optimize the number of iterations \parencite{Trottenberg2020}. Highly optimized multigrid solvers have a local complexity given by $\mathcal{O}(N_g)$, with a global complexity of $\mathcal{O}(N_g log(N_g))$ when using domain decomposition like in the case of PINC \parencite{Trottenberg2020}.
+
 As described earlier, the multigrid method solves Poisson's equation in PINC. Strictly speaking, the solution to Gauss's law, equation \eqref{eq:gauss} is solved. In PINC however, electrostatic plasma is assumed, in this case the electric field is irrotational, i.e. $\nabla \cross \vb{E} = 0$ and the electric field can then be represented as the gradient of a scalar potential field $\vb{E} = \nabla \phi$.  Substituting the potential field back into Gauss's law, equation \eqref{eq:gauss} we have Poisson's equation
-
 \begin{equation}\label{eq:poisson}
-    \nabla^2 \phi = \frac{\rho}{\epsilon}
+    \nabla^2 \phi = \frac{\rho}{\epsilon}.
 \end{equation}
-
 In PINC this equation is solved iteratively using the Gauss-seidel method. Gauss-Seidel discretizes \eqref{eq:poisson} using the Forward-Time Central-Space (FTCS) finite difference scheme. In one spatial dimension, the electric field in terms of the potential becomes
-
 \begin{equation}\label{eq:Ediscrete}
-    \vb{E}_g = \frac{\phi^{n+1}_g - \phi^{n-1}_g}{2\Delta x}
+    \vb{E}_g = \frac{\phi^{n+1}_g - \phi^{n-1}_g}{2\Delta x}.
 \end{equation}
-
-and Poisson's equation, equation \eqref{eq:poisson}, becomes
-
+Poisson's equation, equation \eqref{eq:poisson}, becomes
 \begin{equation}\label{eq:poissonDescrete}
-    \frac{\phi^{n+1}_g - 2\phi^n_g + \phi^{n-1}_g}{{\Delta x}^2} = - \frac{\rho_g}{\epsilon}
+    \frac{\phi^{n+1}_g - 2\phi^n_g + \phi^{n-1}_g}{{\Delta x}^2} = - \frac{\rho_g}{\epsilon}.
 \end{equation}
-
-
 Where the subscript g implies the evaluation of $\phi$ at grid points, and the superscript p denotes the grid node index. Analogous expressions can be formed in two and three spatial dimensions.
 
 \subsection{Particle weighting}
 In the particle in cell method particles can exist anywhere in the continuous spatial computational domain, but forces and charge densities are calculated at discrete grid points \parencite[chapter 2.6]{Birdsall2004}. Historically, the NGP method and CIC method are used to weight computational particles to the grid. Higher order schemes exists, such as Quadratic Splines (QS) and Cubic Splines (CS), see \parencite{Okuda1979} for an overview on the usage of higher order weighting schemes in plasma simulation. In PINC the CIC method is used to weight particle parameters to the grid. Using similar notation as Verboncoeur \parencite{Verboncoeur2005} the weighting function is defined as 
-
 \begin{equation}\label{eq:weightFunc}
-    \vb{w}_{i,j,k} = \vb{x}_p - \vb{X}_{i,j,k}
+    \vb{w}_{i,j,k} = \vb{x}_p - \vb{X}_{i,j,k}.
 \end{equation}
-
 Where $\vb{x}_p$ is the position of particle p, and $\vb{X}_{i,j,k}$ is the position of the nearest grid point closest to the origin. Using equation \eqref{eq:weightFunc}, the charge distribution of particle p to a two dimensional grid can be found as
-
 \begin{subequations}
     \begin{align*}
         Q_{i,j} &= q_p \, (1 - w_i) \, (1 - w_j) \\
         Q_{i+1,j} &= q_p \, w_i \, (1 - w_j) \\
         Q_{i,j+1} &= q_p \, (1 - w_i) \, w_j \\
-        Q_{i+1,j+1} &= q_p \, w_i \, w_j 
+        Q_{i+1,j+1} &= q_p \, w_i \, w_j. 
     \end{align*}
 \end{subequations}
-
 With similar equations for the three dimensional case can be found from equation \eqref{eq:weightFunc}. From the charge distribution found above, the charge density can be found directly by dividing the charge distribution by the volume of a computational cell, i.e 
-
 \begin{equation*}
-    \rho_{i,j,k} = \frac{Q_{i,j,k}}{V_{i,j,k}}
+    \rho_{i,j,k} = \frac{Q_{i,j,k}}{V_{i,j,k}}.
 \end{equation*}
-
 From the charge density and current density, PINC computes the electric and magnetic field using the multigrid field solver module.
 
 \section{Simulation stability and constraints}
 
 \subsection{Spatial resolution}
 In PINC, and in other particle in cell codes, particles move in continuous space, but their macroscopic properties are projected to a discrete grid. Representing continuous variables on a discrete grid leads to numerical instability called finite grid instability \parencite[section 5.1.]{Lapenta2011}. The analysis of finite grid instability is beyond the scope of this thesis, a rigorous mathematical description of finite grid instability can be found in for example \textit{Plasma physics via computer simulation} \parencite{Birdsall2004}. The most important result of these analyses is that the grid spacing $\Delta x$ must satisfy the condition
-
 \begin{equation}\label{eq:GridSize}
-    \frac{\Delta x}{\lambda_D} < C
+    \frac{\Delta x}{\lambda_D} < C.
 \end{equation}
-
-
 Where C is some constant dependent on the discretization scheme used. In the case of the CIC scheme, the constant C is approximately equal to $\pi$. Failure to meet this condition in a PIC simulation leads to unphysical heating of the plasma. Equation \eqref{eq:GridSize} must therefore be satisfied in all directions of the full computational domain to ensure conservation of energy.
 
 \subsection{temporal resolution}
 In PINC, the boris algorithm is used for particle pushing. The boris algorithm is an explicit forward time integration scheme, and as such simulations run with PINC must satisfy temporal stability constraints associated with such schemes. A Von Neumann stability analysis of a harmonic oscillator without an external magnetic field given by the following equation \parencite{Hockney1988}, \parencite{Birdsall2004}, \parencite{Lapenta2011} 
-
 \begin{equation}\label{eq:harmonicOscillator}
-    \frac{q_s}{m_s} \vb{E}_p(\vb{x}_p) = - \Omega^2 \vb{x}_p
+    \frac{q_s}{m_s} \vb{E}_p(\vb{x}_p) = - \Omega^2 \vb{x}_p,
 \end{equation}
-
 leads to the equation 
-
 \begin{equation}
-    \left(\frac{\Omega \Delta t}{2} \right)^2 = \sin^2{\left(\frac{\omega_N \Delta t}{2}\right)}
+    \left(\frac{\Omega \Delta t}{2} \right)^2 = \sin^2{\left(\frac{\omega_N \Delta t}{2}\right)}.
 \end{equation}
-
 Where $\omega_N$ is the numerical oscillation frequency. For values outside the range [-1,1] the sine function has only complex solutions, thus for timesteps $\Delta t$ where  $\Omega \Delta t > 2$ is true, the numerical oscillation frequency will be complex. Any practical simulation of the harmonic oscillator will therefore become unstable due to unbounded numerical heating. Thus, the finite time stability criteria can be expressed as
-
 \begin{equation}
-    \Omega \Delta t < 2
+    \Omega \Delta t < 2.
 \end{equation}
 
 In this thesis, for solar wind simulations, the frequency $\Omega$ that needs to be resolved is typically the electron oscillation frequency of the cold solar wind plasma. 
 
 
 \subsection{The CFL condition}
-The Courant–Friedrichs–Lewy condition, or CFL condition, is a stability criteria linking the finite timestep and grid step, $\Delta t$ and $\Delta x$ respectively. The condition must be met everywhere in the computational domain if the explicit integrator in PINC is to converge to a solution.
-
-In \insertref{See Steffens master thesis..} a common formulation of the condition is given as
-
+The Courant–Friedrichs–Lewy condition, or CFL condition, is a stability criteria linking the finite timestep and grid step, $\Delta t$ and $\Delta x$ respectively. The condition must be met everywhere in the computational domain if the explicit integrator in PINC is to converge to a solution.A common formulation of the condition is given as \parencite{Marholm2019}
 \begin{equation}
-    \frac{\Delta x}{\Delta t} > C
+    \frac{\Delta x}{\Delta t} > C.
 \end{equation}
-
 Where C is some characteristic speed. The constant C is solver scheme dependent, and is often set as $C = 1$ for explicit schemes; in PINC this qualitatively means that a particle is restricted to move by maximum one computational cell per timestep as the length scale is normalized to the grid step size.
 
 \section{The PINC Object module}
@@ -170,80 +145,45 @@ In this section the method used in PINC for defining objects on a structured Car
 
 
 \subsection{Representing objects on a grid}
-In the PINC object module, conducting objects are represented as points on the Cartesian computational grid, and stored in an input HDF5 (Hierarchical Data Format) file. Internally in PINC, this file is converted to a PINC \textit{Grid} structure instance and is stored as a subset of the \textit{Object} data structure which additionally contains data on which nodes are internal to the object, which nodes are on the surface, and data required in photoemission computations. Required data for photoemission in the \textit{Object} structure will be described in the later section on implementation of photoemission in PINC.
-
-The PINC \textit{Grid} structure is a generalized data structure that stores N-dimensional data in a flat manner. The values on the grid is stored in a lexicographical manner; the elements of the three dimensional array is then represented in PINC as
-
-\begin{equation*}
-    (0,0,0), \, (1,0,0), \,, \, (2,0,0), \, ... \, , \, (0,1,0) \,, \, (1,1,0) \,, \, (2,1,0) \,, \, ...
-\end{equation*}
-
-Objects in PINC are thus stored as 1 by N arrays representing scalar fields, where N is the total number of grid points in the computational domain. The \textit{Grid} structure additionally contains a data field called \textit{sizeProd}, that allows for converting between Cartesian grid point coordinates and the index of value in the array: This field is an array that contains the cumulative product of the number of grid points along each axis in the computational domain. Thus, the index $p$ of the value of a \textit{Grid} structure located at the Cartesian coordinates $(x,y,z)$ is represented as
-
-\begin{equation}\label{eq:PINCindex}
-    p = x \cdot \text{sizeProd}[0] + y \cdot \text{sizeProd}[1] + z \cdot \text{sizeProd}[2]
-\end{equation}
-
-Traversing along an axis from a point with index $p$ of the \textit{Grid} structure, is then the simple matter of adding the corresponding element of the \textit{sizeProd} array to the index $p$. We will make use of this fact, along with equation \eqref{eq:PINCindex}, later in this chapter in creating an algorithm for photoemission on the surface of conducting objects. 
-
+In the PINC object module, conducting objects are represented as points on the Cartesian computational grid, and stored in an input HDF5 (Hierarchical Data Format) file. Internally in PINC, this file is converted to a PINC \textit{Grid} structure instance and is stored as a subset of the \textit{Object} data structure which additionally contains data on which nodes are internal to the object, which nodes are on the surface, and data required in photoemission computations. Required data for photoemission in the \textit{Object} structure will be described in the later section on implementation of photoemission in PINC. The PINC \textit{Grid} structure is a generalized data structure that stores N-dimensional data in a flat manner. The values on the grid is stored in a lexicographical manner.
 
 \subsection{The capacitance matrix method}
-The general idea of the capacitance matrix method is to precalculate a capacitance matrix for each object immersed in the plasma in question. Applying the computed capacitance matrix, the charges due to super-particles impinging the object can be redistributed to the surface of the object, after redistribution of charges a charge density and electric potential correction is computed and spacecraft potential can be updated. super-particles located within the object are then removed from the computational domain after their charges have been redistributed. 
-
-\todo{Create a new cycle diagram}
-Figure \insertref{Updated PIC cycle diagram} shows a modified computational cycle for PINC when taking into account charge accumulation on the surface of a conducting object immersed in the plasma.
+The general idea of the capacitance matrix method is to pre-calculate a capacitance matrix for each object immersed in the plasma in question. Applying the computed capacitance matrix, the charges due to super-particles impinging the object can be redistributed to the surface of the object, after redistribution of charges a charge density and electric potential correction is computed and spacecraft potential can be updated. super-particles located within the object are then removed from the computational domain after their charges have been redistributed. This modifies the PIC computational cycle in figure \cref{fig:pic} slightly, adding steps for redistributing charges that impinge on the spacecraft and another iteration of the Multigrid solver to update the fields.
 
 The capacitance matrix relates the potential $\phi$ and charge distribution $\rho$ as follows \parencite{Miyake2009}
-
 \begin{equation}
-    \rho_i = \sum^{N_G}_{j=1} A_{ij} \phi_j
+    \rho_i = \sum^{N_G}_{j=1} A_{ij} \phi_j.
 \end{equation}
-
 Where the matrix A represents the capacitance matrix, where i and j are the indices of the grid, and $N_G$ is the total number of grid points. Inverting matrix A, and defining $B \equiv A^{-1}$, the potential $\phi$ can be calculated as 
-
 \begin{equation}
-    \phi_i = \sum^{N_G}_{j=1} B_{ij} \rho_j
+    \phi_i = \sum^{N_G}_{j=1} B_{ij} \rho_j.
 \end{equation}
-
-
 After redistribution of charges, the charge density on the conducting body surface $\rho_s$ changes. The correction in potential on the spacecraft surface $\delta \phi_s$ can then be found from the charge density correction $\delta \rho_s$ as
-
 \begin{equation}
-    \delta \phi_{s,i} = \sum^{N_B}_{j=1} B_{ij} \delta \rho_{s,j}
+    \delta \phi_{s,i} = \sum^{N_B}_{j=1} B_{ij} \delta \rho_,
 \end{equation}
-
-Where $N_B$ is the total number of surface nodes, and $N_B < N_G$. By forming a subset of matrix B with the values associated with the surface nodes, with $N_B$ rows and columns, and inverting this matrix the charge density correction on the surface can be found
-
+where $N_B$ is the total number of surface nodes, and $N_B < N_G$. By forming a subset of matrix B with the values associated with the surface nodes, with $N_B$ rows and columns, and inverting this matrix the charge density correction on the surface can be found
 \begin{equation}\label{eq:SCchargeCorr}
-    \delta \rho_{s,i} = \sum^{N_B}_{j=1} C_{ij} \delta \phi_{s,j}
+    \delta \rho_{s,i} = \sum^{N_B}_{j=1} C_{ij} \delta \phi_{s,j}.
 \end{equation}
-
 Where the matrix $C$ is the inverted sub matrix of B. Qualitatively $C$ is the capacitance matrix of the conducting surface. In the PINC object module, matrix $C$ is constructed and stored before the main simulation loop begins by placing a unit charge on each grid point defining the conducting object surface, setting all other grid points to zero charge, and then solving for the potential: This forms the sub matrix of matrix $B$ which can then be inverted to find the surface capacitance matrix $C$, details of this implementation are found in appendix \ref{sec:ObjectCode}.
 
-In the simulation time-loop of PINC, after the potential has been updated, but before charges have been distributed to the surface, the surface potential of the conducting body $\phi_{s,j}$ is not the same value for all values of j and is therefore not at an equipotential. 
-
-The correction in potential in terms of the equipotential $\phi_c$ of the surface is given by
-
+In the simulation time-loop of PINC, after the potential has been updated, but before charges have been distributed to the surface, the surface potential of the conducting body $\phi_{s,j}$ is not the same value for all values of j and is therefore not at an equipotential. The correction in potential in terms of the equipotential $\phi_c$ of the surface is given by
 \begin{equation}\label{eq:SCphiCorrEqui}
-    \delta \phi_{s,j} = \phi_c - \phi_{s,j}
+    \delta \phi_{s,j} = \phi_c - \phi_{s,j},
 \end{equation}
-
-Substituting equation \eqref{eq:SCphiCorrEqui} into equation \eqref{eq:SCchargeCorr}, the charge density correction equation becomes
-
+substituting equation \eqref{eq:SCphiCorrEqui} into equation \eqref{eq:SCchargeCorr}, the charge density correction equation becomes
 \begin{equation}\label{eq:SCrhoCorrNew}
-    \delta \rho_{s,i} = \sum^{N_B}_{j=1} C_{ij} (\phi_c - \phi_{s,j})
+    \delta \rho_{s,i} = \sum^{N_B}_{j=1} C_{ij} (\phi_c - \phi_{s,j}).
 \end{equation}
 
 The equipotential $\phi_c$ is unknown in equation \eqref{eq:SCrhoCorrNew}; by using the fact that charges must be conserved when impinged charges are redistributed to the object surface, the equipotential can be calculated. Conservation of charge takes the form
-
 \begin{equation}\label{eq:ConsSurfCharge}
-    \sum^{N_B}_{i=1} \delta \rho_{s,i} = 0
+    \sum^{N_B}_{i=1} \delta \rho_{s,i} = 0,
 \end{equation}
-
-Substituting equation \eqref{eq:SCrhoCorrNew} into equation \eqref{eq:ConsSurfCharge}, $\phi_c$ can be computed as
-
+substituting equation \eqref{eq:SCrhoCorrNew} into equation \eqref{eq:ConsSurfCharge}, $\phi_c$ can be computed as
 \begin{equation}\label{eq:Equipotential}
-    \phi_c = \frac{\sum_i \sum_j C_{ij} \phi_{s,j}}{\sum_i \sum_j C_{ij}}
+    \phi_c = \frac{\sum_i \sum_j C_{ij} \phi_{s,j}}{\sum_i \sum_j C_{ij}}.
 \end{equation}
 
 In the conducting object run mode of PINC, after a first pass of the multigrid Poisson solver, equations \eqref{eq:SCrhoCorrNew} and equation \eqref{eq:Equipotential} are solved to redistribute absorbed charged particles, a new pass with the Poisson solver then solves the new potential field using the correction to the charge density field. Details on the implementation of these equations in PINC can be referenced by contacting the 4DSpace group at the University of Oslo for access to the PINC code repository.
@@ -278,50 +218,9 @@ The method for finding the surface nodes directly exposed to sunlight has been p
 
 Beginning at the node with index 0 of the domain, the code steps along the x direction checking whether each node index is an element of the array containing all object surface nodes. When the node index matches the index of a surface node, that index is stored in the object structure, and the loop stepping along the x axis is exited. The loop of stepping down the x axis is then repeated for each node along the y and z axis until the function has iterated through each "column" normal to the YZ plane. If a surface node is not located in a column parallel to the x axis, the function simply continues to the next column.
 
-This function can be visualized as analogous to mapping the topology of the bottom of a lake by sinking a weight attached to a rope from the surface of the lake, and measuring the wetted length of the rope when the weight reaches the bottom.
+This function can be visualized as analogous to mapping the topology of the bottom of a lake by sinking a weight attached to a rope from the surface of the lake, and measuring the wetted length of the rope when the weight reaches the bottom. Listing \ref{lst:sunlitNodes} in \cref{sec:appendixA} shows the basic structure of the function described above, and details how the code loops through the structured grid. The surface node array is initialized by a function that computes the object capacitance matrix, which is called before the sunlit surface nodes are found. In the photoelectron injection function, the indices of the sunlit nodes can then be converted into Cartesian coordinates with a helper function using the "sizeProd" array. 
 
-
-\begin{minipage}{\linewidth}
-\begin{lstlisting}[language=C, caption={Pseudo code for finding sunlit object surface nodes},
-label={lst:sunlitNodes}]
-void oFindAllSunlitNodes(...){
-
-    ... define and initialize variables ...
-
-    for(int k = 0; k<size[z]; k++){
-    
-        for(int j = 0; j<size[y]; j++){
-                
-            int flag = 0;
-            for(int i = 0; i<size[x]; i++){
-                
-                index = i*sizeProd[1] + j*sizeProd[2] + k*sizeProd[3];
-                for(int n = 0; n < nSurfaceNodes; n++){
-                    
-                    surfNode = surface[n];
-                    if(surfNode == index){
-                        ... append index to exposed node array ...
-                        flag = 1;
-                        break;
-                    }
-                    
-                if(flag) break;
-                
-                }
-            }
-        }
-    }
-}
-\end{lstlisting}
-\end{minipage}
-
-\vspace{1cm}
-Listing \ref{lst:sunlitNodes} shows the basic structure of the function described above. Each column normal to the YZ plane is stepped down using the "size" array that stores the number of nodes along each axis of the domain. The linear index of the node is then found using equation \eqref{eq:PINCindex} and compared with the indices of surface nodes stored in the "surface" array. 
-
-The surface node array is initialized by a function that computes the object capacitance matrix, which is called before the sunlit surface nodes are found. In the photoelectron injection function, the indices of the sunlit nodes can then be converted into Cartesian coordinates with a helper function using the "sizeProd" array. 
-
-A similar function to listing \ref{lst:sunlitNodes} finds the subset of object surface nodes that are used for photoelectron injection by filling cells adjacent to the emitting surfaces.
-Since PINC does not store data defining cells, and each node is surrounded by 8 computational cells, it is necessary to consistently pick which cell to fill with photoelectrons. For a surface node with linear index $p$ located at grid points $[i,j,k]$ we choose the cell to be filled by the nodes $[i-1,j,k], [i-1,j+1,k], [i-1,j,k+1], [i-1,j+1,k+1], [i,j,k], [i,j+1,k], [i,j,k+1], [i,j+1,k+1]$. In PINC we have defined the sunlit surface of the object by the projection of the object onto the YZ plane, therefore for a cell to be "on" the surface of the object we also require that the vertices $[i,j,k], [i,j+1,k], [i,j,k+1], [i,j+1,k+1]$ of the cell are also surface nodes.
+A similar function to listing \ref{lst:sunlitNodes} finds the subset of object surface nodes that are used for photoelectron injection by filling cells adjacent to the emitting surfaces. Since PINC does not store data defining cells, and each node is surrounded by 8 computational cells, it is necessary to consistently pick which cell to fill with photoelectrons. For a surface node with linear index $p$ located at grid points $[i,j,k]$ we choose the cell to be filled by the nodes $[i-1,j,k], [i-1,j+1,k], [i-1,j,k+1], [i-1,j+1,k+1], [i,j,k], [i,j+1,k], [i,j,k+1], [i,j+1,k+1]$. In PINC we have defined the sunlit surface of the object by the projection of the object onto the YZ plane, therefore for a cell to be "on" the surface of the object we also require that the vertices $[i,j,k], [i,j+1,k], [i,j,k+1], [i,j+1,k+1]$ of the cell are also surface nodes.
 
 \begin{figure}[h!]
     \centering
@@ -332,174 +231,54 @@ Since PINC does not store data defining cells, and each node is surrounded by 8 
 
 Figure \ref{fig:sunlitNodes} is a visual representation of why this condition must be met for nodes used for the cell filling injection algorithm. It shows the surface nodes of a 2 unit by 2 unit box inside a computational box of 10 x 10 x 10 nodes where the sunward direction is along the negative X axis. Nodes marked in blue are nodes used for photoelectron injection by cell filling, the surface injection algorithm uses the nodes colored \textbf{both} red and blue. Cells defined by nodes colored red are not adjacent to the sunlit surface in the XY plane.
 
-Another condition is necessary to avoid selecting cells that are part of the interior of the object; we further stipulate that for nodes $[i-1,j,k], [i-1,j+1,k], [i-1,j,k+1], [i-1,j+1,k+1]$ a maximum of three are either surface nodes \textbf{or} interior nodes of the object.
-
-
-\begin{minipage}{\linewidth}
-    \begin{lstlisting}[language=C, caption={C pseudocode for finding cells adjacent
-    to sunlit object surfaces},
-    label={lst:sunlitCells}]
-    
-    void oCellFillingNodes(...){
-        
-        ... variable definitions and initialization ...
-    
-        for(long int i = surfaceOffset[a]; i<surfaceOffset[a+1]; i++){
-                    
-            int nObjNode = 0;
-            int yzPlane = 0;        
-          
-            //cell nodes
-            long int p = surface[i];
-            long int pu = p + sizeProd[3];
-            long int plu = p + sizeProd[2] + sizeProd[3];
-            long int pl = p + sizeProd[2]; 
-            long int po = p - sizeProd[1];
-            long int pou = p - sizeProd[1] + sizeProd[3];
-            long int poul = p - sizeProd[1] + sizeProd[3] + sizeProd[2];
-            long int pol = p - sizeProd[1] + sizeProd[2];
-        
-            for(int j = interiorOffset[a]; j < interiorOffset[a+1]; j++){
-                long int intNode = interior[j];
-                if(po == intNode || pou == intNode ||
-                   poul == intNode || pol == intNode){
-                    nObjNode++;
-                }
-            }
-        
-            for(int j = surfaceOffset[a]; j < surfaceOffset[a+1]; j++){
-                long int surfNode = surface[j];
-                if(po == surfNode || pou == surfNode || 
-                   poul == surfNode || pol == surfNode){
-                    nObjNode++;
-                }
-        
-                if(p == surfNode || pu == surfNode || 
-                   plu == surfNode || pl == surfNode){
-                    yzPlane++;
-                }
-            }
-        
-            if(yzPlane == 4 && nObjNode < 8){
-                ... store index p as an emitting node for cell filling ...
-            }
-        }
-    }
-    \end{lstlisting}
-\end{minipage}
-
-
-A C style pseudocode implementation of these conditions are given in listing \ref{lst:sunlitCells}; the "surfaceOffset" stores the number of surface nodes for object "a", then the defined cell vertices are stored. The linear index of these vertices are then compared against the "surface" array and "interior" array. We then check whether the cell has a face on the surface of the object, and that the cell is \textbf{not} an interior cell.
+Another condition is necessary to avoid selecting cells that are part of the interior of the object; we further stipulate that for nodes $[i-1,j,k], [i-1,j+1,k], [i-1,j,k+1], [i-1,j+1,k+1]$ a maximum of three are either surface nodes \textbf{or} interior nodes of the object. A C style pseudocode implementation of these conditions are given in listing \ref{lst:sunlitCells} in \cref{sec:appendixA}; the "surfaceOffset" stores the number of surface nodes for object "a", then the defined cell vertices are stored. The linear index of these vertices are then compared against the "surface" array and "interior" array. We then check whether the cell has a face on the surface of the object, and that the cell is \textbf{not} an interior cell.
 
 
 \subsection{Photoemission current and photoelectron energy}\label{subsection:CurrentDensity}
-Two methods have been developed in PINC for finding the temperature, and flux of photoelectrons from sunlit object surfaces. The first method has been previously discussed in chapter \cref{sec:theory}; integrating Planck's law over a frequency band, allows both the photoelectron flux and temperature to be calculated. 
-
-For some objects, especially spacecraft, the photoelectric current, and the temperature of the emitted electrons are known a priori to our simulation. These values can then be specified as a input parameters to PINC.
-
-The number of super particles to inject per timestep into each cell adjacent to the sunlit surface is directly computed from the photoelectron current flux \parencite{Deca2013}
-
+Two methods have been developed in PINC for finding the temperature, and flux of photoelectrons from sunlit object surfaces. The first method has been previously discussed in chapter \cref{sec:theory}; integrating Planck's law over a frequency band, allows both the photoelectron flux and temperature to be calculated. For some objects, especially spacecraft, the photoelectric current, and the temperature of the emitted electrons are known a priori to our simulation. These values can then be specified as a input parameters to PINC. The number of super particles to inject per timestep into each cell adjacent to the sunlit surface is directly computed from the photoelectron current flux \parencite{Deca2013}
 \begin{equation}\label{eq:NPHelectrons}
-    N_{inject} = j_{ph} \frac{dA \cdot dt}{q_{part}}
+    N_{inject} = j_{ph} \frac{dA \cdot dt}{q_{part}}.
 \end{equation}
-
 Where $N_{inject}$ is the number of super particles to inject into each photoemitting cell, $dA$ is the area of a computational cell, $dt$ is the simulation timestep, and $q_{part}$ is the charge of one computational particle. The charge on one particle is calculated as
-
 \begin{equation}
-    q_{part} = \frac{\rho \, e \, V_{cell}}{N_{p,cell}}
+    q_{part} = \frac{\rho \, e \, V_{cell}}{N_{p,cell}},
 \end{equation}
-
 where $\rho$ is the electron density, $V_{cell}$ is the volume of the cell, and $N_{p,cell}$ is an input parameter specifying the number of particles per computational cell. Equation \eqref{eq:NPHelectrons} can be rewritten to calculate the total number of photoelectrons ejected per timestep. Since several photoelectron injection methods have been analyzed for this thesis, the total photoelectron flux per timestep is the form that has been implemented into PINC
-
 \begin{equation}
-    N_{total} =  \frac{j_{ph} \cdot A \cdot dt}{q_{part}}
+    N_{total} =  \frac{j_{ph} \cdot A \cdot dt}{q_{part}}.
 \end{equation}
-
-where the total area of the sunlit object surface $A$ has been used instead of the cell surface area. These particles are then injected into the computational domain with velocity sampled from a Maxwellian plasma with an average temperature given by the input parameters. Which method PINC uses for finding photoelectron flux is specified as a flag in the simulation input file.  
+Where the total area of the sunlit object surface $A$ has been used instead of the cell surface area. These particles are then injected into the computational domain with velocity sampled from a Maxwellian plasma with an average temperature given by the input parameters. Which method PINC uses for finding photoelectron flux is specified as a flag in the simulation input file.  
 
 \subsection{Integrating Planck's law}
 
-The photoelectron flux of a sunlit object is dependent on the material composition of the sunlit surface. Surfaces with a lower work function tend to eject more photoelectrons.
+The photoelectron flux of a sunlit object is dependent on the material composition of the sunlit surface. Surfaces with a lower work function tend to eject more photoelectrons. Similarly, the photoelectron flux of a sunlit surface is proportional to the distance from the surface to the sun. Since the power output of the sun follows an inverse square law with the square of the distance from the sun. The closer the spacecraft is to the sun in its orbit the higher the number of photons with energy greater than the work function strike the surface of the spacecraft. Both these factors need to be accounted for in order to make simulating spacecraft charging in sunlight as general as possible. 
 
-Similarly, the photoelectron flux of a sunlit surface is proportional to the distance from the surface to the sun. Since the power output of the sun follows an inverse square law with the square of the distance from the sun. The closer the spacecraft is to the sun in its orbit the higher the number of photons with energy greater than the work function strike the surface of the spacecraft. Both these factors need to be accounted for in order to make simulating spacecraft charging in sunlight as general as possible. 
+The number of photoelectrons emitted is however not equal to the number of impinging photons with energy higher than the surface work function. Both the reflectance of the surface, and the photoelectron yield of the surface material significantly reduce the photoelectron flux. Reflectance and photoelectron yield are both dependent on the energy of incoming photons, but are assumed to be constant in this thesis. Thus, to compute the photoelectron flux for a particular spacecraft, Planck's law must be integrated in the frequency band from the work function frequency, to infinity before the main particle-in-cell loop is started. The photoelectron flux can then be directly computed from the power received by the spacecraft, as long as the surface area exposed to the sun and work function of the spacecraft material surface is known. These variables, in addition to the material photoelectron yield and reflectance, can be given as inputs to our simulation.
 
-The number of photoelectrons emitted is however not equal to the number of impinging photons with energy higher than the surface work function. Both the reflectance of the surface, and the photoelectron yield of the surface material significantly reduce the photoelectron flux. Reflectance and photoelectron yield are both dependent on the energy of incoming photons, but are assumed to be constant in this thesis.
-
-Thus, to compute the photoelectron flux for a particular spacecraft, Planck's law must be integrated in the frequency band from the work function frequency, to infinity before the main particle-in-cell loop is started. The photoelectron flux can then be directly computed from the power received by the spacecraft, as long as the surface area exposed to the sun and work function of the spacecraft material surface is known. These variables, in addition to the material photoelectron yield and reflectance, can be given as inputs to our simulation.
-
-Integrating Planck's additionally allows the average kinetic energy of the emitted photoelectron to be calculated, dividing the total radiation energy absorbed per timestep by the total photoelectron flux.
-
-Several methods for numerically integrating Planck's law efficiently exists. In this thesis, the method settled on is based on the paper by Widger and Woodall \parencite{Widger1976}. A overview of the method presented in that paper, and the implementation in PINC as C pseudocode will now be given.
+Integrating Planck's additionally allows the average kinetic energy of the emitted photoelectron to be calculated, dividing the total radiation energy absorbed per timestep by the total photoelectron flux. Several methods for numerically integrating Planck's law efficiently exists. In this thesis, the method settled on is based on the paper by Widger and Woodall \parencite{Widger1976}. A overview of the method presented in that paper, and the implementation in PINC as C pseudocode will now be given.
 
 First, to simplify the integrals, Planck's law is recast in terms of the wavenumber ($cm^{-1}$) $\nu$ rather than the frequency of radiation. Planck's law then takes the form
-
 \begin{equation}\label{eq:PlanckNu}
-    B(T) = C_1 \int^{\infty}_{\nu} \nu^3 \left(\exp{\frac{C_2 \nu}{T}} - 1 \right) d \nu
+    B(T) = C_1 \int^{\infty}_{\nu} \nu^3 \left(\exp{\frac{C_2 \nu}{T}} - 1 \right) d \nu.
 \end{equation}
-
-Where B(T) is the radiance, given in units of $W cm^{-2} Sr^{-1}$, T is the absolute temperature in Kelvins, and $C_1$ and $C_2$ are the first and second radiation constants respectively.
-
-Letting $x = C_2 T^{-1} \nu$, equation \eqref{eq:PlanckNu} can be rewritten as 
-
+Where B(T) is the radiance, given in units of $W cm^{-2} Sr^{-1}$, T is the absolute temperature in Kelvins, and $C_1$ and $C_2$ are the first and second radiation constants respectively. Letting $x = C_2 T^{-1} \nu$, equation \eqref{eq:PlanckNu} can be rewritten as 
 \begin{equation}\label{eq:PlanckX}
-    B(T) = C_1 C_2^{-4} T^4 \int^{\infty}_x \frac{x^3}{\exp{x} - 1} dx
+    B(T) = C_1 C_2^{-4} T^4 \int^{\infty}_x \frac{x^3}{\exp{x} - 1} dx.
 \end{equation}
 
 The integrand in equation \eqref{eq:PlanckX} can be expanded in a series form, substituting that series into equation \eqref{eq:PlanckX} and integrating by parts, equation \eqref{eq:planckX} becomes
-
 \begin{equation}\label{eq:PlanckSum}
-    \int^{\infty}_x \frac{x^3}{\exp{x} - 1} dx = \sum^{\infty}_{n=1} \exp{-n x} \left(x^2 n^{-1} + 3 x^2 n^{-2} + 6 x n^{-3} + 6 n^{-4} \right)
+    \int^{\infty}_x \frac{x^3}{\exp{x} - 1} dx = \sum^{\infty}_{n=1} \exp{-n x} \left(x^2 n^{-1} + 3 x^2 n^{-2} + 6 x n^{-3} + 6 n^{-4} \right).
 \end{equation}
-
 $C_1$, $C_2$ and T are known constants in equation \eqref{eq:PlanckX}, and the infinite sum in equation \eqref{eq:PlanckSum} is straight forward to compute to some finite tolerance using a C function. The integral in \eqref{eq:PlanckSum} is computed in units of radiance $W m^2 Sr^{-1}$, the solid angle $\Omega$ of the photoemitting object with respect to the sun can be calculated as
-
 \begin{equation*}
-    \Omega = \frac{A_s}{r^2}
+    \Omega = \frac{A_s}{r^2}.
 \end{equation*}
-
 Where $A_s$ is the area of the sunlit surface, and $r$ is the radial distance from the center of the sun to the object. Multiplying the result of \eqref{eq:PlanckSum} by the solid angle of the object with respect to the sun, and the surface area of the sun, the power output in the frequency band above the work function of interest can be found. A similar integral to the one found in equation \eqref{eq:PlanckSum} can be constructed in terms of photons per second instead of Watts.
 
 Computing the photons impinging on the surface per timestep does not however correspond to the amount of photoelectrons emitted by the sunlit surface. To compute the total photoelectron flux, the photon impinging rate must be multiplied by the surface material reflectance, and the photoelectron yield (number of electrons emitted per incoming photon above the work function of the material) as described in chapter \ref{sec:theory}.
 
-\begin{minipage}{\linewidth}
-\begin{lstlisting}[language=C, caption={Numerical integration of Planck's law in terms of photon flux}, label={lst:planck}]
-void oPlanckPhotonIntegral(...){
-
-  ... Variable and constant definitions and initialization ...
-    
-  for(int a=0; a<nObj; a++){
-	//sigma[a] = ((double)sigma[a]) / (Planck * speedOfLight * 100.);
-	double c1 = Planck * speedOfLight / Boltzmann;
-	double x = c1 * 100. * (double)sigma[a]/temperature;
-	double x2 = x * x;
-
-	// decide how many terms of sum are needed
-	double iterations = 2.0 + 20.0/x;
-	iterations = (iterations < 512.) ? iterations : 512;
-	int iter = (int)(iterations);
-	// add up terms of sum
-	double sum = 0.;
-	for (int n=1; n<iter; n++) {
-	  double dn = 1.0 / n;
-	  sum += exp(-n*x) * (x2 + 2.0*(x + dn)*dn) * dn;
-	}
-	//result, in units of photons/s/m2/sr, convert to photons/timestep
-	double kTohc = (Boltzmann * (double)temperature) / (Planck * speedOfLight);
-	double solidAngle = (double)area[a] / pow(distFromSun,2.);
-	radiance[a] = 2.0 * pow(kTohc,3.) * speedOfLight;
-	radiance[a] = radiance[a] * sum;
-	radiance[a] *= solidAngle * sunSurfaceArea;
-	radiance[a] *= (1.0 - reflectance) * phYield;
-	radiance[a] *= time;
-  }
-    
-  ... Store radiance to object structure here ...
-
-}
-\end{lstlisting}
-\end{minipage}
-
-Listing \ref{lst:planck} shows a numeric implementation of equation \eqref{eq:PlanckX} and equation \eqref{eq:PlanckSum}. The original algorithm \parencite{Blackbody} has been converted from C++ code to C for compatibility with the PINC framework.
+Listing \ref{lst:planck} in \cref{sec:appendixA} shows a numeric implementation of equation \eqref{eq:PlanckX} and equation \eqref{eq:PlanckSum}. The original algorithm \parencite{Blackbody} has been converted from C++ code to C for compatibility with the PINC framework.
 
 
 \subsection{Injection of photoelectrons}\label{subsec:injection}
@@ -568,14 +347,8 @@ Where $\beta$, $\gamma$ are the rotation angles about the y and z axis, and $\pm
 The disadvantage of using this method is that it requires calling the function that generates the rotation matrix every time a photoelectron is emitted. This makes this method more computationally expensive than taking samples from the univariate and bivariate Gaussian distributions. However, the photoelectrons produced by the first method could potentially have higher average kinetic energy than what is physically correct, since the two Gaussian distributions are sampled independently in the first method.
 
 
-
 \subsubsection*{Filling cells adjacent to sunlit surfaces}
-This method is based on the same method utilized in the particle-in-cell code iPic3D by Deca et al. \parencite{Deca2013}; photoelectrons are distributed in a uniform random location in each computational cell adjacent to the emitting surface of the object. Based on the results from verification simulations, this cell filling algorithm was the method ultimately selected when simulating charging of the BepiColombo spacecraft MMO.
-
-In PINC, unlike iPic3D, objects are defined by the nodes on the computational grid rather than the computational cells. The first step in PINC is then to identify the corner nodes of the cells adjacent to the emitting surface, the pseudocode found in listing \ref{lst:sunlitCells} shows how these corner nodes are identified.
-
-Each photoelectron is placed in a cell by adding a random value in the range $[0,1]$ to each position component of the corner node. 
-
+This method is based on the same method utilized in the particle-in-cell code iPic3D by Deca et al. \parencite{Deca2013}; photoelectrons are distributed in a uniform random location in each computational cell adjacent to the emitting surface of the object. Based on the results from verification simulations, this cell filling algorithm was the method ultimately selected when simulating charging of the BepiColombo spacecraft MMO. In PINC, unlike iPic3D, objects are defined by the nodes on the computational grid rather than the computational cells. The first step in PINC is then to identify the corner nodes of the cells adjacent to the emitting surface, the pseudocode found in listing \ref{lst:sunlitCells} in \cref{sec:appendixA} shows how these corner nodes are identified. Each photoelectron is placed in a cell by adding a random value in the range $[0,1]$ to each position component of the corner node. 
 \begin{subequations}
     \begin{equation}\label{eq:cellFillX}
         x_{p} = x_{n} - R
@@ -584,47 +357,12 @@ Each photoelectron is placed in a cell by adding a random value in the range $[0
         y_{p} = y_{n} + R
     \end{equation}
     \begin{equation}
-        z_{p} = z_{n} + R
+        z_{p} = z_{n} + R.
     \end{equation}
 \end{subequations}
-
 Where the subscript $p$ denotes the p'th photoelectron and the subscript $n$ is used for node positions. The random number $R$ is sampled independently for each position component, and the range $[0,1]$ is used since distance is normalized by stepsize in PINC. The negative sign in subequation \eqref{eq:cellFillX} stems from the fact that in PINC the sunward direction is always along the negative x axis.
 
-The total flux of photoelectrons is divided by the number of cells adjacent to the sunlit surfaces of the object, each cell is then filled iteratively with this amount. 
-
-\begin{minipage}{\linewidth}
-\begin{lstlisting}[language=C, caption={C style pseudocode of cell filling algorithm},
-                    label={lst:cellInject}]
-void pPhotoelectrons(...){
-
-  ... initialize variables ...
-  ... divide photoelectron flux by total number of cells to be filled ...
-
-  for(int a=0; a < nObjects; a++){
-    for(long int j=0; j<(long)flux[a]; j++){
-      for(int i = 0; i < nEmittingNodes; i++){
-
-        long int node = emittingNodes[emittingOffset[a] + i];
-        gNodeToGrid3D(... node, pos ... ); //computes node location in grid
-        memcpy(newPos, pos, pop->nDims * sizeof(*newPos));
-        while(vel[0] >= 0.0){
-          vel[0] = univariate_gaussian(... avgVel[a] ...); //normal velocity component
-        }
-        bivariate_gaussian( ...avgVel[a], &vel[1], &vel[2] ...); //tangential velocity components
-        newPos[0] -= random(...); //subtract a random value in range [0,1]
-        newPos[1] += random(...);
-        newPos[2] += random(...);
-        pNewParticle(...); //create the new particle
-        ... reset "vel" array to zeroes ...
-      }
-    }
-  }   
-}
-\end{lstlisting}
-\end{minipage}
-
-
-Listing \ref{lst:cellInject} shows how this method was implemented in C style pseudocode. The velocity of a particle is sampled in the surface normal direction and the tangential direction. Then a random position within the cell is computed as an offset of the position of the corner node that defines the cell, the electron is then stored in the particle "population" structure with its new velocity and position. The next cell corner is then selected and the process repeats until the total amount of photoelectrons in the timestep has been created.
+The total flux of photoelectrons is divided by the number of cells adjacent to the sunlit surfaces of the object, each cell is then filled iteratively with this amount. Listing \ref{lst:cellInject} in \cref{sec:appendixA} shows how this method was implemented in C style pseudocode. The velocity of a particle is sampled in the surface normal direction and the tangential direction. Then a random position within the cell is computed as an offset of the position of the corner node that defines the cell, the electron is then stored in the particle "population" structure with its new velocity and position. The next cell corner is then selected and the process repeats until the total amount of photoelectrons in the timestep has been created.
 
 \newpage
 \section{Photoemission verification simulation}
@@ -850,12 +588,7 @@ Figures \ref{fig:DoubleGaussAlongX} and \ref{fig:DoubleGaussAlongY} plot potenti
 
 A potential reason for this, is that the double sampling method increases the average kinetic energy of the emitted photoelectrons to a point where not all the photoelectrons return to the surface of the object and become reabsorbed. Figure \ref{fig:DoubleGaussAlongY} also shows another small barrier directly behind the cubesat along the direction of drift. 
 
-This suggest that particles pushed based on the two samplings of velocity have higher tangential velocities in the photoelectrons than when injected using the other two algorithms, causing electrons to accumulate downstream of the object.
-
-\todo{Sample pop file to check if electrons are Maxwellian? Can use the plot python script called VelDistributionSingle.py}
-
-Based on the relative accuracy as shown in table \ref{tab:verificationPla} when compared to the two other PIC codes, an accurate reproduction of the expected physics, and the lower computational complexity as compared to the rotation matrix algorithm, I selected the cell filling algorithm as the injection algorithm to use when simulating MMO in its orbit around Mercury.
-
+This suggest that particles pushed based on the two samplings of velocity have higher tangential velocities in the photoelectrons than when injected using the other two algorithms, causing electrons to accumulate downstream of the object. Based on the relative accuracy as shown in table \ref{tab:verificationPla} when compared to the two other PIC codes, an accurate reproduction of the expected physics, and the lower computational complexity as compared to the rotation matrix algorithm, I selected the cell filling algorithm as the injection algorithm to use when simulating MMO in its orbit around Mercury.
 
 \section{Mercury Magnetospheric Orbiter simulation setup}
 The MMO is one of the two spacecraft making up the joint European Space Agency (ESA) and Japan Aerospace Exploration Agency (JAXA) BepiColombo mission. The principal scientific goals of the MMO spacecraft is to investigate the plasma environment around Mercury as well as the interaction between the planets intrinsic magnetic field and the solar wind  \parencite{Benkhoff2009} \parencite{Saito2010}. 
@@ -892,10 +625,9 @@ Figures \ref{fig:MMOnoBooms} and figure \ref{fig:MMOWithBooms} show two voxelize
 
 \subsection{Magnetospheric and numerical parameters}
 
-Two spacecraft have visited Mercury at the time of writing. The first spacecraft to do so was the Mariner 10 spacecraft, performing three fly-bys of the planet, equipped both with plasma detectors and magnetometers to study the properties of Mercury's magnetic field and its interaction with the solar wind plasma \insertref{MESSENGER and Mariner 10 flyby observations of magnetotail structure and dynamics at Mercury}. A longer observation mission, the MESSENGER spacecraft, entered into orbit around Mercury as the first spacecraft to do so. It orbited the planet from 2011 to 2015 in a highly eccentric orbit, collecting data all the while on the plasma conditions of the planets magnetosphere, magnetotail and the intrinsic magnetic field of the planet.
+Two spacecraft have visited Mercury at the time of writing. The first spacecraft to do so was the Mariner 10 spacecraft, performing three fly-bys of the planet, equipped both with plasma detectors and magnetometers to study the properties of Mercury's magnetic field and its interaction with the solar wind plasma \parencite{Slavin2012}. A longer observation mission, the MESSENGER spacecraft, entered into orbit around Mercury as the first spacecraft to do so. It orbited the planet from 2011 to 2015 in a highly eccentric orbit, collecting data all the while on the plasma conditions of the planets magnetosphere, magnetotail and the intrinsic magnetic field of the planet.
 
-In this thesis, I have used a combination of data gathered from the MESSENGER mission, as well as MHD simulations of solar wind interaction with the magnetosphere of Mercury, to simulate the charging of the MMO spacecraft. Several assumptions were made in carrying out this analysis; first of all, the MMO spacecraft is spin-stabilized \parencite{Yamakawa2008} to reduce thermal load with its spin axis aligned along the magnetic dipole axis of Mercury. Because of the small timescales of charging relative to the rotational rate of the spacecraft, I have assumed an irrotational body fixed reference frame for the PINC simulations. Furthermore, MMO will orbit Mercury in a polar orbit with a period of 9.3 hours \insertref{ESA fact sheet}. As such, I chose to simulate the charging of the spacecraft close to the periapsis of MMO's orbit. Specifically, when the spacecraft is over Mercury's magnetic south pole where the plasma density is relatively high and exposed to direct sunlight. The distance of Mercury to the sun was also assumed to be the same as used in \parencite{Benna2009} such that the photon flux experienced by the MMO can be computed accurately. 
-
+In this thesis, I have used a combination of data gathered from the MESSENGER mission, as well as MHD simulations of solar wind interaction with the magnetosphere of Mercury, to simulate the charging of the MMO spacecraft. Several assumptions were made in carrying out this analysis; first of all, the MMO spacecraft is spin-stabilized \parencite{Yamakawa2008} to reduce thermal load with its spin axis aligned along the magnetic dipole axis of Mercury. Because of the small timescales of charging relative to the rotational rate of the spacecraft, I have assumed an irrotational body fixed reference frame for the PINC simulations. Furthermore, MMO will orbit Mercury in a polar orbit with a period of 9.3 hours \parencite{ESAa}. As such, I chose to simulate the charging of the spacecraft close to the periapsis of MMO's orbit. Specifically, when the spacecraft is over Mercury's magnetic south pole where the plasma density is relatively high and exposed to direct sunlight. The distance of Mercury to the sun was also assumed to be the same as used in \parencite{Benna2009} such that the photon flux experienced by the MMO can be computed accurately. 
 
 \begin{table}[H]
     \centering
@@ -927,13 +659,19 @@ In this thesis, I have used a combination of data gathered from the MESSENGER mi
     \label{tab:PlasmaParamMMO}
 \end{table}
 
-Table \ref{tab:PlasmaParamMMO} summarizes all relevant parameters used in the charging simulation of the MMO spacecraft. The plasma density and thermal velocity values were extracted from the MHD simulation plots given in the paper by Benna et al. modelling the magnetosphere of Mercury at the first MESSENGER flyby. The intrinsic magnetic field of Mercury is dominantly dipolar, with a dipole tilt to the rotational axis constrained to being less than $\ang{5}$ \parencite{Anderson2010}. Mercury's rotational axis is tilted 2 minutes of arc with respect to its orbital plane \parencite{Rothery2015}, and has a external field strength of about $100 nT$ at the north cusp \parencite{Anderson2010}. Using the maximum dipole axis tilt angle, the value for the magnetic field $\vb{B}_0$ in table \ref{tab:PlasmaParamMMO} is then given in the Mercury solar orbital (MSO) coordinates. 
+Table \ref{tab:PlasmaParamMMO} summarizes all relevant parameters used in the charging simulation of the MMO spacecraft. The computational box measures $28.125 m$ along each axis. With the plasma parameters given above, applying equation \eqref{eq:debyelength} gives a debye length of $\lambda_D = 7.43 m$. This means the computational box is approximately 3.79 Debye lengths in each direction. Ideally, we would use a larger computational domain, around $\lambda_D$, to avoid disruptive effects in the electric field along the boundaries. The size of the computational domain used was a tradeoff between the ability to resolve the MMO to sufficient accuracy, the total computational time available to us on the Saga supercomputer, and reduction of undesirable boundary effects. 
+
+The plasma density and thermal velocity values were extracted from the MHD simulation plots given in the paper by Benna et al. modelling the magnetosphere of Mercury at the first MESSENGER flyby. The intrinsic magnetic field of Mercury is dominantly dipolar, with a dipole tilt to the rotational axis constrained to being less than $\ang{5}$ \parencite{Anderson2010}. Mercury's rotational axis is tilted 2 minutes of arc with respect to its orbital plane \parencite{Rothery2015}, and has a external field strength of about $100 nT$ at the north cusp \parencite{Anderson2010}. Using the maximum dipole axis tilt angle, the value for the magnetic field $\vb{B}_0$ in table \ref{tab:PlasmaParamMMO} is then given in the Mercury solar orbital (MSO) coordinates. 
 
 The distance from the MMO to the sun $r_{sc}$ was computed using the Jet Propulsion Lab (JPL) ephemeris system HORIZONS and setting the time of the ephemeris to the day of the first MESSENGER Mercury fly-by.
 
 The parameter $\overline{Y}$ is the photoelectron yield per incoming photon and averaged over the range of photon energies that cause photoemission for MMO. Here we have assumed the MMO to be covered by Multi Layer Insulation (MLI), a thermal insulation covering consisting of several layers of plastic coated with an outer layer of Aluminium. The average photoelectron yield of Aluminium and its work function were found in \parencite{Feuerbacher1972}, the yield parameter used is dependent on the reflectance of the Aluminium, and as such the reflectance is not included as a separate parameter. 
 
 The SSM panels that cover the MMO are composed of silver films which have a slightly higher, but similar, work function to that of Aluminium. The parameter $A_{MM0}$ denotes the sunlit area of the MMO with and without the magnetometer booms. Since the booms account for a significant part of the sunlit surface area of the spacecraft the properties of Aluminium was used for simulations both with and without the booms.
+
+\section{Data analysis tools}
+The PINC framework already includes several Python scripts for analyzing 2D profiles of plasma density, potential, and the electric field. Tools also exist for analyzing the probability distribution of simulation particles. These tools use the numerical computation libraries Numpy, Scipy and Matplotlib to convert values and create readable plots. These tools were built by Jan Deca, Sigvald Marholm, Vigdis Holta, Steffen Brask og Gullik Killie. I modified several of these tools to be specific for my MMO simulations, nevertheless, all credit goes to the original developers. Tools written entirely by myself are mentioned, and some of the more comprehensive ones are expanded upon in \cref{sec:appendixA} and \cref{sec:appendixD}.
+
 
 \newpage
 %\section{Data analysis tools}

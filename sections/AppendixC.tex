@@ -18,7 +18,8 @@ The python script below also outputs the root mean square error, such that the f
 \begin{equation}\label{eq:RMSE}
     \text{RMSE} = \sqrt{\frac{\sum^n_{i=1} \left(y_{pred,i} - y_i \right)^2}{n}}.
 \end{equation}
-The absolute value of the potential found with PINC simulation was used to simplify fitting the trial functions to the data, the independent time variable $t$ was also normalized by 10,000 timesteps to reduce errors from small floating point operations when computing the $e^{-b t}$ term found in two of the trial functions.
+The absolute value of the potential found with PINC simulation was used to simplify fitting the trial functions to the data, the independent time variable $t$ was also normalized by 10,000 timesteps to reduce errors from small floating point operations when computing the $e^{-b t}$ term found in two of the trial functions. The Hill function was found to be the function that best fit the curves of the absolute value of potential. The lowest RMSE values for the Hill fitting found that the potential converged to $-283 \; V$ for the MMO with deployed booms, and $-281 \; V$ for the MMO without deployed booms. 
+
 \begin{center}
 \begin{figure}[H]
   \begin{subfigure}[b]{0.61\textwidth}
@@ -54,8 +55,6 @@ The absolute value of the potential found with PINC simulation was used to simpl
   \caption{Curve fitting using a generalized logistic function, Hall function, and exponential function of the potential of the MMO spacecraft with booms. The Y axis is the absolute potential in Volts, and the X axis is units of 1,000 timesteps}
 \end{figure}
 \end{center}
-
-The Hill function was found to fit the curves of the absolute value of potential best. The lowest RMSE values for the Hill fitting found that the potential converged to $-283 \; V$ for the MMO with deployed booms, and $-281 \; V$ for the MMO without deployed booms. 
 
 
 \begin{longlisting}

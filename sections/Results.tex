@@ -1,7 +1,7 @@
 \chapter{Results}
 \label{sec:results}
 
-The charging behaviour of a spacecraft is dependent on several factors; the material composition of the craft, its dimensions, its location in space, the local time, and the space weather \parencite{LAI2019} \todo{Update reference, bib file contains extract of the book}. In this thesis, I wish to investigate what effects the presence of MMO's booms have on its charging behaviour, additionally I wished to investigate whether the direction of the ambient plasma drift or the photoelectron temperature would significantly change how the spacecraft charges.
+The charging behaviour of a spacecraft is dependent on several factors; the material composition of the craft, its dimensions, its location in space, the local time, and the space weather \parencite{LAI2019}. In this thesis, I wish to investigate what effects the presence of MMO's booms have on its charging behaviour, additionally I wished to investigate whether the direction of the ambient plasma drift or the photoelectron temperature would significantly change how the spacecraft charges.
 
 The booms on the MMO extend the characteristic length of the spacecraft to be longer than that of the Debye length of the plasma found in table \ref{tab:PlasmaParamMMO}, as such I expect there to be a difference in the thickness of the plasma sheaths formed. 
 
@@ -50,24 +50,12 @@ Save for cases 1 and 6, the simulations without photoemission, the computational
 
 For the sake of brevity, we will refer to the case number as shown in table \ref{tab:MMOexperiments} when presenting analyses for these five experiments. Results will be presented in order such that the plasma conditions closest to those the MMO will actually experience when orbiting Mercury is presented as the last simulation where photoemission parameters are computed directly. Photoemission with a different electron temperature is also presented, since an assumption of constant photoelectron yield was made, the impact of a higher photoelectron temperature will be compared to the other experiments in which the average photoelectron temperature was computed using Planck's law. We have also chosen to group simulations with and without booms together to make comparison across the two configurations simpler.
 
-Except for a computational charging analysis of the combined BepiColombo spacecraft under thrust (using the MTM, the Mercury Transfer Module) \insertref{ESA Bepi sim} we were unable to find similar numerical experiments of the charging of the MMO spacecraft, we will therefore compare our results to theory through current balance analysis as presented in \ref{sec:theory}. We will also compare our results qualitatively to numerical charging experiments for different plasma parameters and different objects, such as in the paper by Deca et al. \parencite{Deca2013} used for our verification simulations.
-\todo{Add sheath thickness analysis}
-From current balance, with photoemission included, we expect the variation of drift direction (comparing cases 2 and 3 to cases 7 and 8) to have minimal impact on the floating potential PINC will converge to. Similarly we expect the sheath thickness and sheath plasma densities to be comparable for different drift directions. Across all five simulation types run, we expect the floating potential and sheath thickness to be larger in magnitude when the booms on the MMO are fully extended; since the booms are modeled as photoemissive, the greater surface area will lead to an overall higher electron current flowing from the spacecraft leading to a higher floating potential \todo{That can't be right...}. 
+Except for a computational charging analysis of the combined BepiColombo spacecraft under thrust (using the MTM, the Mercury Transfer Module) \parencite{ESA}, we were unable to find similar numerical experiments of the charging of the MMO spacecraft. We will therefore compare our results to theory through current balance analysis as presented in \ref{sec:theory}. We will also compare our results qualitatively to numerical charging experiments for different plasma parameters and different objects. Such as in the paper by Deca et al. \parencite{Deca2013} that was used for our verification simulations.
+
+From current balance, with photoemission included, we expect the variation of drift direction (comparing cases 2 and 3 to cases 7 and 8) to have minimal impact on the floating potential PINC will converge to. Similarly we expect the sheath thickness and sheath plasma densities to be comparable for different drift directions. Across all five simulation types run, we expect the floating potential and sheath thickness to be larger in magnitude when the booms on the MMO are fully extended. Since the booms are modeled as photoemissive, the greater surface area will lead to an overall higher electron current flowing from the spacecraft leading to a higher floating potential.
 
 The inclusion of the external magnetic field of Mercury could potentially impact the fraction of photoelectrons with a greater than average temperature being able to leave the surface of the spacecraft, if the particles' velocity vector does not align with the magnetic field the force exerted by the magnetic field could trap electrons more efficiently, leading to a lower floating potential.        
 
-%FLOATING POTENTIAL SUMMARY
-% \begin{table}[]
-% \centering
-% \begin{tabular}{cccccc}
-% \hline
-% & No photoelectron & Drift along Z & Drift along X & External Magnetic Field & Photoelectron temperature 3 eV\\\hline
-% With booms & N/A & 105.419 & 105.400 & 105.400 & 78.154\\\hline
-% Without booms & N/A & 100.710 & 100.696 & 100.699 & N/A\\\hline
-% \end{tabular}
-% \caption{Dummy text}
-% \label{tab:FlotingPotSummary}
-% \end{table}
 \section{Charging without photoemission}\label{subsec:noPHsec}
 %FLOATING POTENTIAL CONVERGENCE
 \begin{center}
@@ -240,7 +228,14 @@ Figures \ref{fig:IonsNoPH} and \ref{fig:ElectronsNoPH} show the density of ions 
 \label{fig:Conv_posX}
 \end{figure}
 
-Figure \ref{fig:Conv_posX} shows the convergence to the floating potential of both MMO configurations. Unlike the numerical simulations without photoemission, the potential of both configurations of the MMO converge rapidly to a its floating potential. The slope of the increase in potential early on in the simulation points to the high ratio between the photoemission current and the charging from the impinging electrons from the ambient plasma. The floating potential for MMO with booms, as seen in figure \ref{fig:C_posX_WB} overshoots the floating potential by several volts, before converging to 105.4 V. In the boomless configuration, figure \ref{fig:C_posX_NB}, the overshoot is much smaller, and the potential shows oscillatory behaviour around a floating potential of 100.7 V. The overshoot in the floating potential could result from the thin booms extending far from the main body of the MMO developing a potential barrier slower, and smaller in height, than the central body leading to a gradual rather than sudden decrease in the effective photoemission current.
+Figure \ref{fig:Conv_posX} shows the convergence to the floating potential of both MMO configurations. Unlike the numerical simulations without photoemission, the potential of both configurations of the MMO converge rapidly to a its floating potential. The slope of the increase in potential early on in the simulation points to the high ratio between the photoemission current and the charging from the impinging electrons from the ambient plasma. The absolute value of the current density $j_{ph}$ can be calculated from the equation
+\begin{equation}
+     j_{ph} = \frac{N_p \overline{Y}_{ph} q_e}{A_{ph} dt}. 
+\end{equation}
+Where $N_p$ is the number of impinging photons per timestep with energy higher than the material work function, and $\overline{Y}_{ph}$ is the averaged photoelectron yield. Plugging in $N_p$ output by the simulation, and $\overline{Y}_{ph}$ from \cref{tab:PlasmaParamMMO}, gives the photoemission current density. We have $j_{ph} = 0.237 A m^{-2}$ for both configurations of the booms.
+
+
+The floating potential for MMO with booms, as seen in figure \ref{fig:C_posX_WB} overshoots the floating potential by several volts, before converging to 105.4 V. In the boomless configuration, figure \ref{fig:C_posX_NB}, the overshoot is much smaller, and the potential shows oscillatory behaviour around a floating potential of 100.7 V. The overshoot in the floating potential could result from the thin booms extending far from the main body of the MMO developing a potential barrier slower, and smaller in height, than the central body leading to a gradual rather than sudden decrease in the effective photoemission current.
 
 % We can compute the theoretical floating potential of the MMO with booms undeployed with a photoemission current present using the same method as in \cref{subsec:noPHsec}. The current balance equation must include the photoemission current, and therefore takes the form
 % \begin{equation}
@@ -255,10 +250,7 @@ Figure \ref{fig:Conv_posX} shows the convergence to the floating potential of bo
 %     I_{ph} = \frac{N_p \overline{Y}_{ph} q_e}{dt}, 
 % \end{equation}
 % where $N_p$ is the number of impinging photons per timestep with energy higher than the material work function, and $\overline{Y}_{ph}$ is the averaged photoelectron yield. Plugging in $N_p$ output by the simulation, and $\overline{Y}_{ph}$ from \cref{tab:PlasmaParamMMO}, we have a photoemission current of $I_{ph} = 0.384 A$.
-
-
 %POTENTIAL THROUGH CENTER OF OBJECT
-
 \begin{figure}[H]
   \begin{subfigure}[b]{0.6\textwidth}
   \includegraphics[width=\textwidth]{figures/MMO/posX/WB/L_posX_WB.png}
@@ -274,11 +266,7 @@ Figure \ref{fig:Conv_posX} shows the convergence to the floating potential of bo
 \label{fig:Line_posX}
 \end{figure}
 
-We next plot the potential along the X axis as seen in figures \ref{fig:L_posX_WB} and \ref{fig:L_posX_NB}. The profile is plotted at timestep 10,000, when the floating potential has stabilized. Note that the profile line does not pass through the centre of the octagonal body of the MMO, rather passing through one of the panels at an angle to the YZ plane, as will become apparent when the 2D potential profile is shown. Directly in front of the MMO, both configurations of the spacecraft show a distinct potential barrier forming on the photoemissive side. In \ref{fig:L_posX_WB} the potential difference 6.4 V floating potential of the spacecraft is $93.17 V$, and in \ref{fig:L_posX_NB} the height of the barrier relative to the plasma is $92.58 V$. The configurations of MMO with booms then has a barrier that is $0.59 V$ deeper than the configuration without booms. Both plots also show a small distinct drop in potential directly behind the spacecraft, likely caused by photoelectrons orbiting the craft before being reabsorbed.    
-
-
 %AVERAGE POTENTIAL ISOLINES XY
-
 \begin{figure}[H]
   \begin{subfigure}[b]{0.6\textwidth}
     \includegraphics[width=\textwidth]{figures/MMO/posX/WB/P_posX_WB.png}
@@ -293,6 +281,8 @@ We next plot the potential along the X axis as seen in figures \ref{fig:L_posX_W
   \caption{2D slices through $Z = 14.4 m$ showing the time averaged potential profile of the entire computational domain with drift along X axis, and photoemission included. The potential is time averaged after a floating potential has been reached after 1,000 timesteps.}
   \label{fig:Pot_posX}
 \end{figure}
+
+We next plot the potential along the X axis as seen in figures \ref{fig:L_posX_WB} and \ref{fig:L_posX_NB}. The profile is plotted at timestep 10,000, when the floating potential has stabilized. Note that the profile line does not pass through the centre of the octagonal body of the MMO, rather passing through one of the panels at an angle to the YZ plane, as will become apparent when the 2D potential profile is shown. Directly in front of the MMO, both configurations of the spacecraft show a distinct potential barrier forming on the photoemissive side. In \ref{fig:L_posX_WB} the potential difference 6.4 V floating potential of the spacecraft is $93.17 V$, and in \ref{fig:L_posX_NB} the height of the barrier relative to the plasma is $92.58 V$. The configurations of MMO with booms then has a barrier that is $0.59 V$ deeper than the configuration without booms. Both plots also show a small distinct drop in potential directly behind the spacecraft, likely caused by photoelectrons orbiting the craft before being reabsorbed.    
 
 Figure \ref{fig:Pot_posX} plots contour lines for the potential in 2D slices of the computational domain. Contrasting figures \ref{fig:P_posX_WB} and \ref{fig:P_posX_NB} with figures \ref{fig:P_noPH_WB} and \ref{fig:P_noPH_NB}, we can see a thinner sheath form around both configurations around the MMO when photoemission is included. For both figures \ref{fig:P_posX_WB} and \ref{fig:P_posX_WB} we can also see that there are regions within the sheath on the sunlit side of the spacecraft where the potential differ varies along the booms. On both booms half way along the length, a small region of slightly higher potential, this suggests a gradient in the local electrical field. This variation in the potential could be the result of the angled geometry of the main body of the MMO, or potentially as a result of the voxelization of the spacecraft. Similarly, the sunlit panel of the octagonal main body closest to the sun shows a lower potential than the sunlit slanted panels. \cref{sec:appendixD} contains an analysis and discussion of these potential variations within the photoelectron sheath.
 
@@ -314,9 +304,7 @@ Figure \ref{fig:Pot_posX} plots contour lines for the potential in 2D slices of 
 \label{fig:Ions_posX}
 \end{figure}
 
-
 %RHO_E
-
 \begin{figure}[H]
   \begin{subfigure}[b]{0.6\textwidth}
   \includegraphics[width=\textwidth]{figures/MMO/posX/WB/E_posX_WB.png}
@@ -332,11 +320,9 @@ Figure \ref{fig:Pot_posX} plots contour lines for the potential in 2D slices of 
 \label{fig:Electrons_posX}
 \end{figure}
 
-
 Plasma particle densities are plotted for both ions (protons) and electrons in figures \ref{fig:Ions_posX} and \ref{fig:Electrons_posX} respectively. Due to a high photoemission current, the positively charged spacecraft does not form an ion wake, as can be seen in both \ref{fig:I_posX_WB} and \ref{fig:I_posX_WB}. Downstream of the spacecraft, there is a relative low ion density relative to the ambient plasma which is more prominent in the case of the boomless configuration of the MMO. 
 
-Variations in the ion density in the wake of a spacecraft is also realted to the plasma Mach number, as seen in the paper by Miloch et al. \insertref{Effects of booms of sounding rockets in flowing
-plasmas, Miloch}. We can compute the Mach number of the plasma using equation \eqref{eq:ionMach}, and the Mach number equation
+Variations in the ion density in the wake of a spacecraft is also realted to the plasma Mach number, as seen in the paper by Miloch et al. \parencite{Paulsson2019}. We can compute the Mach number of the plasma using equation \eqref{eq:ionMach}, and the Mach number equation
 \begin{equation}
     M = v_d / c_s,
 \end{equation}
@@ -397,8 +383,6 @@ The MMO without booms can be approximated as a cylinder, equation \eqref{eq:ICyl
 \label{fig:Line_minZ}
 \end{figure}
 
-Figures \ref{fig:L_minZ_NB} and \ref{fig:L_minZ_WB} show the potential profile along the X axis for cases 3 and 8. The minimum potential in the potential barrier is slightly lower than for cases 2 and 6, the potential barrier height from figure \ref{fig:L_minZ_WB} is $093.33 V$, and for the MMO without booms figure \ref{fig:L_minZ_NB} gives a barrier height of $92.81 V$.
-
 %AVERAGE POTENTIAL ISOLINES XY
 \begin{figure}[H]
   \begin{subfigure}[b]{0.6\textwidth}
@@ -416,6 +400,7 @@ Figures \ref{fig:L_minZ_NB} and \ref{fig:L_minZ_WB} show the potential profile a
 \label{fig:Pot_minZ}
 \end{figure}
 
+Figures \ref{fig:L_minZ_NB} and \ref{fig:L_minZ_WB} show the potential profile along the X axis for cases 3 and 8. The minimum potential in the potential barrier is slightly lower than for cases 2 and 6, the potential barrier height from figure \ref{fig:L_minZ_WB} is $93.33 V$, and for the MMO without booms figure \ref{fig:L_minZ_NB} gives a barrier height of $92.81 V$.
 
 Figure \ref{fig:Pot_minZ} the 2D potential profile for simulation cases 3 and 8; no significant difference can be seen in the shape and thickness of the sheath formed around the MMO. Both figures \ref{fig:P_minZ_WB} and \ref{fig:P_minZ_NB} again show the distinct variation in potential within the sheath along the booms, and on the sunlit octagonal panel perpendicular to the Sun/MMO vector. 
 
@@ -481,9 +466,9 @@ Particles that enter the computational domain experience a force given by equati
     \vb{F} = q\left(\vb{v} \cross \vb{B}\right) = - q \abs{v} \abs{B} \sin{\theta} \; \vb{j}.
 \end{equation}
 Here, we have used $\theta$ to denote the angle between the velocity vector and the magnetic field vector in the XZ plane, and $\vb{j}$ as the unit vector along the Y axis. Plugging in the drift velocity, the magnetic field strength, and $\theta = \ang{5.03}$  
-a force of $1.404 \times 10^{-22} N$ will act on the proton and electron in the negative $\vb{j}$ and positive $\vb{j}$ direction respectively. This force will cause the ions and electron to spiral in opposite direction along guiding centers aligned with the magnetic field lines. We have already seen that drift direction does not affect the floating potential obtained from previous results, thus the floating potential remains the same. So called E cross B drift found close to the MMO where the electrical field is non-zero, is discussed in more detail in appendix \ref{sec:appendixD}. 
-%POTENTIAL THROUGH CENTER OF OBJECT
+a force of $1.404 \times 10^{-22} N$ will act on the proton and electron in the negative $\vb{j}$ and positive $\vb{j}$ direction respectively. This force will cause the ions and electron to spiral in opposite direction along guiding centers aligned with the magnetic field lines. We have already seen that drift direction does not affect the floating potential obtained from previous results, thus the floating potential remains the same. So called E cross B drift found close to the MMO where the electrical field is non-zero, is discussed briefly in appendix \ref{sec:appendixD}. 
 
+%POTENTIAL THROUGH CENTER OF OBJECT
 \begin{figure}[H]
   \begin{subfigure}[b]{0.6\textwidth}
   \includegraphics[width=\textwidth]{figures/MMO/BField/WB/L_BField_WB.png}
@@ -558,8 +543,6 @@ Figures \ref{fig:Ions_BField} and \ref{fig:Electrons_BField} show the ion and el
 
 
 \section{Charging at different photoelectron temperatures}
-Internally in PINC, we have made the assumption of constant yield of photoelectrons by averaging the yield over the energy of incoming photoelectrons. Since our computation of the temperature is based on this averaging, another simulation was carried out where the photoelectron temperature was set to a constant, $T_{ph} = 3 \; eV$. The photoemission current was kept constant and no external magnetic field was included. Since drift was along the negative Z axis, these simulation cases (cases 5 and 10) are compared against simulation cases 3 and 8.  
-
 
 %FLOATING POTENTIAL CONVERGENCE
 \begin{figure}[H]
@@ -578,6 +561,8 @@ Internally in PINC, we have made the assumption of constant yield of photoelectr
 \caption{Timeseries plot of the potential of the two configurations of the MMO, drift is along the negative Z axis and the photoelectron temperature has been set to $3 \; eV$. The potential has been converted from PINC dimensionless units to Volts. The inset plots the same timeseries after 1000 timesteps, where the potential of the spacecraft has begun to oscillate about the floating potential.}
 \label{fig:Conv_PHTemp}
 \end{figure}
+
+Internally in PINC, we have made the assumption of constant yield of photoelectrons by averaging the yield over the energy of incoming photoelectrons. Since our computation of the temperature is based on this averaging, another simulation was carried out where the photoelectron temperature was set to a constant, $T_{ph} = 3 \; eV$. The photoemission current was kept constant and no external magnetic field was included. Since drift was along the negative Z axis, these simulation cases (cases 5 and 10) are compared against simulation cases 3 and 8.  
 
 Figures \ref{fig:C_PHTemp_WB} and \ref{fig:C_PHTemp_NB} show the converge of the potential convergence of two boom configurations for case 5 and 10. A significantly lower floating potential is reached for both boom configurations as compared to cases 3 and 8. The floating potential of the MMO with deployed booms was $78.15 \; V$, and $75.75 V$ for the MMO without deployed booms. The difference in floating potential between the two configurations is smaller than for the cases with a lower photoelectron temperature. Unlike case 3, figure \ref{fig:C_PHTemp_NB} shows an overshoot of the spacecraft potential before converging to the final floating potential, which could be due to a greater fraction of the photoelectrons having high enough kinetic energy to escape the potential barrier formed, thereby reducing the effective photoemission current. 
 
